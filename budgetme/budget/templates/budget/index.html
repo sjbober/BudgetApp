@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>My home page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script> -->
+  </head>
+  <body>
+    <p>This is my page</p>
+    {% if latest_expenses_list %}
+    <ul>
+        {% for expense in latest_expenses_list %}
+        <li><a href="{% url 'budget:expense_detail' expense.id %}">{{ expense.amount }}</a></li>
+        <!-- <li><a href="/budget/{{ expense.id }}/">{{ expense.amount }}</a></li> -->
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>No expenses are available.</p>
+    {% endif %}
+    <canvas id="myChart"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  </body>
+</html>
