@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>{% block page_title %}Page Title{% endblock %}</title>
+
+    <!-- Bootstrap CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/pulse/bootstrap.min.css" rel="stylesheet" integrity="sha384-FnujoHKLiA0lyWE/5kNhcd8lfMILbUAZFAT89u11OhZI7Gt135tk3bGYVBC2xmJ5" crossorigin="anonymous">
+
+    <!-- Font Awesome CDN -->
+    <script src="https://kit.fontawesome.com/bff70a1c12.js" crossorigin="anonymous"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@900&display=swap" rel="stylesheet"> 
+
+    <!-- Stylesheets  -->
+    <link rel="stylesheet" type="text/css" href="{% static 'budget/main.css' %}">
+
+    {% block extra_styles %}{% endblock %}
+    
+  </head>
+  <body>
+    <header>
+      <nav class="bg-primary flex just-betw align-center">
+        <a class="logo" href="#"><i class="fas fa-piggy-bank"></i> MoneyHog</a>
+        <ul class="navbar-list flex just-betw align-end">
+            <li>
+                <button type="button" class="btn btn-outline-secondary hamb">
+                <i class="fa fa-bars fa-lg"></i>
+                </button>
+            </li>
+            <li class="hide">
+                <a class="navbar-link {% block summary-active %}{% endblock summary-active %}" href="#"><i class="fas fa-chart-pie"></i> Summary {% block summary_active_sr %}{% endblock summary_active_sr %}</a>
+            </li>
+            <li class="hide">
+              <!-- navbar-active -->
+              <!-- <div class="btn-group"> -->
+                <a class="navbar-link {% block expenses_active %}{% endblock expenses_active %}" href="{% url 'budget:expense_list' %}"><i class="fas fa-receipt"></i> Expenses {% block expenses_active_sr %}{% endblock expenses_active_sr %}</a>
+              <!-- </div> -->
+                
+            </li>
+            <li class="hide">
+                <a class="navbar-link {% block income-active %}{% endblock income-active %}" href="#"><i class="fas fa-dollar-sign"></i> Income {% block income_active_sr %}{% endblock income_active_sr %}</a>
+            </li>
+            <li class="hide">
+                <a class="navbar-link {% block categ-active %}{% endblock categ-active %}" href="#"><i class="fas fa-tags"></i> Categories {% block categ_active_sr %}{% endblock categ_active_sr %}</a>
+            </li>
+            <li class="hide">
+                <a class="navbar-link {% block account-active %}{% endblock account-active %}" href="#"><i class="fas fa-user-circle"></i> Account {% block account_active_sr %}{% endblock account_active_sr %}</a>
+            </li>
+            <li class="hide">
+              <div class="dropdown dropleft">
+                <button class="navbar-link btn btn-link tn-secondary dropdown-toggl" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-plus"></i> New
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <a class="dropdown-item" href="#">Expense</a>
+                  <a class="dropdown-item" href="#">Income</a>
+                </div>
+              </div>
+            </li>
+            
+        </ul>
+      </nav>
+   
+    </header>
+    <main {% block main_class %} class="contents" {% endblock %}>
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+    {% block bootstrap_scripts %}{% endblock %}
+
+    {% block my_scripts %}{% endblock %}
+
+    <!-- Nav Bar -->
+    <script src="../../../static/budget/scripts/responsiveNav.js"></script>
+
+    <!-- Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    
+
+
+  </body>
+</html>

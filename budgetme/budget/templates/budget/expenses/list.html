@@ -1,120 +1,75 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    {% load static %}
-    <meta charset="utf-8">
-    <title>Expenses</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/pulse/bootstrap.min.css" rel="stylesheet" integrity="sha384-FnujoHKLiA0lyWE/5kNhcd8lfMILbUAZFAT89u11OhZI7Gt135tk3bGYVBC2xmJ5" crossorigin="anonymous">
-    <!-- <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/minty/bootstrap.min.css" rel="stylesheet" integrity="sha384-4HfFay3AYJnEmbgRzxYWJk/Ka5jIimhB/Fssk7NGT9Tj3rkEChpSxLK0btOGzf2I" crossorigin="anonymous"> -->
+{% extends "budget/expenses/expense.html" %}
 
+{% block page_title %}Expenses{% endblock page_title %}
 
-    <link rel="stylesheet" type="text/css" href="{% static 'budget/main.css' %}">
+{% block main_class %} class="table-content" {% endblock main_class %}
+
+{% block content %}
+  <div class="flex mt-2 mb-4">
+    <h1 class="imp page-title mr-4">My Expenses</h1>
+    <!-- <div class="flex align-center flex-wrap"> -->
+    <a href="{% url 'budget:expense_form_page' %}" class="btn btn-outline-primary imp title-med"><i class="fas fa-plus"></i> New Expense</a>
+      
+    <!-- </div> -->
     
-    <!-- Font Awesome CDN -->
-    <script src="https://kit.fontawesome.com/bff70a1c12.js" crossorigin="anonymous"></script>
+  </div>
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@900&display=swap" rel="stylesheet"> 
-  </head>
-  <body>
-    <header>
-      <nav class="bg-primary flex just-betw align-center">
-        <a class="logo" href="#"><i class="fas fa-piggy-bank"></i> MoneyHog</a>
-        <ul class="navbar-list flex just-betw align-end">
-            <li>
-                <button type="button" class="btn btn-outline-secondary hamb">
-                <i class="fa fa-bars fa-lg"></i>
-                </button>
-            </li>
-            <li class="hide">
-                <a class="navbar-link" href="#"><i class="fas fa-chart-pie"></i> Summary</a>
-            </li>
-            <li class="hide">
-                <a class="navbar-link navbar-active" href="{% url 'budget:expense_list' %}"><i class="fas fa-receipt"></i> Expenses <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="hide">
-                <a class="navbar-link" href="#"><i class="fas fa-dollar-sign"></i> Income</a>
-            </li>
-            <li class="hide">
-                <a class="navbar-link" href="#"><i class="fas fa-tags"></i> Categories</a>
-            </li>
-            <li class="hide">
-                <a class="navbar-link" href="#"><i class="fas fa-user-circle"></i> Account</a>
-            </li>
-        </ul>
-      </nav>
-   
-    </header>
-    <main class="table-content table-striped">
-      <div class="flex mt-2 mb-4">
-        <h1 class="imp page-title mr-4">My Expenses</h1>
-        <!-- <div class="flex align-center flex-wrap"> -->
-        <a href="{% url 'budget:expense_form_page' %}" class="btn btn-outline-primary imp title-med"><i class="fas fa-plus"></i> New Expense</a>
-          
-        <!-- </div> -->
+  <div class="flex flex-wrap align-center mb-2">
+    <span class="title-med imp mr-2">Filters: </span>
+    <button type="button" class="btn btn-outline-primary imp title-sm mr-4"><span id="current-month">Month: {{ month }}<i class="fas fa-caret-down"></i></button>
+    <form action="" method="POST" class="inline-for flex align-center just-end" enctype="application/x-www-form-urlencoded">        
+      {% csrf_token %}
+      <!-- <div class="form-group mb-ow row"> -->
+        <label for="expense-search" class="sr-only">Search:</label>
+        <input type="search" id="expense-search" name="expense-search" class="form-control" aria-describedby="search">
+        <button type="submit" class="btn btn-outline-primary form-control"><i class="fas fa-search"></i></button>
+      <!-- </div> -->
+      
+    </form>
+  </div>
+  
+  
+
+  {% if latest_expenses_list %}
+  <div class="table-responsive">
+    <table class="table table-striped mb-4">
+      <thead>
+        <tr>
+          <th scope="col" class="title-sm">ID</th>
+          <th scope="col" class="title-sm">Date</th>
+          <th scope="col" class="title-sm">Amount</th>
+          <th scope="col" class="title-sm">Category</th>
+          <th scope="col" class="title-sm">Vendor</th>
+          <th scope="col" class="title-sm">Description</th>
+          <th scope="col" class="title-sm">Receipt</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for expense in latest_expenses_list %}
+        <tr>
+          <td><a href="{% url 'budget:expense_detail' expense.id %}">{{ expense.pk }}</a></td>
+          <td>{{ expense.expense_date }}</td>
+          <td>${{ expense.amount }}</td>
+          <td>{{ expense.category }}</td>
+          <td>{{ expense.vendor }}</td>
+          <td>{{ expense.description }}</td>
+          <td>{% if expense.receipt %} Yes
+            {% else %} {% endif %}</td>
+        </tr>
+        {% endfor %}
+
+        <tr class="table-secondary">
+          <td colspan="2" class="imp title-sm">Monthly Total:</td>
+          <td colspan="5" class="imp title-sm">${{ monthly_total }}</td>
+        </tr>
         
-      </div>
-
-      <div class="flex flex-wrap align-center mb-2">
-        <span class="title-med imp mr-2">Filters: </span>
-        <button type="button" class="btn btn-outline-primary imp title-sm mr-4"><span id="current-month">Month: {{ month }}<i class="fas fa-caret-down"></i></button>
-        <form action="" method="POST" class="inline-for flex align-center just-end" enctype="application/x-www-form-urlencoded">        
-          {% csrf_token %}
-          <!-- <div class="form-group mb-ow row"> -->
-            <label for="expense-search" class="sr-only">Search:</label>
-            <input type="search" id="expense-search" name="expense-search" class="form-control" aria-describedby="search">
-            <button type="submit" class="btn btn-outline-primary form-control"><i class="fas fa-search"></i></button>
-          <!-- </div> -->
-          
-        </form>
-      </div>
-      
+      </tbody>
       
 
-      {% if latest_expenses_list %}
-      <div class="table-responsive">
-        <table class="table mb-4">
-          <thead>
-            <tr>
-              <th scope="col" class="title-sm">ID</th>
-              <th scope="col" class="title-sm">Date</th>
-              <th scope="col" class="title-sm">Amount</th>
-              <th scope="col" class="title-sm">Category</th>
-              <th scope="col" class="title-sm">Vendor</th>
-              <th scope="col" class="title-sm">Description</th>
-              <th scope="col" class="title-sm">Receipt</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for expense in latest_expenses_list %}
-            <tr>
-              <td><a href="{% url 'budget:expense_detail' expense.id %}">{{ expense.pk }}</a></td>
-              <td>{{ expense.expense_date }}</td>
-              <td>${{ expense.amount }}</td>
-              <td>{{ expense.category }}</td>
-              <td>{{ expense.vendor }}</td>
-              <td>{{ expense.description }}</td>
-              <td>{% if expense.receipt %} Yes
-                {% else %} {% endif %}</td>
-            </tr>
-            {% endfor %}
-
-            <tr class="table-secondary">
-              <td colspan="2" class="imp title-sm">Monthly Total:</td>
-              <td colspan="5" class="imp title-sm">${{ monthly_total }}</td>
-            </tr>
-            
-          </tbody>
-          
-
-        </table>
-      </div>
-      
-      {% else %}
-          <p>You don't have any expenses yet!</p>
-      {% endif %}
-    </main>
-
-    
-</body>
-</html>
+    </table>
+  </div>
+  
+  {% else %}
+      <p>You don't have any expenses yet!</p>
+  {% endif %}
+{% endblock content%}

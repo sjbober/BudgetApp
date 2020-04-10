@@ -10,6 +10,7 @@ from django.template import loader
 from .models import Expense
 from .models import Income
 from .models import Category
+from .models import TempReceipt
 
 from datetime import date
 from django.contrib import messages
@@ -28,6 +29,12 @@ from django.views import generic
 
 # from budget.forms import ExpenseForm 
 from django.views.generic.edit import FormView
+
+# To read images
+import cloudmersive_ocr_api_client
+from cloudmersive_ocr_api_client.rest import ApiException
+from django.http import JsonResponse
+from .forms import TempReceiptForm
 
 class IndexView(generic.ListView):
     template_name = 'budget/index.html'
@@ -125,6 +132,7 @@ def expense_edit(request, pk):
             'expense': expense,
         }
 
+        # return render(request, 'budget/expenses/edit-expense.html',context)
         return render(request, 'budget/expenses/edit-expense.html',context)
 
 
@@ -146,6 +154,71 @@ def expense_form_page(request):
         }
 
         return render(request, 'budget/expenses/new-expense.html',context)
+        # return render(request, 'budget/expenses/edit-expense.html',context)
+
+def read_receipt(request):
+    # if request.method == "POST":
+    #     response = {"test": "test"}
+    #     return JsonResponse(response)
+    test = {"test": "success"}
+    # form = TempReceiptForm(request.POST, request.FILES)
+    # if form.is_valid():
+    #     img = form.save()
+    #     image_file = img.image
+        # return image_file
+    if request.method == "POST":
+        img = request.FILES.get('file')
+        newTemp = TempReceipt(image = img)
+        newTemp.save()
+    # tempRe = TempReceipt()
+    # tempRe.image = request.POST.get('file', None)
+    # tempRe.image = request.FILES["file"]
+    image_file = "C:/Users/sjbober/Documents/Projects/budget/budgetme" + newTemp.image.url
+    path = {"path": image_file}
+    return JsonResponse(path)
+    # image_file = '..\/' + newTemp.image.url
+    # pk = img.pk
+    # api_instance = cloudmersive_ocr_api_client.ImageOcrApi()
+    # image_file = request.GET.get('file', None)
+    # image_file = request.POST.get('file', None)
+    # image_file = request.POST.get("file", None)
+    # image_file = request.POST
+    # image_name = request.FILES["file"].name
+    # image_file = '../media/temp/' + image_name
+        # return JsonResponse(test)
+        # return JsonResponse(image_file)
+    response = {"error": "File not found"}
+                    # "image": image_file}
+    # return image_file
+    # image_file = tempRe.image
+    if image_file == None:
+    #     pass
+        return JsonResponse(response)
+    # image_file = request
+    # print(image_file)
+    # image_file = request
+    # return JsonResponse(test)
+
+    api_instance = cloudmersive_ocr_api_client.ImageOcrApi()
+    # return JsonResponse(test)
+   ## image_file = 'C:\\temp\\input.jpg' # file | Image file to perform OCR on.  Common file formats such as PNG, JPEG are supported.
+    # configuration = cloudmersive_ocr_api_client.Configuration()
+    api_instance.api_client.configuration.api_key = {}
+    api_instance.api_client.configuration.api_key['Apikey'] = '04d1a7be-c9d1-4d93-8ec4-e7545c2a570a'
+    # return JsonResponse(test)
+    try:
+        # Converts an uploaded image in common formats such as JPEG, PNG into text via Optical Character Recognition.
+        api_response = api_instance.image_ocr_post(image_file)
+        # return JsonResponse(test)
+        # return JsonResponse(api_response)
+        return api_response
+        # pprint(api_response)
+    except ApiException as e:
+        response = {"error": "Error calling the OCR API"}
+        return JsonResponse(response)
+        # print("Exception when calling ImageOcrApi->image_ocr_post: %s\n" % e)
+
+# 0acd1416-c3d7-4031-b177-07a498332cb1
 
 # Income Views
 # ///////////////////////////////////////

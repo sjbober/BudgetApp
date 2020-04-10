@@ -7,8 +7,13 @@ uploadReceiptButton.addEventListener("change", showFile);
 
 function showFile() {
     preview.classList.remove("d-none");
-    uploadReceiptButton.files[0].isValid = true;
+    // uploadReceiptButton.files[0].isValid = true;
+
+    // previewName.classList.add("sr-only");
     previewName.innerHTML = uploadReceiptButton.files[0].name;
+
+
+
     // previewName.value = uploadReceiptButton.files[0].name;
     // previewName.placeholder = uploadReceiptButton.files[0].name;
     // console.log(previewName);

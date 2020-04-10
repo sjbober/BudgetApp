@@ -4,6 +4,7 @@ from django import forms
 from django.forms import ModelForm
 
 from .models import Expense
+from .models import TempReceipt
 
 class DeleteExpenseForm(ModelForm):
     class Meta:
@@ -46,3 +47,8 @@ class ExpenseForm(ModelForm):
         
         }
         # category = ChoiceField(widget=forms.Select(attrs={'class':'regDropDown'}))
+
+class TempReceiptForm(ModelForm):
+    class Meta:
+        model = TempReceipt
+        fields = '__all__'

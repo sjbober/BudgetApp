@@ -28,6 +28,8 @@ urlpatterns = [
 
     path('expenses/<int:pk>/', views.expense_detail, name='expense_detail'),
 
+    path('expenses/read-receipt', views.read_receipt, name='read_receipt'),
+
     path('expenses/<int:pk>/edit', views.expense_edit, name='expense_edit'),
 
     path('income/<int:pk>/', views.IncomeDetailView.as_view(), name='income_detail'),

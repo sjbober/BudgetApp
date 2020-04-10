@@ -1,171 +1,26 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    {% load static %}
-    <meta charset="utf-8">
-    <title>Edit Expense</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/pulse/bootstrap.min.css" rel="stylesheet" integrity="sha384-FnujoHKLiA0lyWE/5kNhcd8lfMILbUAZFAT89u11OhZI7Gt135tk3bGYVBC2xmJ5" crossorigin="anonymous">
-    <!-- <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/flatly/bootstrap.min.css" rel="stylesheet" integrity="sha384-yrfSO0DBjS56u5M+SjWTyAHujrkiYVtRYh2dtB3yLQtUz3bodOeialO59u5lUCFF" crossorigin="anonymous"> -->
-    <!-- <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/litera/bootstrap.min.css" rel="stylesheet" integrity="sha384-pLgJ8jZ4aoPja/9zBSujjzs7QbkTKvKw1+zfKuumQF9U+TH3xv09UUsRI52fS+A6" crossorigin="anonymous"> -->
+{% extends "budget/expenses/form.html" %}
 
+{% block page_title %}Edit Expense{% endblock page_title %}
 
-    <link rel="stylesheet" type="text/css" href="{% static 'budget/main.css' %}">
-    
-    <!-- Font Awesome CDN -->
-    <script src="https://kit.fontawesome.com/bff70a1c12.js" crossorigin="anonymous"></script>
+{% block h1 %}Edit Expense #{{ expense.id }}{% endblock h1 %}
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@900&display=swap" rel="stylesheet"> 
+{% block extra_button%}<a href="{% url 'budget:expense_detail' expense.id %}" type="button" class="btn btn-link imp text-info title-sm">Cancel <i class="fas fa-times" aria-hidden="true"></i></a>
+{% endblock extra_button%}
 
+{% block form-action %}{% url 'budget:expense_edit' expense.id %}{% endblock form-action %}
 
-  </head>
-  <body>
-    <header>
-      <nav class="bg-primary flex just-betw align-center">
-        <a class="logo" href="#"><i class="fas fa-piggy-bank"></i> MoneyHog</a>
-        <ul class="navbar-list flex just-betw align-end">
-            <li>
-                <button type="button" class="btn btn-outline-secondary hamb">
-                <i class="fa fa-bars fa-lg"></i>
-                </button>
-            </li>
-            <li class="hide">
-                <a class="navbar-link" href="#"><i class="fas fa-chart-pie"></i> Summary</a>
-            </li>
-            <li class="hide">
-                <a class="navbar-link navbar-active" href="{% url 'budget:expense_list' %}"><i class="fas fa-receipt"></i> Expenses <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="hide">
-                <a class="navbar-link" href="#"><i class="fas fa-dollar-sign"></i> Income</a>
-            </li>
-            <li class="hide">
-                <a class="navbar-link" href="#"><i class="fas fa-tags"></i> Categories</a>
-            </li>
-            <li class="hide">
-                <a class="navbar-link" href="#"><i class="fas fa-user-circle"></i> Account</a>
-            </li>
-        </ul>
-      </nav>
-   
-    </header>
-    <main class="contents">
-        <div class="flex just-betw mt-2 mb-4">
-            <h1 class="imp page-title">Edit Expense #{{ expense.id }}</h1>
-            <a href="{% url 'budget:expense_detail' expense.id %}" type="button" class="btn btn-link imp text-info title-sm">Cancel <i class="fas fa-times" aria-hidden="true"></i></a>
-        </div>
-      
+{% block existing_receipt %}
+  {% if expense.receipt %}
+  <span class="mb-2 flex just-center"> 
+      <img src="{{ expense.receipt.url }}" alt="{{ expense.receipt }}" class="w-75"> 
+      <!-- <img src="/receipt2.JPG" alt="{{ expense.receipt }}" class="w-75">  -->
+  </span>
+  {% endif %}
+{% endblock existing_receipt %}
 
-      {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% block existing_receipt_delete %}
+  {% if expense.receipt %}
+  <button id="remove-file" type="button" class="btn text-warning"><span class="sr-only">Remove file</span><i class="fas fa-times-circle fa-lg"></i></button>
+  {% endif %}
+{% endblock existing_receipt_delete %}
 
-      <form action="{% url 'budget:expense_edit' expense.id %}" method="POST" class="inline-form" enctype="multipart/form-data"> 
-        {% csrf_token %}
-  <!-- {% comment %} -->    <!-- {% endcomment %} -->
-
-          <div class="form-group mb-2 row">
-            <label for="receipt-file" class="col-sm-4 col-form-label"><span class="imp">Receipt</span> <small>(optional)</small></label>
-            <div class="col-md-8 flex just-start">
-              <label id="" class="flex w-75" for="receipt">
-                <div class="btn btn-outline-primary w-100 imp"><i class="fas fa-camera fa-lg"></i> Choose file or photo</div>
-                <input id="receipt" type="file" accept="image/*" capture=environment class="image-upload" name="receipt"/>
-              </label>
-
-              <button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="left" title="Upload a clean copy of your receipt and we'll auto-fill as many details as we can so you don't have to."><i class="far fa-question-circle fa-lg"></i></button>
-            </div>
-          </div>
-{% comment %}
-        {% if expense.receipt %}
-        {% endcomment %}
-          <div id="receipt-preview" class="form-group mb-2 row">
-            <label for="receipt-file" class="col-sm-4 col-form-label imp sr-onl">File</label>
-            <div class="col-md-8 flex flex-col">
-              <!-- <span>File name: </span> -->
-              
-                <span id="receipt-file"> 
-                    {% if expense.receipt %}
-                  <img src="{{ expense.receipt.url }}" alt="{{ expense.receipt }}" class="w-100"> 
-                  {% endif %}
-                </span>
-                <img id="receipt-image" src="#" alt="New Receipt"  class="w-100 d-none" />
-              
-
-
-              <!-- <button id="remove-file" type="button" class="btn remove-content"><span class="sr-only">Remove file</span><i class="fas fa-times-circle fa-lg"></i></button> -->
-            </div>
-          </div>
-          {% comment %}
-          {% endif %}
-          {% endcomment %}
-
-          {% comment %} 
-          {% if expense.receipt %} <img src="{{ expense.receipt.url }}" alt="sdfsdf" class="img-thumbnail"> {% endif %}{% endcomment %}
-                       
-          <div class="form-group mb-2 row">
-            <label for="{{ form.expense_date.id_for_label }}" class="col-sm-4 col-form-label imp">Date</label>
-            <div class="col-md-8 flex">
-              {{ form.expense_date }}
-              <button id="today" type="button" class="btn btn-link">Today</button>
-            </div> 
-          </div>
-          <div class="form-group mb-2 row">
-            <label for="{{forms.amount.id_for_label}}" class="col-sm-4 col-form-label imp">Amount</label>
-            <div class="col-md-8">
-              {{ form.amount }}
-            </div>
-          </div>
-
-          <div class="form-group mb-2 row">
-            <label for="{{ form.category.id_for_label }}" class="col-sm-4 col-form-label"><span class="imp">Category</span> <small>(optional)</small></label>
-            <div class="col-md-8 flex">
-              {{ form.category }}
-              <button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="top" title="Categories help you determine which areas you spend the most and allow you to set budgets for yourself."><i class="far fa-question-circle fa-lg"></i></button>
-            </div>
-            
-          </div>
-
-          <!-- <p class="imp">Additional details to help you find this expense later:</p> -->
-          <div class="form-group mb-2 row">
-            <label for="{{ form.vendor.id_for_label }}" class="col-sm-4 col-form-label"><span class="imp">Vendor</span> <small>(optional)</small></label>
-            <div class="col-md-8">
-              {{ form.vendor }}
-            </div>
-          </div>
-          <div class="form-group mb-4 row">
-            <label for="{{ form.description.id_for_label}}" class="col-sm-4 col-form-label"><span class="imp">Description</span> <small>(optional)</small></label>
-            <div class="col-md-8">
-              {{ form.description }}
-            </div>           
-          </div>
-
-          <button type="submit" class="btn btn-primary block imp title-med"><i class="fas fa-receipt"></i> Save Changes</button>
-
-
-      </form>
-    </main>
-  
-
-    <!-- Bootstrap -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
-    <script>
-      $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-      })
-    </script>
-
-    <script src="../../../static/budget/scripts/receiptFileDisplay.js"></script>
-    <script src="../../../static/budget/scripts/setDateToday.js"></script>
-    <script src="../../../static/budget/scripts/addPlaceholderTextToSelect.js"></script>
-    <script src="../../../static/budget/scripts/removeReceipt.js"></script>
-    <script src="../../../static/budget/scripts/displayImagePreviewBeforeUpload.js"></script>
-
-    <!-- Nav Bar -->
-    <script src="../../../static/budget/scripts/responsiveNav.js"></script>
-
-    <script>
-
-    </script>
-
-  </body>
-</html>

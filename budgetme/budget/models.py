@@ -33,3 +33,5 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+class TempReceipt(models.Model):
+    image = models.ImageField(upload_to="temp/", blank=True)

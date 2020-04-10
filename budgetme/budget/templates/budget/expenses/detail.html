@@ -1,142 +1,92 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    {% load static %}
-    <meta charset="utf-8">
-    <title>New Expense</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/pulse/bootstrap.min.css" rel="stylesheet" integrity="sha384-FnujoHKLiA0lyWE/5kNhcd8lfMILbUAZFAT89u11OhZI7Gt135tk3bGYVBC2xmJ5" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="{% static 'budget/main.css' %}">
-    
-    <!-- Font Awesome CDN -->
-    <script src="https://kit.fontawesome.com/bff70a1c12.js" crossorigin="anonymous"></script>
+{% extends "budget/expenses/expense.html" %}
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@900&display=swap" rel="stylesheet"> 
-  </head>
-  <body>
-    <header>
-        <nav class="bg-primary flex just-betw align-center">
-            <a class="logo" href="#"><i class="fas fa-piggy-bank"></i> MoneyHog</a>
-            <ul class="navbar-list flex just-betw align-end">
-                <li>
-                    <button type="button" class="btn btn-outline-secondary hamb">
-                    <i class="fa fa-bars fa-lg"></i>
-                    </button>
-                </li>
-                <li class="hide">
-                    <a class="navbar-link" href="#"><i class="fas fa-chart-pie"></i> Summary</a>
-                </li>
-                <li class="hide">
-                    <a class="navbar-link navbar-active" href="{% url 'budget:expense_list' %}"><i class="fas fa-receipt"></i> Expenses <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="hide">
-                    <a class="navbar-link" href="#"><i class="fas fa-dollar-sign"></i> Income</a>
-                </li>
-                <li class="hide">
-                    <a class="navbar-link" href="#"><i class="fas fa-tags"></i> Categories</a>
-                </li>
-                <li class="hide">
-                    <a class="navbar-link" href="#"><i class="fas fa-user-circle"></i> Account</a>
-                </li>
-            </ul>
-        </nav>
-        
-    </header>
-    <main class="contents">
-        {% if messages %}
-        <!-- <ul>
-            {% for message in messages %}
-                <li><div class="alert alert-success" role="alert">
-                    {{ message }}
-                  </div></li>
-            {% endfor %}
-         </ul> -->
-         {% for message in messages %}
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+{% block page_title %}Expense Details{% endblock page_title %}
+
+{% block content %}
+    {% if messages %}
+    <!-- <ul>
+    {% for message in messages %}
+        <li><div class="alert alert-success" role="alert">
             {{ message }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-          </div>
-          {% endfor %}
-        {% endif %}
-        <div class="flex just-betw mt-2 mb-4">
-            <h1 class="imp page-title">Expense #{{ expense.id }}</h1>
-            <button type="button" class="btn imp text-danger title-sm" data-toggle="modal" data-target="#deleteExpense">Delete <i class="fas fa-trash-alt"></i></button>
+            </div></li>
+    {% endfor %}
+    </ul> -->
+    {% for message in messages %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    <div class="flex just-betw mt-2 mb-4">
+    <h1 class="imp page-title">Expense #{{ expense.id }}</h1>
+    <button type="button" class="btn imp text-danger title-sm" data-toggle="modal" data-target="#deleteExpense">Delete <i class="fas fa-trash-alt"></i></button>
+    </div>
+
+    <table class="table mb-4">
+    <tbody>
+        <tr>
+            <th scope="row">Date</th>
+            <td>{{ expense.expense_date }}
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">Amount</th>
+            <td>${{ expense.amount }}    
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">Category</th>
+            <td>{{ expense.category }}    
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">Vendor</th>
+            <td>
+                {{ expense.vendor }}
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">Description</th>
+            <td>
+                {{ expense.description }}
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">Receipt </th>
+            <td>
+                {% if expense.receipt %} <img src="{{ expense.receipt.url }}" alt="{{ expense.receipt }}" class="w-100">
+                {% endif %}
+            </td>
+        </tr>
+    </tbody>
+
+
+    </table>
+    <a href="{% url 'budget:expense_edit' expense.id %}" class="btn btn-primary block imp title-med mb-3"><i class="far fa-edit"></i> Edit</a>
+
+    <div id="deleteExpense" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title imp">Delete Expense</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
         </div>
-
-        <table class="table mb-4">
-            <tbody>
-                <tr>
-                    <th scope="row">Date</th>
-                    <td>{{ expense.expense_date }}
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Amount</th>
-                    <td>${{ expense.amount }}    
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Category</th>
-                    <td>{{ expense.category }}    
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Vendor</th>
-                    <td>
-                        {{ expense.vendor }}
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Description</th>
-                    <td>
-                        {{ expense.description }}
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Receipt </th>
-                    <td>
-                        {% if expense.receipt %} <img src="{{ expense.receipt.url }}" alt="{{ expense.receipt }}" class="w-100">
-                        {% endif %}
-                    </td>
-                </tr>
-            </tbody>
-            
-
-        </table>
-        <a href="{% url 'budget:expense_edit' expense.id %}" class="btn btn-primary block imp title-med mb-3"><i class="far fa-edit"></i> Edit</a>
-
-        <div id="deleteExpense" class="modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title imp">Delete Expense</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <p>Are you sure you want to delete this expense?</p>
-                </div>
-                <div class="modal-footer flex just-around">
-                    <form action="{% url 'budget:expense_detail' expense.pk%}" method="POST" class="inline-form" enctype="application/x-www-form-urlencoded"> 
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Yes, delete it</button>
-                    </form>
-                  <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
-                </div>
-              </div>
-            </div>
-          </div>
-    </main>
-
-    <!-- Bootstrap -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-  
-    <!-- Nav Bar -->
-    <script src="../../../static/budget/scripts/responsiveNav.js"></script>
-</body>
-</html>
+        <div class="modal-body">
+            <p>Are you sure you want to delete this expense?</p>
+        </div>
+        <div class="modal-footer flex just-around">
+            <form action="{% url 'budget:expense_detail' expense.pk%}" method="POST" class="inline-form" enctype="application/x-www-form-urlencoded"> 
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Yes, delete it</button>
+            </form>
+            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+        </div>
+    </div>
+    </div>
+    {% endblock content%}
