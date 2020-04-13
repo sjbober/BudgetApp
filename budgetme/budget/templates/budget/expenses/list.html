@@ -67,8 +67,43 @@
       
 
     </table>
+    <nav aria-label="..." class="flex just-center">
+      <ul class="pagination">
+
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">Previous</span>
+        </li>
+      {% endif %}
+
+{% comment %}
+        {% for page in page_obj.page_range %}
+        {% endcomment %}
+        <li class="page-item"><a class="page-link" href="#">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li>
+        {% comment %}
+        {% endfor %}
+        {% endcomment %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+          <span class="page-link ">Next</span>
+        </li>
+        {% endif %}
+
+
+        </li>
+      </ul>
+    </nav>
   </div>
-  
+ 
   {% else %}
       <p>You don't have any expenses yet!</p>
   {% endif %}

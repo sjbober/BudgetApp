@@ -6,13 +6,14 @@ from django.http import Http404
 from django.http import HttpResponse
 from django.template import loader
 
-
+# Models
 from .models import Expense
 from .models import Income
 from .models import Category
 from .models import TempReceipt
 
 from datetime import date
+
 from django.contrib import messages
 
 from .forms import ExpenseForm
@@ -25,7 +26,6 @@ from django.urls import reverse_lazy
 
 # //////////////////////////////////////////
 from django.views import generic
-# from .models import Expense 
 
 # from budget.forms import ExpenseForm 
 from django.views.generic.edit import FormView
@@ -35,6 +35,9 @@ import cloudmersive_ocr_api_client
 from cloudmersive_ocr_api_client.rest import ApiException
 from django.http import JsonResponse
 from .forms import TempReceiptForm
+
+# Pagination
+from django.core.paginator import Paginator
 
 class IndexView(generic.ListView):
     template_name = 'budget/index.html'
@@ -74,7 +77,13 @@ class IndexView(generic.ListView):
 
 def expense_list(request):
     today = date.today()
-    latest_expenses_list = Expense.objects.filter(expense_date__year=today.year, expense_date__month=today.month).order_by('-expense_date')
+    # latest_expenses_list = Expense.objects.filter(expense_date__year=today.year, expense_date__month=today.month).order_by('-expense_date')
+
+    latest_expenses_list = Expense.objects.order_by('-expense_date')
+
+    paginator = Paginator(latest_expenses_list, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     monthly_total = 0
     for i in latest_expenses_list:
@@ -86,10 +95,13 @@ def expense_list(request):
         'latest_expenses_list': latest_expenses_list,
         'monthly_total' : monthly_total,
         'month': month,
+        'page_obj': page_obj,
     }
 
     return render(request, 'budget/expenses/list.html', context)
 
+def paginateExpenseList():
+    pass
 
 # class ExpenseDetailView(generic.DetailView):
 #     model = Expense
