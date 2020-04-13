@@ -212,6 +212,22 @@ textarea {
     /* border-radius: 5px; */
 }
 
+/* This ensures that the receipt delete button is displayed properly on top of the receipt */
+#file-and-del {
+    position: relative;
+}
+
+.del-butn {
+    position: absolute;
+    right: -5px;
+    top: -5px;
+    border-radius: 100%;
+    padding: 0px;
+    border: none;
+    background-color: white;
+
+
+}
 
 
 /*  ======================================================

@@ -1,5 +1,6 @@
 from __future__ import print_function
 import time
+
 import cloudmersive_ocr_api_client
 from cloudmersive_ocr_api_client.rest import ApiException
 from pprint import pprint
@@ -26,7 +27,7 @@ try:
     api_response = api_instance.image_ocr_photo_recognize_receipt(image_file, recognition_mode=recognition_mode, language=language)
     # original: 
        # api_response = api_instance.image_ocr_photo_recognize_receipt(image_file, recognition_mode=recognition_mode, language=language, preprocessing=preprocessing)
-    # pprint(api_response)
+    pprint(api_response)
     return api_response
 except ApiException as e:
     print("Exception when calling ImageOcrApi->image_ocr_photo_recognize_receipt: %s\n" % e)

@@ -11,16 +11,11 @@
 
 {% block existing_receipt %}
   {% if expense.receipt %}
-  <span class="mb-2 flex just-center"> 
-      <img src="{{ expense.receipt.url }}" alt="{{ expense.receipt }}" class="w-75"> 
-      <!-- <img src="/receipt2.JPG" alt="{{ expense.receipt }}" class="w-75">  -->
+  <span id="file-and-del" class="mb-2 flex just-center align-start w-75"> 
+      <!-- <img src="{{ expense.receipt.url }}" alt="{{ expense.receipt }}" class="w-75">  -->
+    <img src="../../../static/budget/walmart.png" alt="{{ expense.receipt }}" class="w-100"> 
+    <button id="remove-file" type="button" class="btn btn-outline-danger del-butn"><span class="sr-only">Remove file</span><i class="fas fa-times-circle fa-2x"></i></button>
   </span>
   {% endif %}
 {% endblock existing_receipt %}
-
-{% block existing_receipt_delete %}
-  {% if expense.receipt %}
-  <button id="remove-file" type="button" class="btn text-warning"><span class="sr-only">Remove file</span><i class="fas fa-times-circle fa-lg"></i></button>
-  {% endif %}
-{% endblock existing_receipt_delete %}
 
