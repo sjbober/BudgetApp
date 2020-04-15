@@ -1,14 +1,20 @@
 {% extends "budget/expenses/expense.html" %}
+{% load static %}
 
 {% block page_title %}Expenses{% endblock page_title %}
+
+{% block extra_styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'budget/list.css' %}">
+{% endblock extra_styles %}
+
 
 {% block main_class %} class="table-content" {% endblock main_class %}
 
 {% block content %}
   <div class="flex mt-2 mb-4">
-    <h1 class="imp page-title mr-4">My Expenses</h1>
+    <h1 class="imp page-title mr-4">Expenses</h1>
     <!-- <div class="flex align-center flex-wrap"> -->
-    <a href="{% url 'budget:expense_form_page' %}" class="btn btn-outline-primary imp title-med"><i class="fas fa-plus"></i> New Expense</a>
+    <a href="{% url 'budget:expense_form_page' %}" class="btn btn-primary imp title-med"><i class="fas fa-plus"></i> New Expense</a>
       
     <!-- </div> -->
     
@@ -16,7 +22,47 @@
 
   <div class="flex flex-wrap align-center mb-2">
     <span class="title-med imp mr-2">Filters: </span>
-    <button type="button" class="btn btn-outline-primary imp title-sm mr-4"><span id="current-month">Month: {{ month }}<i class="fas fa-caret-down"></i></button>
+    <button id="date-range" type="button" class="btn btn-outline-primary imp title-sm mr-4" data-toggle="modal" data-target="#dateModal">Date<span id="date-range"></span></button>
+
+    <button type="button" class="btn btn-outline-primary imp title-sm mr-4"><span id="current-month"></span>Amount</button>
+
+    <button type="button" class="btn btn-outline-primary imp title-sm mr-4"><span id="current-month"></span>Category</button>
+
+    <!-- Date Modal -->
+    <div id="dateModal" class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title imp">Date Filter</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div id="date-modal-body" class="modal-body">
+                <div class="custom-control custom-checkbox mb-2">
+                  <input type="checkbox" class="custom-control-input" id="one-date">
+                  <label class="custom-control-label" for="one-date">One Date?</label>
+                </div>
+                <div class="flex align-center just-aroun">
+                  <label for="start-date" class="col-sm-4 form-control imp">Start Date</label>
+                  <label for="end-date" class="col-sm-4 col-form-label imp">End Date</label>
+       
+                </div>
+                <div class="flex align-center just-center">
+                  <input id="start-date" type="date" name="expense_date" class="form-control col-sm-4 mr-2" aria-describedby="dateofExpense" required="" >
+                  <span ><i class="fas fa-angle-right fa-lg"></i></span>
+                  <input id="end-date" type="date" name="expense_date" class="form-control ml-2" aria-describedby="dateofExpense" required="" >
+                </div>
+
+                
+              </div>
+              <div class="modal-footer flex just-aroun">
+                    <button type="submit" class="btn btn-outline-primary imp">Save Filter</button>
+              </div>
+          </div>
+      </div>
+    </div>
+
     <form action="" method="POST" class="inline-for flex align-center just-end" enctype="application/x-www-form-urlencoded">        
       {% csrf_token %}
       <!-- <div class="form-group mb-ow row"> -->
@@ -30,21 +76,48 @@
   
   
 
-  {% if latest_expenses_list %}
+  {% if page_obj %}
+  <span>Showing {{ start_num }} - {{ end_num }} of {{ num_records }} expenses.</span>
   <div class="table-responsive">
-    <table class="table table-striped mb-4">
-      <thead>
+    <table class="table mb-">
+      <thead class="thead-light">
         <tr>
           <th scope="col" class="title-sm">ID</th>
           <th scope="col" class="title-sm">Date</th>
           <th scope="col" class="title-sm">Amount</th>
           <th scope="col" class="title-sm">Category</th>
+          {% comment %}
           <th scope="col" class="title-sm">Vendor</th>
           <th scope="col" class="title-sm">Description</th>
-          <th scope="col" class="title-sm">Receipt</th>
+          <th scope="col" class="title-sm">Receipt</th>{% endcomment %}
         </tr>
       </thead>
-      <tbody>
+      <tbody class="list-grou">
+      
+                {% for record in page_obj %}
+
+                <tr class="click btn-link">
+                  <td >{{ record.pk }}</a></td>
+                  <td >{{ record.expense_date }}</td>
+                  <td >${{ record.amount }}</td>
+                  <td >{{ record.category }}</td>
+                  {% comment %}
+                  <td>{{ record.vendor }}</td>
+                  <td>{{ record.description }}</td>
+                  <td>{% if record.receipt %} Yes
+                    {% else %} {% endif %}</td>
+                    {% endcomment %}
+                </tr>
+
+                {% endfor %}
+
+  {% comment %}
+                  <a href="{% url 'budget:expense_detail' record.id %}">{{ record.pk }}</a>
+  {% endcomment %}
+
+
+        
+  {% comment %}
         {% for expense in latest_expenses_list %}
         <tr>
           <td><a href="{% url 'budget:expense_detail' expense.id %}">{{ expense.pk }}</a></td>
@@ -57,13 +130,26 @@
             {% else %} {% endif %}</td>
         </tr>
         {% endfor %}
+  {% endcomment %}
 
+  {% comment %}
         <tr class="table-secondary">
           <td colspan="2" class="imp title-sm">Monthly Total:</td>
           <td colspan="5" class="imp title-sm">${{ monthly_total }}</td>
         </tr>
-        
+        <tr class="thead-light">
+          <td colspan="2" class="imp title-sm">Total:</td>
+          <td colspan="2" class="imp title-sm">${{ page_total }}</td>
+        </tr>
+  {% endcomment %}
+
       </tbody>
+      <tfoot>
+        <tr class="thead-light">
+          <td colspan="2" class="imp title-sm">Total:</td>
+          <td colspan="2" class="imp title-sm">${{ page_total }}</td>
+        </tr>
+      </tfoot>
       
 
     </table>
@@ -72,29 +158,50 @@
 
       {% if page_obj.has_previous %}
         <li class="page-item">
-          <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+          <a class="page-link" href="?page={{ page_obj.previous_page_number }}"><i class="fas fa-angle-left"></i> Previous</a>
         </li>
       {% else %}
         <li class="page-item disabled">
-          <span class="page-link">Previous</span>
+          <span class="page-link"><i class="fas fa-angle-left"></i> Previous</span>
         </li>
       {% endif %}
 
+
+      {% for page_num in page_range %}
+
+        <li class="page-item page-num"><a class="page-link" href="">{{ page_num }}</a></li>
+
+      {% endfor %}
+
+      
+
+
+
+
 {% comment %}
-        {% for page in page_obj.page_range %}
-        {% endcomment %}
-        <li class="page-item"><a class="page-link" href="#">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li>
-        {% comment %}
-        {% endfor %}
-        {% endcomment %}
+
+<!-- page_n -->
+{% if page_num == page_number %}
+<script type="text/javascript">
+  console.log("{{ page_num }}")
+  console.log("{{ page_number }}")
+  
+  </script>
+<li class="page-item page-num active" ><a class="page-link" href="#">{{ page_num }}</a></li>
+{% else %}
+<li class="page-item page-num"><a class="page-link" href="#">{{ page_num }}</a></li>
+{% endif %}
+
+<!-- ------ -->
+{% endcomment %}
 
         {% if page_obj.has_next %}
         <li class="page-item">
-          <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+          <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next <i class="fas fa-angle-right"></i></a>
         </li>
         {% else %}
         <li class="page-item disabled">
-          <span class="page-link ">Next</span>
+          <span class="page-link ">Next <i class="fas fa-angle-right"></i></span>
         </li>
         {% endif %}
 
@@ -108,3 +215,46 @@
       <p>You don't have any expenses yet!</p>
   {% endif %}
 {% endblock content%}
+
+
+{% block my_scripts %}
+
+<script src="../../../static/budget/scripts/clickExpenseToRedirect.js"></script>
+
+<script type="text/javascript">
+  window.addEventListener("load", addActiveClass);
+  window.addEventListener("load", addURLs);
+
+  function addActiveClass() {
+    let pageLinks = document.getElementsByClassName("page-num");
+    let page_number = "{{ page_number }}";
+
+    if ( page_number == "None" ) {
+      pageLinks[0].className = "page-item active" ;
+    } else {
+      for (let i = 0; i < pageLinks.length; i++) {
+            if ( page_number == pageLinks[i].innerText ) {
+              pageLinks[i].className = "page-item active" ;
+              break;
+            }
+          }
+    }
+    
+
+  }
+
+  function addURLs() {
+    let pageLinks = document.getElementsByClassName("page-num");
+    console.log(pageLinks[0].childNodes[0]);
+
+    for (let i = 0; i < pageLinks.length; i++) {
+      let page_number = pageLinks[i].innerText;
+      pageLinks[i].childNodes[0].href = "?page=" + page_number;
+      
+
+    }
+  }
+
+</script>
+
+{% endblock %}

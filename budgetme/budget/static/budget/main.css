@@ -184,6 +184,29 @@ textarea {
 
 
 /*  ======================================================
+    Tables
+    ======================================================  */
+.click:hover,
+.click:focus, 
+.click:hover:focus:active
+{
+    cursor: pointer;
+    background-color: #A991D4;
+    background-color: #e7e0f3;
+    text-decoration: none;
+} 
+.click {
+    box-shadow: 0px 0px 1px #888888;
+    /* border: 1px solid #888888; */
+}
+
+tfoot,thead {
+    /* background-color: #e7e0f3; */
+    background-color: #F9F8FC;
+}
+
+
+/*  ======================================================
     Spacing and centering/alignment
     ======================================================  */
 
@@ -200,16 +223,18 @@ textarea {
     ======================================  */
 
 .btn-primary,
+.btn-outline-primary,
 .btn-success,
 .btn-danger,
 /* .btn.btn-outline-primary, */
-.btn-info
+.btn-info,
+.btn-outline-secondary
 /* .btn */
 /* .btn.btn-outline-info */
  {
     /* box-shadow:  */
-    box-shadow: 0px 0px 5px #888888;
-    /* border-radius: 5px; */
+    box-shadow: 0px 0px 2px #888888;
+    border-radius: 5px;
 }
 
 /* This ensures that the receipt delete button is displayed properly on top of the receipt */
@@ -332,4 +357,9 @@ main {
         height:0
     }
 
+    /*  */
+#id_expense_date {
+    padding-left: 5px;
+    /* padding-right: 1px; */
+}
 

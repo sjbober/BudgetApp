@@ -39,6 +39,9 @@ from .forms import TempReceiptForm
 # Pagination
 from django.core.paginator import Paginator
 
+# Errors 
+import logging
+
 class IndexView(generic.ListView):
     template_name = 'budget/index.html'
     context_object_name = 'latest_expenses_list'
@@ -76,27 +79,49 @@ class IndexView(generic.ListView):
 #         expense_date__month=today.month).order_by('-expense_date')
 
 def expense_list(request):
-    today = date.today()
+    # today = date.today()
     # latest_expenses_list = Expense.objects.filter(expense_date__year=today.year, expense_date__month=today.month).order_by('-expense_date')
 
     latest_expenses_list = Expense.objects.order_by('-expense_date')
 
-    paginator = Paginator(latest_expenses_list, 10)
+    limit = 10
+    paginator = Paginator(latest_expenses_list, limit)
     page_number = request.GET.get('page')
+    if page_number == None:
+        page_number = 1
     page_obj = paginator.get_page(page_number)
 
-    monthly_total = 0
-    for i in latest_expenses_list:
-        monthly_total += i.amount
+    # monthly_total = 0
+    # for i in latest_expenses_list:
+    #     monthly_total += i.amount
 
-    month = today.strftime('%B')
+    page_total = 0
+    page_count = 0
+    for i in page_obj:
+        page_total += i.amount
+        page_count += 1
+
+    start_num = (int(page_number) - 1) * limit +1
+    end_num = start_num + page_count - 1
+
+    # month = today.strftime('%B')
     # month = today.strftime
     context = {
-        'latest_expenses_list': latest_expenses_list,
-        'monthly_total' : monthly_total,
-        'month': month,
+        # 'latest_expenses_list': latest_expenses_list,
+        # 'monthly_total' : monthly_total,
+        # 'month': month,
         'page_obj': page_obj,
+        'page_number': page_number,
+        # 'paginator': paginator,
+        'page_total': page_total,
+        # 'page_count': page_count,
+        'num_records': paginator.count,
+        'page_range': paginator.page_range,
+        'start_num' : start_num,
+        'end_num': end_num,
     }
+
+    # logger.info(page_number)
 
     return render(request, 'budget/expenses/list.html', context)
 
