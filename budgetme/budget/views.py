@@ -80,12 +80,12 @@ class IndexView(generic.ListView):
 
 def expense_list(request):
     # today = date.today()
-    # latest_expenses_list = Expense.objects.filter(expense_date__year=today.year, expense_date__month=today.month).order_by('-expense_date')
+    # expenses_list = Expense.objects.filter(expense_date__year=today.year, expense_date__month=today.month).order_by('-expense_date')
 
-    latest_expenses_list = Expense.objects.order_by('-expense_date')
+    expenses_list = Expense.objects.order_by('-expense_date')
 
     limit = 10
-    paginator = Paginator(latest_expenses_list, limit)
+    paginator = Paginator(expenses_list, limit)
     page_number = request.GET.get('page')
     if page_number == None:
         page_number = 1
@@ -94,6 +94,9 @@ def expense_list(request):
     # monthly_total = 0
     # for i in latest_expenses_list:
     #     monthly_total += i.amount
+
+    # List of all categories:
+    category_list = Category.objects.all()
 
     page_total = 0
     page_count = 0
@@ -107,31 +110,117 @@ def expense_list(request):
     # month = today.strftime('%B')
     # month = today.strftime
     context = {
-        # 'latest_expenses_list': latest_expenses_list,
-        # 'monthly_total' : monthly_total,
-        # 'month': month,
         'page_obj': page_obj,
         'page_number': page_number,
-        # 'paginator': paginator,
         'page_total': page_total,
-        # 'page_count': page_count,
         'num_records': paginator.count,
         'page_range': paginator.page_range,
         'start_num' : start_num,
         'end_num': end_num,
+        'category_list': category_list,
     }
 
     # logger.info(page_number)
 
     return render(request, 'budget/expenses/list.html', context)
 
-def paginateExpenseList():
-    pass
+def expense_list_filter(request):
+    if request.method == "POST":
+        # for i in request.POST:
+        #     print(i)
+        #     print(request.POST.get(i))
+        print("newline")
+        keywords = request.POST.get("expense-search")
+        single_date = request.POST.get("singledate")
+        date_range = request.POST.get("daterange")
+        print("single date is: ",single_date)
+        print("date range is: ",date_range)
+        print("search keywords are: ",keywords)
+        # print(request.POST.get("singledate"))
 
-# class ExpenseDetailView(generic.DetailView):
-#     model = Expense
-#     template_name = 'budget/expenses/detail.html'
+        # categories:
+        # {{ category }}
+        # have to loop through ..how to know the id of each category?
+        
+        if single_date:
+            print(single_date)
+            # print(type(single_date))
+            # print("single date")
+            # 04/10/2020
+            # Create list composed of the year, month, and day
+            date_list = single_date.split('/')
+            print("the date list is: ", date_list)
 
+            # Get a filtered expense list based on the date
+            expenses_list = Expense.objects.filter(expense_date__year=date_list[2],    expense_date__month=date_list[0],expense_date__day=date_list[1]).order_by('-expense_date')
+
+            # for i in expenses_list:
+                # print(expenses_list[i])
+            if not expenses_list:
+                print("no expenses?")
+
+
+# YourModel.objects.filter(datetime_published__year='2008', 
+#                          datetime_published__month='03', 
+#                          datetime_published__day='27')
+
+            # expenses_list = Expense.objects.filter(expense_date__year=date_list[2],    expense_date__month=date_list[1],expense_date__date=date_list[0]).order_by('-expense_date')
+            #     expenses_list = Expenses.objects.filter(date__range=["2011-01-01", "2011-01-31"])
+            
+
+        elif date_range:
+            print("date range")
+
+        else:
+            print("no date entered")
+            expenses_list = Expense.objects.order_by('-expense_date')
+            
+        
+    # else: 
+    # print("made it this far")
+
+    limit = 10
+    paginator = Paginator(expenses_list, limit)
+    page_number = request.GET.get('page')
+    if page_number == None:
+        page_number = 1
+    page_obj = paginator.get_page(page_number)
+
+    # List of all categories:
+    category_list = Category.objects.all()
+
+    # monthly_total = 0
+    # for i in latest_expenses_list:
+    #     monthly_total += i.amount
+
+    page_total = 0
+    page_count = 0
+    for i in page_obj:
+        page_total += i.amount
+        page_count += 1
+
+    start_num = (int(page_number) - 1) * limit +1
+    end_num = start_num + page_count - 1
+    # print("made it this far 2")
+    # month = today.strftime('%B')
+    # month = today.strftime
+    context = {
+        'page_obj': page_obj,
+        'page_number': page_number,
+        'page_total': page_total,
+        'num_records': paginator.count,
+        'page_range': paginator.page_range,
+        'start_num' : start_num,
+        'end_num': end_num,
+        'category_list': category_list,
+    }
+
+    # logger.info(page_number)
+
+    return render(request, 'budget/expenses/list.html', context)
+
+
+# View an existing expense
 def expense_detail(request, pk):
     expense = Expense.objects.get(pk = pk)
 
@@ -160,7 +249,7 @@ def expense_edit(request, pk):
         # come back here and finish error handling
     else:
         form = ExpenseForm(instance=expense)
-        category_list = Category.objects
+        category_list = Category.objects.all()
         
 
         context = {
@@ -171,8 +260,6 @@ def expense_edit(request, pk):
 
         # return render(request, 'budget/expenses/edit-expense.html',context)
         return render(request, 'budget/expenses/edit-expense.html',context)
-
-
 
 # Create a new expense page
 def expense_form_page(request):
@@ -193,6 +280,7 @@ def expense_form_page(request):
         return render(request, 'budget/expenses/new-expense.html',context)
         # return render(request, 'budget/expenses/edit-expense.html',context)
 
+# Code not working - attemt to read receipt
 def read_receipt(request):
     # if request.method == "POST":
     #     response = {"test": "test"}
@@ -255,7 +343,10 @@ def read_receipt(request):
         return JsonResponse(response)
         # print("Exception when calling ImageOcrApi->image_ocr_post: %s\n" % e)
 
-# 0acd1416-c3d7-4031-b177-07a498332cb1
+
+
+# Old views
+
 
 # Income Views
 # ///////////////////////////////////////

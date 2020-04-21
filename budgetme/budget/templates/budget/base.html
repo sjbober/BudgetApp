@@ -22,7 +22,7 @@
   </head>
   <body>
     <header>
-      <nav class="bg-primary flex just-betw align-center">
+      <nav class="navbar navbar-dark bg-primary flex just-betw align-center">
         <a class="logo" href="#"><i class="fas fa-piggy-bank"></i> MoneyHog</a>
         <ul class="navbar-list flex just-betw align-end">
             <li>
@@ -49,7 +49,7 @@
             <li class="hide">
                 <a class="navbar-link {% block account-active %}{% endblock account-active %}" href="#"><i class="fas fa-user-circle"></i> Account {% block account_active_sr %}{% endblock account_active_sr %}</a>
             </li>
-            <li class="hide">
+            <!-- <li class="hide">
               <div class="dropdown dropleft">
                 <button class="navbar-link btn btn-link tn-secondary dropdown-toggl" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-plus"></i> New
                 </button>
@@ -58,16 +58,20 @@
                   <a class="dropdown-item" href="#">Income</a>
                 </div>
               </div>
-            </li>
+            </li> -->
             
         </ul>
       </nav>
    
     </header>
-    <main {% block main_class %} class="contents" {% endblock %}>
-        {% block content %}
+    <main class="wide-content">
+        {% block page-header %}
         {% endblock %}
-
+        <div {% block main_class %}{% endblock %}>
+          {% block content %}
+          {% endblock %}
+        </div>
+        
     </main>
 
     {% block bootstrap_scripts %}{% endblock %}

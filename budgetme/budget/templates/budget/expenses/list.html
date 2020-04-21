@@ -5,222 +5,185 @@
 
 {% block extra_styles %}
 <link rel="stylesheet" type="text/css" href="{% static 'budget/list.css' %}">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+<link rel="stylesheet" type="text/css" href="{% static 'budget/rangeSlider/nouislider.css' %}">
+<!-- <link href="nouislider.css" rel="stylesheet"> -->
 {% endblock extra_styles %}
 
-
-{% block main_class %} class="table-content" {% endblock main_class %}
+{% block hist-activ %}active imp{% endblock %}
 
 {% block content %}
-  <div class="flex mt-2 mb-4">
-    <h1 class="imp page-title mr-4">Expenses</h1>
-    <!-- <div class="flex align-center flex-wrap"> -->
-    <a href="{% url 'budget:expense_form_page' %}" class="btn btn-primary imp title-med"><i class="fas fa-plus"></i> New Expense</a>
+  <div id="filters-and-list">
+
+    <!-- <div class="flex flex-col flex-wrap align-center mb-2 w-25"> -->
+      <!-- <span class="title-med imp mr-2">Filters: </span> -->
       
-    <!-- </div> -->
-    
-  </div>
-
-  <div class="flex flex-wrap align-center mb-2">
-    <span class="title-med imp mr-2">Filters: </span>
-    <button id="date-range" type="button" class="btn btn-outline-primary imp title-sm mr-4" data-toggle="modal" data-target="#dateModal">Date<span id="date-range"></span></button>
-
-    <button type="button" class="btn btn-outline-primary imp title-sm mr-4"><span id="current-month"></span>Amount</button>
-
-    <button type="button" class="btn btn-outline-primary imp title-sm mr-4"><span id="current-month"></span>Category</button>
-
-    <!-- Date Modal -->
-    <div id="dateModal" class="modal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title imp">Date Filter</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                  </button>
-              </div>
-              <div id="date-modal-body" class="modal-body">
-                <div class="custom-control custom-checkbox mb-2">
-                  <input type="checkbox" class="custom-control-input" id="one-date">
-                  <label class="custom-control-label" for="one-date">One Date?</label>
-                </div>
-                <div class="flex align-center just-aroun">
-                  <label for="start-date" class="col-sm-4 form-control imp">Start Date</label>
-                  <label for="end-date" class="col-sm-4 col-form-label imp">End Date</label>
-       
-                </div>
-                <div class="flex align-center just-center">
-                  <input id="start-date" type="date" name="expense_date" class="form-control col-sm-4 mr-2" aria-describedby="dateofExpense" required="" >
-                  <span ><i class="fas fa-angle-right fa-lg"></i></span>
-                  <input id="end-date" type="date" name="expense_date" class="form-control ml-2" aria-describedby="dateofExpense" required="" >
-                </div>
-
-                
-              </div>
-              <div class="modal-footer flex just-aroun">
-                    <button type="submit" class="btn btn-outline-primary imp">Save Filter</button>
-              </div>
-          </div>
-      </div>
-    </div>
-
-    <form action="" method="POST" class="inline-for flex align-center just-end" enctype="application/x-www-form-urlencoded">        
+    <form id="filter-form" action="{% url 'budget:expense_list_filter' %}" method="POST" class="mt-3" enctype="application/x-www-form-urlencoded"> 
       {% csrf_token %}
-      <!-- <div class="form-group mb-ow row"> -->
-        <label for="expense-search" class="sr-only">Search:</label>
-        <input type="search" id="expense-search" name="expense-search" class="form-control" aria-describedby="search">
-        <button type="submit" class="btn btn-outline-primary form-control"><i class="fas fa-search"></i></button>
-      <!-- </div> -->
-      
+
+        <!-- <h2 class="imp title-xl mb-3">Search Filters</h2> -->
+
+        <div id="search-section" class="mb-3">
+          <label for="expense-search" class="imp">Keywords</label>
+          <input type="search" id="expense-search" name="expense-search" class="form-control" aria-describedby="search">
+        </div>  
+
+        <div id="date-section" class="mb-3">
+            <label id="singledate-label" for="singledate" class="imp">Date</label>
+            <label id="daterange-label" for="daterange" class="imp d-none">Date Range</label>
+            <div id="date-check" class="custom-control custom-checkbox mb-2">
+              <input type="checkbox" class="custom-control-input" id="use-range" name="use-range">
+              <label class="custom-control-label" for="use-range">Use Date Range?</label>
+            </div>
+            <input id="singledate" type="text" name="singledate" class="form-control w-50" aria-describedby="date" />
+            <input id="daterange" type="text" name="daterange" class="form-control w-50 d-none" aria-describedby="dateRange" />
+          
+        </div>
+
+        <div id="amount-section" class="mb-3">  
+          <p class="title-me imp mb-3">Amount</p>  
+          <div id="slider" class="mb-2"></div> 
+          <div id="amount-labels" class="flex align-center date-modal-body">
+            <label for="min-amount" class="im">Min</label>
+            <span></span>
+            <label for="max-amount" class="im">Max</label>
+          </div>
+
+          <div id="amount-inputs" class="flex align-center just-betw date-modal-body">
+            <input id="min-amount" type="number" name="min-amount" class="form-control" aria-describedby="minAmount" step="1" >
+            <span class="flex just-center" ><i class="fas fa-angle-right fa-lg"></i></span>
+            <input id="max-amount" type="number" name="max-amount" class="form-control" aria-describedby="maxAmount" step="1">
+          </div>
+        </div>
+        {% if category_list %}
+        <div id="category-section" class="mb-3">
+          <p class="title-me imp mb-1">Categories</p>
+          {% for category in category_list %}
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="{{ category }}">
+            <label class="custom-control-label" for="{{category}}">{{ category }}</label>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+        <div id="receipt-section" class="mb-3">
+          <p class="title-me imp mb-1">Receipt</p>
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="has-receipt">
+            <label class="custom-control-label" for="has-receipt">Has Receipt?</label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-outline-primary imp block"><i class="fas fa-search" aria-hidden="true"></i> Save Filters</button>
+        <!-- <div class="modal-footer flex just-around">
+              <button id="submit-date-filter" type="submit" class="btn btn-primary imp">Save Filter</button>
+        </div> -->
     </form>
-  </div>
+
+    
+    <!-- </div> -->
   
   
 
-  {% if page_obj %}
-  <span>Showing {{ start_num }} - {{ end_num }} of {{ num_records }} expenses.</span>
-  <div class="table-responsive">
-    <table class="table mb-">
-      <thead class="thead-light">
-        <tr>
-          <th scope="col" class="title-sm">ID</th>
-          <th scope="col" class="title-sm">Date</th>
-          <th scope="col" class="title-sm">Amount</th>
-          <th scope="col" class="title-sm">Category</th>
-          {% comment %}
-          <th scope="col" class="title-sm">Vendor</th>
-          <th scope="col" class="title-sm">Description</th>
-          <th scope="col" class="title-sm">Receipt</th>{% endcomment %}
-        </tr>
-      </thead>
-      <tbody class="list-grou">
-      
-                {% for record in page_obj %}
-
-                <tr class="click btn-link">
-                  <td >{{ record.pk }}</a></td>
-                  <td >{{ record.expense_date }}</td>
-                  <td >${{ record.amount }}</td>
-                  <td >{{ record.category }}</td>
-                  {% comment %}
-                  <td>{{ record.vendor }}</td>
-                  <td>{{ record.description }}</td>
-                  <td>{% if record.receipt %} Yes
-                    {% else %} {% endif %}</td>
-                    {% endcomment %}
-                </tr>
-
-                {% endfor %}
-
-  {% comment %}
-                  <a href="{% url 'budget:expense_detail' record.id %}">{{ record.pk }}</a>
-  {% endcomment %}
-
-
+    {% if page_obj %}
+    <div class="table-responsive flex flex-col">
+      <!-- <ul class="nav nav-tabs nav-fill mb-3">
+        <li class="nav-item">
+          <a class="nav-link title-med active imp" href="#">Historical</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link title-med" href="#">Recurring</a>
+        </li>
+      </ul> -->
+      <span class="mt-2 mb-2">Showing {{ start_num }} - {{ end_num }} of {{ num_records }} expenses.</span>
+      <table class="table mb-">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col" class="title-sm">ID</th>
+            <th scope="col" class="title-sm">Date</th>
+            <th scope="col" class="title-sm">Amount</th>
+            <th scope="col" class="title-sm">Category</th>
+            {% comment %}
+            <th scope="col" class="title-sm">Vendor</th>
+            <th scope="col" class="title-sm">Description</th>
+            <th scope="col" class="title-sm">Receipt</th>{% endcomment %}
+          </tr>
+        </thead>
+        <tbody class="list-grou">
         
-  {% comment %}
-        {% for expense in latest_expenses_list %}
-        <tr>
-          <td><a href="{% url 'budget:expense_detail' expense.id %}">{{ expense.pk }}</a></td>
-          <td>{{ expense.expense_date }}</td>
-          <td>${{ expense.amount }}</td>
-          <td>{{ expense.category }}</td>
-          <td>{{ expense.vendor }}</td>
-          <td>{{ expense.description }}</td>
-          <td>{% if expense.receipt %} Yes
-            {% else %} {% endif %}</td>
-        </tr>
-        {% endfor %}
-  {% endcomment %}
+          {% for record in page_obj %}
 
-  {% comment %}
-        <tr class="table-secondary">
-          <td colspan="2" class="imp title-sm">Monthly Total:</td>
-          <td colspan="5" class="imp title-sm">${{ monthly_total }}</td>
-        </tr>
-        <tr class="thead-light">
-          <td colspan="2" class="imp title-sm">Total:</td>
-          <td colspan="2" class="imp title-sm">${{ page_total }}</td>
-        </tr>
-  {% endcomment %}
+          <tr class="click btn-link">
+            <td >{{ record.pk }}</a></td>
+            <td >{{ record.expense_date }}</td>
+            <td >${{ record.amount }}</td>
+            <td >{{ record.category }}</td>
+            {% comment %}
+            <td>{{ record.vendor }}</td>
+            <td>{{ record.description }}</td>
+            <td>{% if record.receipt %} Yes
+              {% else %} {% endif %}</td>
+              {% endcomment %}
+          </tr>
 
-      </tbody>
-      <tfoot>
-        <tr class="thead-light">
-          <td colspan="2" class="imp title-sm">Total:</td>
-          <td colspan="2" class="imp title-sm">${{ page_total }}</td>
-        </tr>
-      </tfoot>
-      
+          {% endfor %}
 
-    </table>
-    <nav aria-label="..." class="flex just-center">
-      <ul class="pagination">
+        </tbody>
+        <tfoot>
+          <tr class="thead-light">
+            <td colspan="2" class="imp title-sm">Total:</td>
+            <td colspan="2" class="imp title-sm">${{ page_total }}</td>
+          </tr>
+        </tfoot>
+      </table>
 
-      {% if page_obj.has_previous %}
-        <li class="page-item">
-          <a class="page-link" href="?page={{ page_obj.previous_page_number }}"><i class="fas fa-angle-left"></i> Previous</a>
-        </li>
-      {% else %}
-        <li class="page-item disabled">
-          <span class="page-link"><i class="fas fa-angle-left"></i> Previous</span>
-        </li>
-      {% endif %}
+      <nav aria-label="..." class="flex just-center">
+        <ul class="pagination">
 
-
-      {% for page_num in page_range %}
-
-        <li class="page-item page-num"><a class="page-link" href="">{{ page_num }}</a></li>
-
-      {% endfor %}
-
-      
-
-
-
-
-{% comment %}
-
-<!-- page_n -->
-{% if page_num == page_number %}
-<script type="text/javascript">
-  console.log("{{ page_num }}")
-  console.log("{{ page_number }}")
-  
-  </script>
-<li class="page-item page-num active" ><a class="page-link" href="#">{{ page_num }}</a></li>
-{% else %}
-<li class="page-item page-num"><a class="page-link" href="#">{{ page_num }}</a></li>
-{% endif %}
-
-<!-- ------ -->
-{% endcomment %}
-
-        {% if page_obj.has_next %}
-        <li class="page-item">
-          <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next <i class="fas fa-angle-right"></i></a>
-        </li>
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}"><i class="fas fa-angle-left"></i> Previous</a>
+          </li>
         {% else %}
-        <li class="page-item disabled">
-          <span class="page-link ">Next <i class="fas fa-angle-right"></i></span>
-        </li>
+          <li class="page-item disabled">
+            <span class="page-link"><i class="fas fa-angle-left"></i> Previous</span>
+          </li>
         {% endif %}
 
 
-        </li>
-      </ul>
-    </nav>
+        {% for page_num in page_range %}
+
+          <li class="page-item page-num"><a class="page-link" href="">{{ page_num }}</a></li>
+
+        {% endfor %}
+
+
+          {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next <i class="fas fa-angle-right"></i></a>
+          </li>
+          {% else %}
+          <li class="page-item disabled">
+            <span class="page-link ">Next <i class="fas fa-angle-right"></i></span>
+          </li>
+          {% endif %}
+
+
+          </li>
+        </ul>
+      </nav>
+    </div>
+  
+    {% else %}
+        <p class="mt-3 ml-3 imp">No expenses found.</p>
+    {% endif %}
   </div>
- 
-  {% else %}
-      <p>You don't have any expenses yet!</p>
-  {% endif %}
 {% endblock content%}
 
 
 {% block my_scripts %}
 
-<script src="../../../static/budget/scripts/clickExpenseToRedirect.js"></script>
-
+<!-- Adding the proper URL's to each pagination link and determining which page is active to add the correct class -->
 <script type="text/javascript">
   window.addEventListener("load", addActiveClass);
   window.addEventListener("load", addURLs);
@@ -245,7 +208,7 @@
 
   function addURLs() {
     let pageLinks = document.getElementsByClassName("page-num");
-    console.log(pageLinks[0].childNodes[0]);
+    // console.log(pageLinks[0].childNodes[0]);
 
     for (let i = 0; i < pageLinks.length; i++) {
       let page_number = pageLinks[i].innerText;
@@ -256,5 +219,46 @@
   }
 
 </script>
+
+<script>
+  $( function() {
+    $( "#slider-range" ).slider({
+      range: true,
+      min: 0,
+      max: 500,
+      values: [ 75, 300 ],
+      slide: function( event, ui ) {
+        $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+      }
+    });
+    $( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
+      " - $" + $( "#slider-range" ).slider( "values", 1 ) );
+  } );
+  </script>
+
+
+<!-- Makes each table row a URL -->
+<script src="../../../static/budget/scripts/clickExpenseToRedirect.js"></script>
+
+<!-- Outside scripts for date and date range picker -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<!-- Activate date picker calendars -->
+<script src="../../../static/budget/scripts/activateDateCalendars.js"></script>
+
+<!-- On checking of the date range checkbox, toggle between single date and date range -->
+<script src="../../../static/budget/scripts/switchDateFilter.js"></script>
+
+<!-- Add dummy date as default for date picker -->
+<script src="../../../static/budget/scripts/defaultDateFilter.js"></script>
+
+<!-- Amount range slider script from  -->
+<script src="../../../static/budget/scripts/nouislider.js"></script>
+
+<!-- Add default amounts in the input fields and automatically update them as the slider moves  -->
+<script src="../../../static/budget/scripts/sliderFunctions.js"></script>
+
 
 {% endblock %}

@@ -17,7 +17,10 @@ nav {
 }
 
 .logo {
-    color: white;
+    /* color: white; */
+    /* color: lavendar; */
+    color: #E6E6FA;
+    /* color: #593196; */
     font-size: 1.3rem;
     font-weight: bold;
     font-family: 'Maven Pro', sans-serif;
@@ -26,7 +29,7 @@ nav {
 
 .navbar-list {
     list-style: none;
-    color: white;
+    /* color: white; */
     margin-bottom: 0;
     padding-left: 0;
     flex-direction: column;
@@ -34,10 +37,11 @@ nav {
 }
 
 .navbar-link {
-    color: white;
+    /* color: white; */
+    color: #E6E6FA;
+    /* color: #593196; */
     padding: 5px 10px;
     font-size: 1.1rem;
-    /* text-decoration: none; */
 }
 
 .navbar-link:hover,
@@ -47,21 +51,30 @@ nav {
 .logo:focus, 
 .logo:hover:focus:active {
     color: #A991D4;
+    /* border: #A991D4; */
+    /* color: white; */
     text-decoration: none;
 } 
 
 
 .navbar-active {
-    background-color: white;
-    color: #593196;
-    border-radius: 5px;
+    /* background-color: white; */
+    color: white;
+    /* color: #593196; */
+    /* border-radius: 5px; */
     font-weight: bold;
+    border-bottom: solid 2px white;
+    /* font-size: 1.2rem; */
+    /* font-weight: bolder; */
+    /* border-top: solid 2px white; */
+    /* border: solid 2px white; */
 }
 
 .navbar-active:hover,
 .navbar-active:focus, 
 .navbar-active:hover:focus:active {
-    color: #593196;
+    /* color: #593196; */
+    border-bottom: solid 2px #A991D4;
 } 
 
 /* Responsive first design */
@@ -102,16 +115,24 @@ nav {
     }
   }
 
+  /*  ======================================================
+    Nav LInks
+    ======================================================  */
+
+    .nav-tabs .nav-item .nav-link {
+        border-bottom-width: 2px;
+    }
+
 /*  ======================================================
     Body Containers padding/position
     ======================================================  */
-.table-content {
+.wide-content {
     padding: 15px 20px;
 }
 
-.contents {
+.narrow-content {
     /* padding */
-    padding: 10px 20px;
+    /* padding: 10px 20px; */
     /* padding-top: 5px; */
     /* width: 350px; */
     max-width: 500px;
@@ -318,7 +339,9 @@ tfoot,thead {
     justify-content: flex-end;
 }
 
-
+.flex-grow {
+    flex-grow: 1;
+}
 
 .flex-wrap {
     flex-wrap: wrap;

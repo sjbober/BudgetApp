@@ -2,9 +2,11 @@
 
 {% block page_title %}{% endblock page_title %}
 
+{% block main_class %} class="narrow-content"{% endblock %}
+
 {% block content %}
 <div class="flex just-betw mt-2 mb-4">
-    <h1 class="imp page-title">{% block h1 %}{% endblock h1 %}</h1>
+    <h1 class="imp page-title mb-0">{% block h1 %}{% endblock h1 %}</h1>
     {% block extra_button%}{% endblock extra_button%}
 </div>
 
@@ -65,7 +67,7 @@
         </div>           
     </div>
 
-    <button type="submit" class="btn btn-primary block imp title-med"><i class="fas fa-receipt"></i> Add Expense</button>
+    <button type="submit" class="btn btn-primary block imp title-med"><i class="fas fa-receipt"></i>{% block button-name %}{% endblock %}</button>
 
 </form>
 {% endblock content%}

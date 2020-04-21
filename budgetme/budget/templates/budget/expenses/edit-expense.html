@@ -2,6 +2,8 @@
 
 {% block page_title %}Edit Expense{% endblock page_title %}
 
+{% block hist-activ %}active imp{% endblock %}
+
 {% block h1 %}Edit Expense #{{ expense.id }}{% endblock h1 %}
 
 {% block extra_button%}<a href="{% url 'budget:expense_detail' expense.id %}" type="button" class="btn btn-link imp text-info title-sm">Cancel <i class="fas fa-times" aria-hidden="true"></i></a>
@@ -18,4 +20,6 @@
   </span>
   {% endif %}
 {% endblock existing_receipt %}
+
+{% block button-name %} Save Changes{% endblock %}
 
