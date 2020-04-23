@@ -2,10 +2,11 @@
 
 
 // Activate the single date picker calendar
-$('input[name="singledate"]').daterangepicker(
-    {singleDatePicker: true,}
+$('input[id="singledate"]').daterangepicker(
+    {singleDatePicker: true,
+    autoUpdateInput: true}
   );
 
   
 // Activate the date range picker
-$('input[name="daterange"]').daterangepicker();
+$('input[id="daterange"]').daterangepicker();

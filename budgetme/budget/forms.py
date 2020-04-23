@@ -6,6 +6,88 @@ from django.forms import ModelForm
 from .models import Expense
 from .models import TempReceipt
 
+class searchExpensesForm(forms.Form):
+    keywords = forms.CharField(required = False,widget=forms.TextInput(attrs={   
+                                                                'id': 'keywords',
+                                                                'type': 'text',
+                                                                'class': 'form-control',
+                                                                'aria-describedby': 'searchKeywords',  
+                                                                    }))
+
+    all_dates = forms.CharField(required = False,widget=forms.TextInput(attrs={  
+                                                                'id': 'all-dates',
+                                                                'type': 'checkbox',
+                                                                'class': 'custom-control-input',
+                                                                'aria-describedby': 'searchAllDates',  
+                                                                'checked': "true"
+                                                                    }))
+
+    # <input type="checkbox" class="custom-control-input" id="use-range" name="use-range">
+    use_range = forms.CharField(required = False,widget=forms.TextInput(attrs={  
+                                                                'id': 'use-range',
+                                                                'type': 'checkbox',
+                                                                'class': 'custom-control-input',
+                                                                'aria-describedby': 'useDateRange',  
+                                                                    }))
+    # If not checked --> None
+    # If checked --> "on"
+
+    # <input id="singledate" type="text" name="singledate" class="form-control w-50" aria-describedby="date"/>
+    single_date = forms.CharField(required = False,widget=forms.TextInput(attrs={
+
+                                                                'id': 'singledate',
+                                                                'type': 'text',
+                                                                'class': 'form-control w-50',
+                                                                'aria-describedby': 'singleDate',  
+                                                                    }))
+    #  04/22/2020
+    
+    # <input id="daterange" type="text" name="daterange" class="form-control w-50 d-none" aria-describedby="dateRange"/>
+    date_range = forms.CharField(required = False,widget=forms.TextInput(attrs={
+
+                                                                'id': 'daterange',
+                                                                'type': 'text',
+                                                                'class': 'form-control w-50 d-none',
+                                                                'aria-describedby': 'dateRange',  
+                                                                    }))
+    # 04/22/2020 - 04/22/2020
+    # <input id="min-amount" type="number" name="min-amount" class="form-control" aria-describedby="minAmount" step="1" >
+    min_amount = forms.DecimalField(required = False,widget=forms.TextInput(attrs={  
+                                                                'required': False,
+                                                                'id': 'min-amount',
+                                                                'type': 'number',
+                                                                'class': 'form-control',
+                                                                'aria-describedby': 'minAmount',
+                                                                'step': "1"  
+                                                                    }))
+    # <input id="max-amount" type="number" name="max-amount" class="form-control" aria-describedby="maxAmount" step="1">
+    max_amount = forms.DecimalField(required = False,widget=forms.TextInput(attrs={  
+                                                                'required': False,
+                                                                'id': 'max-amount',
+                                                                'type': 'number',
+                                                                'class': 'form-control',
+                                                                'aria-describedby': 'maxAmount',
+                                                                'step': "1"  
+                                                                    }))
+
+    # <input class="form-check-input" type="radio" name="receipt-radio" id="has-receipt" value="has-receipt">
+    has_receipt = forms.CharField(required = False,widget=forms.TextInput(attrs={  
+  
+                                                                'id': 'has-receipt',
+                                                                'type': 'radio',
+                                                                'class': 'form-check-input',
+                                                                'aria-describedby': 'hasReceipt',
+                                                                'value': 'has-receipt'
+                                                                    }))
+    # <input class="form-check-input" type="radio" name="receipt-radio" id="no-receipt" value="no-receipt">
+    no_receipt = forms.CharField(required = False,widget=forms.TextInput(attrs={  
+                                                                'id': 'no-receipt',
+                                                                'type': 'radio',
+                                                                'class': 'form-check-input',
+                                                                'aria-describedby': 'noReceipt',
+                                                                'value': 'no-receipt'
+                                                                    }))
+
 class DeleteExpenseForm(ModelForm):
     class Meta:
         model = Expense

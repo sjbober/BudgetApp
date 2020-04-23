@@ -19,25 +19,42 @@
     <!-- <div class="flex flex-col flex-wrap align-center mb-2 w-25"> -->
       <!-- <span class="title-med imp mr-2">Filters: </span> -->
       
+    {% comment %}
+    <form id="filter-form" action="{% url 'budget:expense_list_filter' %}" method="POST" class="mt-3" enctype="application/x-www-form-urlencoded">
+    {% endcomment %}
     <form id="filter-form" action="{% url 'budget:expense_list_filter' %}" method="POST" class="mt-3" enctype="application/x-www-form-urlencoded"> 
       {% csrf_token %}
 
         <!-- <h2 class="imp title-xl mb-3">Search Filters</h2> -->
 
         <div id="search-section" class="mb-3">
-          <label for="expense-search" class="imp">Keywords</label>
-          <input type="search" id="expense-search" name="expense-search" class="form-control" aria-describedby="search">
+          <label for="keywords" class="imp">Keywords</label>
+          {{ form.keywords }}
         </div>  
 
         <div id="date-section" class="mb-3">
-            <label id="singledate-label" for="singledate" class="imp">Date</label>
-            <label id="daterange-label" for="daterange" class="imp d-none">Date Range</label>
-            <div id="date-check" class="custom-control custom-checkbox mb-2">
+          <label id="singledate-label" for="singledate" class="imp">Date</label>
+          <label id="daterange-label" for="daterange" class="imp d-none">Date Range</label>
+          <div id="date-check" class="custom-control custom-checkbox mb-2">
+            {{ form.all_dates}}
+            <label class="custom-control-label" for="all-dates">All dates</label>
+          </div>
+          <div class="flex align-center">
+            {% comment %}
+            <input id="singledate" type="text" name="singledate" class="form-control w-50" aria-describedby="date"/>
+            <input id="daterange" type="text" name="daterange" class="form-control w-50 d-none" aria-describedby="dateRange"/>
+            {% endcomment %}
+            {{ form.single_date }}
+            {{ form.date_range }}
+            <div id="date-check" class="custom-control custom-checkbox ml-2">
+              {% comment %}
               <input type="checkbox" class="custom-control-input" id="use-range" name="use-range">
-              <label class="custom-control-label" for="use-range">Use Date Range?</label>
+              {% endcomment %}
+              {{ form.use_range}}
+              <label class="custom-control-label" for="use-range">Date range</label>
             </div>
-            <input id="singledate" type="text" name="singledate" class="form-control w-50" aria-describedby="date" />
-            <input id="daterange" type="text" name="daterange" class="form-control w-50 d-none" aria-describedby="dateRange" />
+          </div>
+
           
         </div>
 
@@ -45,15 +62,15 @@
           <p class="title-me imp mb-3">Amount</p>  
           <div id="slider" class="mb-2"></div> 
           <div id="amount-labels" class="flex align-center date-modal-body">
-            <label for="min-amount" class="im">Min</label>
+            <label for="min-amount" class="">Min</label>
             <span></span>
-            <label for="max-amount" class="im">Max</label>
+            <label for="max-amount" class="">Max</label>
           </div>
 
           <div id="amount-inputs" class="flex align-center just-betw date-modal-body">
-            <input id="min-amount" type="number" name="min-amount" class="form-control" aria-describedby="minAmount" step="1" >
+            {{ form.min_amount }}
             <span class="flex just-center" ><i class="fas fa-angle-right fa-lg"></i></span>
-            <input id="max-amount" type="number" name="max-amount" class="form-control" aria-describedby="maxAmount" step="1">
+            {{ form.max_amount }}
           </div>
         </div>
         {% if category_list %}
@@ -61,7 +78,7 @@
           <p class="title-me imp mb-1">Categories</p>
           {% for category in category_list %}
           <div class="custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="{{ category }}">
+            <input type="checkbox" class="custom-control-input" id="{{ category }}" name="{{ category }}">
             <label class="custom-control-label" for="{{category}}">{{ category }}</label>
           </div>
           {% endfor %}
@@ -69,10 +86,15 @@
         {% endif %}
         <div id="receipt-section" class="mb-3">
           <p class="title-me imp mb-1">Receipt</p>
-          <div class="custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="has-receipt">
-            <label class="custom-control-label" for="has-receipt">Has Receipt?</label>
+          <div class="form-check form-check-inline">
+            {{ form.has_receipt }}
+            <label class="form-check-label" for="receipt">Has Receipt</label>
           </div>
+          <div class="form-check form-check-inline">
+            {{ form.no_receipt }}
+            <label class="form-check-label" for="receipt">No receipt</label>
+          </div>
+
         </div>
         <button type="submit" class="btn btn-outline-primary imp block"><i class="fas fa-search" aria-hidden="true"></i> Save Filters</button>
         <!-- <div class="modal-footer flex just-around">
@@ -220,21 +242,6 @@
 
 </script>
 
-<script>
-  $( function() {
-    $( "#slider-range" ).slider({
-      range: true,
-      min: 0,
-      max: 500,
-      values: [ 75, 300 ],
-      slide: function( event, ui ) {
-        $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-      }
-    });
-    $( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
-      " - $" + $( "#slider-range" ).slider( "values", 1 ) );
-  } );
-  </script>
 
 
 <!-- Makes each table row a URL -->
@@ -251,14 +258,16 @@
 <!-- On checking of the date range checkbox, toggle between single date and date range -->
 <script src="../../../static/budget/scripts/switchDateFilter.js"></script>
 
-<!-- Add dummy date as default for date picker -->
-<script src="../../../static/budget/scripts/defaultDateFilter.js"></script>
-
 <!-- Amount range slider script from  -->
 <script src="../../../static/budget/scripts/nouislider.js"></script>
 
 <!-- Add default amounts in the input fields and automatically update them as the slider moves  -->
 <script src="../../../static/budget/scripts/sliderFunctions.js"></script>
 
+<!-- Disable/activate the date and date range pickers on click of the "all dates" checkbox -->
+<script src="../../../static/budget/scripts/toggleActivationDatePicker.js"></script>
+
+<!-- Deactivate dates on page load -->
+<script src="../../../static/budget/scripts/deactivateDatesOnload.js"></script>
 
 {% endblock %}
