@@ -23,6 +23,8 @@ from .forms import searchExpensesForm
 # from .forms import DeleteExpenseForm
 
 # For complex querying:
+import operator
+from functools import reduce
 from django.db.models import Q
 
 
@@ -85,7 +87,7 @@ class IndexView(generic.ListView):
 def expense_list(request):
     print('request start')
     context = {}
-    category_list = Category.objects.all()
+    # category_list = Category.objects.all()
     expenses_list = Expense.objects.order_by('-expense_date')
 
     # If a search filter call has been made, we need to filter our expenses list and create a bounded form
@@ -101,25 +103,15 @@ def expense_list(request):
             date_range = form.cleaned_data["date_range"]     # 04/22/2020 - 04/22/2020
             min_amount = form.cleaned_data["min_amount"]
             max_amount = form.cleaned_data["max_amount"]
+            categories = form.cleaned_data["categories"]
             has_receipt = form.cleaned_data["has_receipt"]
 
             context.update({'all_dates': all_dates,
                             'min_amount': min_amount,
                             'max_amount': max_amount,
                             'has_receipt': has_receipt})
-
-            category_names = []
-
-            # Pull out the name of every category, and if the name is in the request and its value is not null, add it to our new list
-            for category in category_list:
-                name = category.name
-                if name in request.GET and request.GET.get(name):
-                    category_names.append(name)
-            print("category names: ", category_names)
-
-            for category in category_names:
-                expenses_list = expenses
-
+            
+            # Filter queryset for keywords
             if keywords:
                 expenses_list = expenses_list.filter(
                     Q(expense_date__icontains=keywords) |
@@ -128,6 +120,7 @@ def expense_list(request):
                     Q(description__icontains=keywords)
                 )
 
+            # Filter queryset for date range or single date
             if not all_dates and use_range: # if the user selected a date range
                 # change "04/22/2020 - 04/22/2020"
                 # into ["yyyy-mm-dd" - "yyyy-mm-dd"]
@@ -144,15 +137,36 @@ def expense_list(request):
                 singledate_list = single_date.split('/')
                 expenses_list = expenses_list.filter(expense_date__year=singledate_list[2],expense_date__month=singledate_list[0],expense_date__day=singledate_list[1]).order_by('-expense_date')
 
+            # Filter query set for min amount
             if min_amount != "0.00":
                 expenses_list = expenses_list.filter(amount__gte=min_amount)
+
+            # Filter query set for max amount
             if max_amount != "1000.00":
                 expenses_list = expenses_list.filter(amount__lte=max_amount)
 
+            # Filter query set for categories
+            print(categories)
+            if categories:
+                list_foreignid = []
+                category_objects = Category.objects.all()
+
+                # Get a list of category primary keys
+                for obj in category_objects:
+                    if obj.name in categories:
+                        list_foreignid.append(obj.id)
+
+                q_category_list = []
+                for foreignid in list_foreignid:
+                    q_category_list.append(Q(category__exact=foreignid))
+
+                expenses_list = expenses_list.filter(reduce(operator.or_, q_category_list))
+
+            # Filter query set based on whether it has a receipt or not
             if has_receipt == "has-receipt":
-                expenses_list = expenses_list.filter(receipt__isnull=False)
+                expenses_list = expenses_list.exclude(receipt__exact='')
             elif has_receipt == "no-receipt":
-                expenses_list = expenses_list.filter(receipt__isnull=True)
+                expenses_list = expenses_list.filter(receipt__exact='')
 
         
     else:
@@ -187,7 +201,7 @@ def expense_list(request):
         'page_range': paginator.page_range,
         'start_num' : start_num,
         'end_num': end_num,
-        'category_list': category_list,
+        # 'category_list': category_list,
         'form': form,
     })
 

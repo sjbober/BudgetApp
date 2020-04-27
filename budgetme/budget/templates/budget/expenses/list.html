@@ -61,7 +61,7 @@
         </div>
 
         <div id="amount-section" class="mb-3">  
-          <p class="title-me imp mb-3">Amount</p>  
+          <p class="imp mb-3">Amount</p>  
           <div id="slider" class="mb-2"></div> 
           <div id="amount-labels" class="flex align-center date-modal-body">
             <label for="min-amount" class="">Min</label>
@@ -75,9 +75,11 @@
             {{ form.max_amount }}
           </div>
         </div>
+
+        {% comment %}
         {% if category_list %}
         <div id="category-section" class="mb-3">
-          <p class="title-me imp mb-1">Categories</p>
+          <p class="imp mb-1">Categories</p>
           {% for category in category_list %}
           <div class="custom-control custom-checkbox">
             <input type="checkbox" class="custom-control-input" id="{{ category }}" name="category">
@@ -86,8 +88,20 @@
           {% endfor %}
         </div>
         {% endif %}
+        {% endcomment %}
+
+        <div id="category-section" class="mb-3">
+          <p class="imp mb-1">Categories</p>
+          {% for category in form.categories %}
+          <div class="custom-control custom-checkbox">
+            {{ category.tag }}
+            <label class="custom-control-label" for="{{ category.id_for_label }}">{{ category.choice_label }}</label>
+          </div>
+          {% endfor %}
+        </div>
+
         <div id="receipt-section" class="mb-3">
-          <p class="title-me imp mb-1">Receipt</p>
+          <p class="imp mb-1">Receipt</p>
           {% for radio in form.has_receipt %}
           <div class="form-check form-check-inline">
             {{ radio.tag }}
@@ -99,24 +113,10 @@
         </div>
         
         <button type="submit" class="btn btn-outline-primary imp block"><i class="fas fa-search" aria-hidden="true"></i> Save Filters</button>
-        <!-- <div class="modal-footer flex just-around">
-              <button id="submit-date-filter" type="submit" class="btn btn-primary imp">Save Filter</button>
-        </div> -->
     </form>
-
-    
-    <!-- </div> -->
   
     {% if page_obj %}
     <div class="table-responsive flex flex-col">
-      <!-- <ul class="nav nav-tabs nav-fill mb-3">
-        <li class="nav-item">
-          <a class="nav-link title-med active imp" href="#">Historical</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link title-med" href="#">Recurring</a>
-        </li>
-      </ul> -->
       <span class="mt-2 mb-2">Showing {{ start_num }} - {{ end_num }} of {{ num_records }} expenses.</span>
       <table class="table mb-">
         <thead class="thead-light">
