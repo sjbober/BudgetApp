@@ -1,3 +1,4 @@
+// Initializing the amount slider
 
 window.addEventListener("load", defaultAmount);
 
@@ -5,10 +6,30 @@ function defaultAmount() {
     let minInput = document.getElementById("min-amount");
     let maxInput = document.getElementById("max-amount");
     var slider = document.getElementById('slider');
+    // let minAmount = "{{ min_amount }}";
+    // let maxAmount = "{{ max_amount }}";
 
+    let min,max;
+
+    // // Determine if the get request includes min or max values
+    // // If it does, use those as the starting values
+    // console.log(minAmount);
+    if (minAmount) {
+        min = minAmount;
+        minInput.value = minAmount;
+    } else {
+        min = 0;
+    }
+
+    if (maxAmount) {
+        max = maxAmount;
+    } else {
+        max = 1000;
+    }
     // Initialize the slider
     noUiSlider.create(slider, {
-        start: [0, 1000],
+        // start: [0, 1000],
+        start: [min, max],
         connect: true,
         step: 1,
         range: {
@@ -29,12 +50,12 @@ function defaultAmount() {
     });
 
     // When the input values change, the slider will change as well
-    minInput.addEventListener('change', function (handle) {
+    minInput.addEventListener('change', function () {
         slider.noUiSlider.set([this.value, null]);
     });
     
-    maxInput.addEventListener('change', function (handle) {
-        slider.noUiSlider.set([handle, this.value]);
+    maxInput.addEventListener('change', function () {
+        slider.noUiSlider.set([null, this.value]);
     });
 
 }

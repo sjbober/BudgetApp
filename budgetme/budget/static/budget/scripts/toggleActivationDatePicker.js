@@ -4,7 +4,6 @@ let allDatesCheckbox = document.getElementById("all-dates");
 allDatesCheckbox.addEventListener("change", toggleDatePicker)
 
 function toggleDatePicker() {
-    console.log("changed")
 
     let singleInput = document.getElementById("singledate");
     let rangeInput = document.getElementById("daterange");

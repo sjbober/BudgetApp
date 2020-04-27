@@ -1,5 +1,6 @@
 {% extends "budget/expenses/expense.html" %}
 {% load static %}
+{% load bootstrap_pagination %}
 
 {% block page_title %}Expenses{% endblock page_title %}
 
@@ -22,8 +23,9 @@
     {% comment %}
     <form id="filter-form" action="{% url 'budget:expense_list_filter' %}" method="POST" class="mt-3" enctype="application/x-www-form-urlencoded">
     {% endcomment %}
-    <form id="filter-form" action="{% url 'budget:expense_list_filter' %}" method="POST" class="mt-3" enctype="application/x-www-form-urlencoded"> 
-      {% csrf_token %}
+    <form id="filter-form" action="{% url 'budget:expense_list' %}" method="GET" class="mt-3" enctype="application/x-www-form-urlencoded"> 
+      
+      {% comment %}{% csrf_token %}{% endcomment %}
 
         <!-- <h2 class="imp title-xl mb-3">Search Filters</h2> -->
 
@@ -78,24 +80,24 @@
           <p class="title-me imp mb-1">Categories</p>
           {% for category in category_list %}
           <div class="custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="{{ category }}" name="{{ category }}">
-            <label class="custom-control-label" for="{{category}}">{{ category }}</label>
+            <input type="checkbox" class="custom-control-input" id="{{ category }}" name="category">
+            <label class="custom-control-label" for="{{ category }}">{{ category }}</label>
           </div>
           {% endfor %}
         </div>
         {% endif %}
         <div id="receipt-section" class="mb-3">
           <p class="title-me imp mb-1">Receipt</p>
+          {% for radio in form.has_receipt %}
           <div class="form-check form-check-inline">
-            {{ form.has_receipt }}
-            <label class="form-check-label" for="receipt">Has Receipt</label>
+            {{ radio.tag }}
+            <label class="form-check-label" for="{{ radio.id_for_label }}">
+              {{ radio.choice_label}}
+            </label>
           </div>
-          <div class="form-check form-check-inline">
-            {{ form.no_receipt }}
-            <label class="form-check-label" for="receipt">No receipt</label>
-          </div>
-
+          {% endfor %}
         </div>
+        
         <button type="submit" class="btn btn-outline-primary imp block"><i class="fas fa-search" aria-hidden="true"></i> Save Filters</button>
         <!-- <div class="modal-footer flex just-around">
               <button id="submit-date-filter" type="submit" class="btn btn-primary imp">Save Filter</button>
@@ -105,8 +107,6 @@
     
     <!-- </div> -->
   
-  
-
     {% if page_obj %}
     <div class="table-responsive flex flex-col">
       <!-- <ul class="nav nav-tabs nav-fill mb-3">
@@ -159,41 +159,10 @@
         </tfoot>
       </table>
 
-      <nav aria-label="..." class="flex just-center">
-        <ul class="pagination">
-
-        {% if page_obj.has_previous %}
-          <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.previous_page_number }}"><i class="fas fa-angle-left"></i> Previous</a>
-          </li>
-        {% else %}
-          <li class="page-item disabled">
-            <span class="page-link"><i class="fas fa-angle-left"></i> Previous</span>
-          </li>
-        {% endif %}
-
-
-        {% for page_num in page_range %}
-
-          <li class="page-item page-num"><a class="page-link" href="">{{ page_num }}</a></li>
-
-        {% endfor %}
-
-
-          {% if page_obj.has_next %}
-          <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next <i class="fas fa-angle-right"></i></a>
-          </li>
-          {% else %}
-          <li class="page-item disabled">
-            <span class="page-link ">Next <i class="fas fa-angle-right"></i></span>
-          </li>
-          {% endif %}
-
-
-          </li>
-        </ul>
-      </nav>
+      <div class="flex just-center">
+        {% bootstrap_paginate page_obj range=10 %}
+      </div>
+      
     </div>
   
     {% else %}
@@ -205,44 +174,17 @@
 
 {% block my_scripts %}
 
-<!-- Adding the proper URL's to each pagination link and determining which page is active to add the correct class -->
+<!-- Declare global template variables -->
 <script type="text/javascript">
-  window.addEventListener("load", addActiveClass);
-  window.addEventListener("load", addURLs);
-
-  function addActiveClass() {
-    let pageLinks = document.getElementsByClassName("page-num");
-    let page_number = "{{ page_number }}";
-
-    if ( page_number == "None" ) {
-      pageLinks[0].className = "page-item active" ;
-    } else {
-      for (let i = 0; i < pageLinks.length; i++) {
-            if ( page_number == pageLinks[i].innerText ) {
-              pageLinks[i].className = "page-item active" ;
-              break;
-            }
-          }
-    }
-    
-
-  }
-
-  function addURLs() {
-    let pageLinks = document.getElementsByClassName("page-num");
-    // console.log(pageLinks[0].childNodes[0]);
-
-    for (let i = 0; i < pageLinks.length; i++) {
-      let page_number = pageLinks[i].innerText;
-      pageLinks[i].childNodes[0].href = "?page=" + page_number;
-      
-
-    }
-  }
-
+  let page_number = "{{ page_number }}";
+  let allDatesCheck = "{{ all_dates }}";
+  let minAmount = "{{ min_amount }}";
+  let maxAmount = "{{ max_amount }}";
+  let hasReceipt = "{{ has_receipt }}";
 </script>
 
-
+<!-- Adding the proper URL's to each pagination link and determining which page is active to add the correct class -->
+<!-- <script src="../../../static/budget/scripts/addPaginationURLs.js"></script> -->
 
 <!-- Makes each table row a URL -->
 <script src="../../../static/budget/scripts/clickExpenseToRedirect.js"></script>
@@ -267,7 +209,8 @@
 <!-- Disable/activate the date and date range pickers on click of the "all dates" checkbox -->
 <script src="../../../static/budget/scripts/toggleActivationDatePicker.js"></script>
 
-<!-- Deactivate dates on page load -->
-<script src="../../../static/budget/scripts/deactivateDatesOnload.js"></script>
+<!-- Defaulting the appropriate search fields -->
+<script src="../../../static/budget/scripts/defaultValues.js"></script>
+
 
 {% endblock %}

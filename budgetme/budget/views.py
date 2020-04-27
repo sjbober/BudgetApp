@@ -19,6 +19,7 @@ from django.contrib import messages
 # Forms to import
 from .forms import ExpenseForm
 from .forms import searchExpensesForm
+# from .forms import ExpenseFilter
 # from .forms import DeleteExpenseForm
 
 # For complex querying:
@@ -82,8 +83,81 @@ class IndexView(generic.ListView):
 #         expense_date__month=today.month).order_by('-expense_date')
 
 def expense_list(request):
-    form = searchExpensesForm()
+    print('request start')
+    context = {}
+    category_list = Category.objects.all()
     expenses_list = Expense.objects.order_by('-expense_date')
+
+    # If a search filter call has been made, we need to filter our expenses list and create a bounded form
+    if 'keywords' in request.GET:
+        print("Search")
+        form = searchExpensesForm(request.GET)
+        if form.is_valid():
+            # print("form is valid")
+            keywords = form.cleaned_data["keywords"]
+            all_dates = form.cleaned_data["all_dates"]
+            use_range = form.cleaned_data["use_range"]  
+            single_date = form.cleaned_data["single_date"]    # 04/22/2020
+            date_range = form.cleaned_data["date_range"]     # 04/22/2020 - 04/22/2020
+            min_amount = form.cleaned_data["min_amount"]
+            max_amount = form.cleaned_data["max_amount"]
+            has_receipt = form.cleaned_data["has_receipt"]
+
+            context.update({'all_dates': all_dates,
+                            'min_amount': min_amount,
+                            'max_amount': max_amount,
+                            'has_receipt': has_receipt})
+
+            category_names = []
+
+            # Pull out the name of every category, and if the name is in the request and its value is not null, add it to our new list
+            for category in category_list:
+                name = category.name
+                if name in request.GET and request.GET.get(name):
+                    category_names.append(name)
+            print("category names: ", category_names)
+
+            for category in category_names:
+                expenses_list = expenses
+
+            if keywords:
+                expenses_list = expenses_list.filter(
+                    Q(expense_date__icontains=keywords) |
+                    Q(amount__icontains=keywords) |
+                    Q(vendor__icontains=keywords) |
+                    Q(description__icontains=keywords)
+                )
+
+            if not all_dates and use_range: # if the user selected a date range
+                # change "04/22/2020 - 04/22/2020"
+                # into ["yyyy-mm-dd" - "yyyy-mm-dd"]
+                fdl = date_range.split(" - ")[0].split('/')
+                first_date = fdl[2] + "-" + fdl[0] + "-" + fdl[1]
+
+                sdl = date_range.split(" - ")[1].split('/')
+                second_date = sdl[2] + "-" + sdl[0] + "-" + sdl[1]
+
+                expenses_list = expenses_list.filter(expense_date__range=[first_date, second_date])
+
+                # expenses_list = Expense.objects.filter(date__range=["2011-01-01", "2011-01-31"])
+            elif not all_dates and not use_range:
+                singledate_list = single_date.split('/')
+                expenses_list = expenses_list.filter(expense_date__year=singledate_list[2],expense_date__month=singledate_list[0],expense_date__day=singledate_list[1]).order_by('-expense_date')
+
+            if min_amount != "0.00":
+                expenses_list = expenses_list.filter(amount__gte=min_amount)
+            if max_amount != "1000.00":
+                expenses_list = expenses_list.filter(amount__lte=max_amount)
+
+            if has_receipt == "has-receipt":
+                expenses_list = expenses_list.filter(receipt__isnull=False)
+            elif has_receipt == "no-receipt":
+                expenses_list = expenses_list.filter(receipt__isnull=True)
+
+        
+    else:
+        form = searchExpensesForm(request.GET)
+        # expenses_list = Expense.objects.order_by('-expense_date')
 
     limit = 10 # record limit per page
     paginator = Paginator(expenses_list, limit)
@@ -92,7 +166,7 @@ def expense_list(request):
         page_number = 1
     page_obj = paginator.get_page(page_number)
 
-    category_list = Category.objects.all()
+    # category_list = Category.objects.all()
 
     page_total = 0
     page_count = 0
@@ -105,7 +179,7 @@ def expense_list(request):
 
     # month = today.strftime('%B')
     # month = today.strftime
-    context = {
+    context.update({
         'page_obj': page_obj,
         'page_number': page_number,
         'page_total': page_total,
@@ -115,159 +189,11 @@ def expense_list(request):
         'end_num': end_num,
         'category_list': category_list,
         'form': form,
-    }
+    })
 
     # logger.info(page_number)
 
     return render(request, 'budget/expenses/list.html', context)
-
-def expense_list_filter(request):
-    # values = request.META.items()
-    # values.sort()
-    # for k, v in values:
-        # print(k,v)
-    
-    category_list = Category.objects.all()
-    # print(category_list)
-    if request.method == "POST":
-        print("newline")
-        # for key in request.POST:
-        #     print(key)
-        #     print(request.POST[key])
-        form = searchExpensesForm(request.POST)
-        print("newline again")
-
-        # Forms pull from the name field!!!
-        keywords = request.POST.get("keywords")
-        all_dates = request.POST.get("all_dates")
-        use_range = request.POST.get("use_range")       # If not checked --> None # If checked --> "on"
-        single_date = request.POST.get("single_date")    # 04/22/2020
-        date_range = request.POST.get("date_range")      # 04/22/2020 - 04/22/2020
-        min_amount = request.POST.get("min_amount")
-        max_amount = request.POST.get("max_amount")
-        has_receipt = request.POST.get("has_receipt")
-        no_receipt = request.POST.get("no_receipt")
-
-        print("search keywords are: ", keywords)
-        print("use all dates?: ", all_dates)
-        print("date range checked?: ", use_range)
-        print("single date is: ", single_date)
-        print("date range is: ", date_range)
-        print("min amount is: ", min_amount)
-        print("max amount is: ", max_amount)
-        print("has receipt: ", has_receipt)
-        print("no receipt?: ", no_receipt)
-
-        # categories???
-        categories = []
-
-        # Pull out the name of every category, and if the name is in the request and its value is not null, add it to our new list
-        for category in category_list:
-            name = category.name
-            if name in request.POST and request.POST.get(name):
-                categories += name
-
-        categ1 = request.POST.get("Rent")
-        print("category 1 is: ", categ1)
-
-        # test = request.POST.get("test")
-        # print("test", test)
-
-
-        # categories:
-        # {{ category }}
-        # have to loop through ..how to know the id of each category?
-        expenses_list = Expense.objects.all().order_by('-expense_date')
-
-        # if all_dates:
-        #     expenses_list = Expense.objects.all().order_by('-expense_date')
-
-        if keywords:
-            # pass
-            expenses_list = expenses_list.filter(
-                Q(expense_date__icontains=keywords) |
-                Q(amount__icontains=keywords) |
-                Q(vendor__icontains=keywords) |
-                Q(description__icontains=keywords)
-                # Q(category__icontains=keywords)
-            )
-
-        if all_dates:
-            pass
-        elif not all_dates and use_range: # if the user selected a date range
-            # change "04/22/2020 - 04/22/2020"
-            # into ["yyyy-mm-dd" - "yyyy-mm-dd"]
-            print(not all_dates)
-            print(use_range)
-            fdl = date_range.split(" - ")[0].split('/')
-            first_date = fdl[2] + "-" + fdl[0] + "-" + fdl[1]
-
-            sdl = date_range.split(" - ")[1].split('/')
-            second_date = sdl[2] + "-" + sdl[0] + "-" + sdl[1]
-
-            expenses_list = expenses_list.filter(expense_date__range=[first_date, second_date])
-            # expenses_list = Expense.objects.filter(date__range=["2011-01-01", "2011-01-31"])
-        elif not all_dates and not use_range:
-            print("all dates is: ",all_dates)
-            singledate_list = single_date.split('/')
-            expenses_list = expenses_list.filter(expense_date__year=singledate_list[2],expense_date__month=singledate_list[0],expense_date__day=singledate_list[1]).order_by('-expense_date')
-
-        if min_amount != "0.00":
-            expenses_list = expenses_list.filter(amount__gte=min_amount)
-        if max_amount != "1000.00":
-            expenses_list = expenses_list.filter(amount__lte=max_amount)
-
-        # if categories:
-        #     for each_categ in categories:
-        #         expenses_list = expenses_list.filter()
-
-    # if request.method == 'GET':
-    #     print("get")
-    #     for key in request.GET:
-    #         print(key)
-    #         print(request.GET[key])
-        
-    limit = 10
-    paginator = Paginator(expenses_list, limit)
-    page_number = request.GET.get('page')
-    if page_number == None:
-        page_number = 1
-    page_obj = paginator.get_page(page_number)
-
-    # List of all categories:
-    # category_list = Category.objects.all()
-
-    # monthly_total = 0
-    # for i in latest_expenses_list:
-    #     monthly_total += i.amount
-
-    page_total = 0
-    page_count = 0
-    for i in page_obj:
-        page_total += i.amount
-        page_count += 1
-
-    start_num = (int(page_number) - 1) * limit +1
-    end_num = start_num + page_count - 1
-    # print("made it this far 2")
-    # month = today.strftime('%B')
-    # month = today.strftime
-    context = {
-        'page_obj': page_obj,
-        'page_number': page_number,
-        'page_total': page_total,
-        'num_records': paginator.count,
-        'page_range': paginator.page_range,
-        'start_num' : start_num,
-        'end_num': end_num,
-        'category_list': category_list,
-        'form': form
-    }
-
-    # logger.info(page_number)
-
-    return render(request, 'budget/expenses/list.html', context)
-
 
 # View an existing expense
 def expense_detail(request, pk):

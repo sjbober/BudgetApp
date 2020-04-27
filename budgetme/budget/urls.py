@@ -21,8 +21,9 @@ urlpatterns = [
     # path('expenses/', views.ExpenseListView.as_view(), name='expense_list'),
 
     path('expenses/', views.expense_list, name='expense_list'),
+    # path('expenses/<str:key>', views.expense_list, name='expense_list'),
 
-    path('expenses/filter/', views.expense_list_filter, name='expense_list_filter'),
+    # path('expenses/filter/', views.expense_list_filter, name='expense_list_filter'),
 
     path('expenses/expense-form-page/', views.expense_form_page, name='expense_form_page'),
 
