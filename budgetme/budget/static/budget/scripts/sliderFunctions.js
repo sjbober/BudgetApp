@@ -6,14 +6,15 @@ function defaultAmount() {
     let minInput = document.getElementById("min-amount");
     let maxInput = document.getElementById("max-amount");
     var slider = document.getElementById('slider');
+    // let highestAmount = "{{ highest_amount }}";
     // let minAmount = "{{ min_amount }}";
     // let maxAmount = "{{ max_amount }}";
-
+    console.log(highestAmount);
     let min,max;
 
-    // // Determine if the get request includes min or max values
-    // // If it does, use those as the starting values
-    // console.log(minAmount);
+    // Determine if the get request includes min or max values
+    // If it does, use those as the starting values
+    // If it doesn't, use 0 as the min amount and the highest expense amount as the max
     if (minAmount) {
         min = minAmount;
         minInput.value = minAmount;
@@ -24,7 +25,8 @@ function defaultAmount() {
     if (maxAmount) {
         max = maxAmount;
     } else {
-        max = 1000;
+        // console.log(highestAmount)
+        max = highestAmount;
     }
     // Initialize the slider
     noUiSlider.create(slider, {
@@ -34,7 +36,7 @@ function defaultAmount() {
         step: 1,
         range: {
             'min': 0,
-            'max': 1000
+            'max': highestAmount
         }
     });
 

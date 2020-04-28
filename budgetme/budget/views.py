@@ -11,6 +11,7 @@ from .models import Expense
 from .models import Income
 from .models import Category
 from .models import TempReceipt
+from .models import RecurringExpense
 
 from datetime import date
 
@@ -20,7 +21,7 @@ from django.contrib import messages
 from .forms import ExpenseForm
 from .forms import searchExpensesForm
 # from .forms import ExpenseFilter
-# from .forms import DeleteExpenseForm
+from .forms import DeleteExpenseForm
 
 # For complex querying:
 import operator
@@ -55,44 +56,15 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         return Expense.objects.order_by('-expense_date')[:5]
 
-# Expense Views
-# ///////////////////////////////////////
-
-# class ExpenseUpdate(UpdateView):
-#     model = Expense
-#     # template_name = 'budget/expenses/new-expense.html'
-
-# class ExpenseDelete(DeleteView):
-#     model = Expense
-#     success_url = reverse_lazy('author-list')
-    
-
-# Old Expense List view
-# def expense_list(request):
-#     latest_expenses_list = Expense.objects.order_by('-expense_date')[:5]
-#     context = {
-#         'latest_expenses_list': latest_expenses_list,
-#     }
-#     return render(request, 'budget/expenses/list.html',context)
-
-# class ExpenseListView(generic.ListView):
-#     template_name = 'budget/expenses/list.html'
-#     context_object_name = 'latest_expenses_list'
-
-#     def get_queryset(self):
-#         today = date.today()
-#         return Expense.objects.filter(expense_date__year=today.year,
-#         expense_date__month=today.month).order_by('-expense_date')
-
 def expense_list(request):
-    print('request start')
     context = {}
-    # category_list = Category.objects.all()
+    category_list = Category.objects.all()
     expenses_list = Expense.objects.order_by('-expense_date')
+    highest_amount = Expense.objects.order_by('-amount')[0].amount
+    # print(highest_amount)
 
     # If a search filter call has been made, we need to filter our expenses list and create a bounded form
     if 'keywords' in request.GET:
-        print("Search")
         form = searchExpensesForm(request.GET)
         if form.is_valid():
             # print("form is valid")
@@ -146,10 +118,8 @@ def expense_list(request):
                 expenses_list = expenses_list.filter(amount__lte=max_amount)
 
             # Filter query set for categories
-            print(categories)
             if categories:
                 list_foreignid = []
-                category_objects = Category.objects.all()
 
                 # Get a list of category primary keys
                 for obj in category_objects:
@@ -180,19 +150,17 @@ def expense_list(request):
         page_number = 1
     page_obj = paginator.get_page(page_number)
 
-    # category_list = Category.objects.all()
-
+    # Get total number of expenses to be displayed on the current page
     page_total = 0
     page_count = 0
     for i in page_obj:
         page_total += i.amount
         page_count += 1
 
+    # Get the starting and ending number of expenses for the current page
     start_num = (int(page_number) - 1) * limit +1
     end_num = start_num + page_count - 1
 
-    # month = today.strftime('%B')
-    # month = today.strftime
     context.update({
         'page_obj': page_obj,
         'page_number': page_number,
@@ -201,8 +169,8 @@ def expense_list(request):
         'page_range': paginator.page_range,
         'start_num' : start_num,
         'end_num': end_num,
-        # 'category_list': category_list,
         'form': form,
+        'highest_amount': highest_amount,
     })
 
     # logger.info(page_number)
@@ -214,14 +182,19 @@ def expense_detail(request, pk):
     expense = Expense.objects.get(pk = pk)
 
     if request.method == "POST":
-        expense.delete()
-        return redirect('budget:expense_list')
-    else:
-        context = {
-            'expense': expense,
-        }
-    
-        return render(request, 'budget/expenses/detail.html', context)
+        form = DeleteExpenseForm(request.POST, instance=expense)
+        if form.is_valid():
+            messages.success(request, "Expense #%s has been deleted." % expense.pk)
+            expense.delete()
+            return redirect('budget:expense_list')
+        else:
+            messages.error(request, "An error occurred and expense #%s was not deleted." % expense.pk)
+
+    context = {
+        'expense': expense,
+    }
+
+    return render(request, 'budget/expenses/detail.html', context)
 
 # Edit an existing expense
 def expense_edit(request, pk):
@@ -234,21 +207,19 @@ def expense_edit(request, pk):
             messages.success(request, "Your changes have been saved.")
             return redirect('budget:expense_detail', pk=expense.pk)
         else:
-            pass
-        # come back here and finish error handling
+            messages.error(request, "An error occurred and your changes have not been saved.")
+
     else:
         form = ExpenseForm(instance=expense)
-        category_list = Category.objects.all()
-        
 
-        context = {
-            'category_list' : category_list,
-            'form' : form,
-            'expense': expense,
-        }
+    category_list = Category.objects.all()
+    context = {
+        'category_list' : category_list,
+        'form' : form,
+        'expense': expense,
+    }
 
-        # return render(request, 'budget/expenses/edit-expense.html',context)
-        return render(request, 'budget/expenses/edit-expense.html',context)
+    return render(request, 'budget/expenses/edit-expense.html',context)
 
 # Create a new expense page
 def expense_form_page(request):
@@ -256,18 +227,21 @@ def expense_form_page(request):
         form = ExpenseForm(request.POST, request.FILES)
         if form.is_valid():
             expense = form.save()
+            messages.success(request, "Expense #{} has been successfully created.".format(str(expense.pk)))
             return redirect('budget:expense_detail', pk=expense.pk)
+        else:
+            messages.error(request, "Your expense could not be submitted.")
+            
     else:
         form = ExpenseForm()
-        category_list = Category.objects.all()
 
-        context = {
-            'category_list' : category_list,
-            'form' : form,
-        }
+    category_list = Category.objects.all()
+    context = {
+        'category_list' : category_list,
+        'form' : form,
+    }
 
-        return render(request, 'budget/expenses/new-expense.html',context)
-        # return render(request, 'budget/expenses/edit-expense.html',context)
+    return render(request, 'budget/expenses/new-expense.html',context)
 
 # Code not working - attemt to read receipt
 def read_receipt(request):

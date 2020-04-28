@@ -5,6 +5,22 @@
 {% block main_class %} class="narrow-content"{% endblock %}
 
 {% block content %}
+
+{% if messages %}
+  {% for message in messages %}
+    {% if message.tags == "error" %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {% else %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    {% endif %}
+    {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  {% endfor %}
+{% endif %}
+
 <div class="flex just-betw mt-2 mb-4">
     <h1 class="imp page-title mb-0">{% block h1 %}{% endblock h1 %}</h1>
     {% block extra_button%}{% endblock extra_button%}
@@ -14,22 +30,6 @@
 
 <form action="{% block form-action %}{% endblock form-action %}" method="POST" class="inline-form" enctype="multipart/form-data"> 
     {% csrf_token %}
-    <div class="form-group mb-2 row">
-        <label for="receipt" class="col-sm-4 col-form-label"><span class="imp">Receipt</span> <small>(optional)</small></label>
-        <div class="col-md-8 flex just-start">
-            <label id="" class="flex w-75" for="receipt">
-            <div class="btn btn-outline-primary w-100 imp"><i class="fas fa-camera fa-lg"></i> Choose file or photo</div>
-            <input id="receipt" type="file" accept="image/*" capture=environment class="image-upload" name="receipt"/>
-            </label>
-
-            <!-- <button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="left" title="Upload a clean copy of your receipt and we'll auto-fill as many details as we can so you don't have to."><i class="far fa-question-circle fa-lg"></i></button> -->
-        </div>
-    </div>
-
-    <div id="receipt-file" class="flex just-center">
-        {% block existing_receipt %}
-        {% endblock existing_receipt %}
-    </div>
 
     <div class="form-group mb-2 row">
         <label for="{{ form.expense_date.id_for_label }}" class="col-sm-4 col-form-label imp">Date</label>
@@ -60,11 +60,29 @@
           {{ form.vendor }}
         </div>
     </div>
-    <div class="form-group mb-4 row">
+
+    <div class="form-group mb-3 row">
         <label for="{{ form.description.id_for_label}}" class="col-sm-4 col-form-label"><span class="imp">Description</span> <small>(optional)</small></label>
         <div class="col-md-8">
           {{ form.description }}
         </div>           
+    </div>
+
+    <div class="form-group mb-2 row">
+      <label for="receipt" class="col-sm-4 col-form-label"><span class="imp">Receipt</span> <small>(optional)</small></label>
+      <div class="col-md-8 flex just-start">
+          <label id="" class="flex w-100" for="receipt">
+          <div class="btn btn-outline-primary w-100 imp"><i class="fas fa-camera fa-lg"></i> Choose file or photo</div>
+          <input id="receipt" type="file" accept="image/*" capture=environment class="image-upload" name="receipt"/>
+          </label>
+
+          <!-- <button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="left" title="Upload a clean copy of your receipt and we'll auto-fill as many details as we can so you don't have to."><i class="far fa-question-circle fa-lg"></i></button> -->
+      </div>
+    </div>
+
+    <div id="receipt-file" class="flex just-center mb-4">
+        {% block existing_receipt %}
+        {% endblock existing_receipt %}
     </div>
 
     <button type="submit" class="btn btn-primary block imp title-med"><i class="fas fa-receipt"></i>{% block button-name %}{% endblock %}</button>
