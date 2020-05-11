@@ -29,8 +29,8 @@ class searchExpensesForm(forms.Form):
                                                                 'class': 'custom-control-input',
                                                                 'aria-describedby': 'useDateRange',  
                                                                     }))
-
-    single_date = forms.CharField(required = False,widget=forms.TextInput(attrs={
+# CharField
+    single_date = forms.DateField(required = False,widget=forms.TextInput(attrs={
 
                                                                 'id': 'singledate',
                                                                 'type': 'text',
@@ -98,11 +98,13 @@ class ExpenseForm(ModelForm):
         fields = '__all__'
         widgets = {
                 'expense_date': forms.TextInput(attrs={
-                                                        'type': 'date',
+                                                        'id': 'datepicker',
+                                                        'type': 'text',
                                                         'class': 'form-control w-50',
                                                         'aria-describedby': 'dateofExpense',
                                                         'required': 'true'  
                                                         }),
+                                                        
                 'amount': forms.TextInput(attrs={
                                                 'type': 'number',
                                                 'class': 'form-control w-50',
@@ -134,10 +136,9 @@ class RecurringExpenseForm(ModelForm):
         fields = '__all__'
         widgets = {
                 'day': forms.NumberInput(attrs={
-                                                'type': 'date',
+                                                'type': 'number',
                                                 'class': 'form-control w-50',
-                                                'aria-describedby': 'dateofExpense',
-                                                'required': 'true'  
+                                                'aria-describedby': 'dayOfMonth' 
                                                 }),
                 'amount': forms.TextInput(attrs={
                                                 'type': 'number',
@@ -163,6 +164,11 @@ class RecurringExpenseForm(ModelForm):
                                                         })
         
         }
+
+class DeleteRecurringExpenseForm(forms.ModelForm):
+    class Meta:
+        model = RecurringExpense
+        fields = []
 
 class TempReceiptForm(ModelForm):
     class Meta:

@@ -2,12 +2,15 @@
 {% load static %}
 {% load bootstrap_pagination %}
 
-{% block page_title %}Expenses{% endblock page_title %}
+{% block page_title %}Spending{% endblock page_title %}
 
 {% block extra_styles %}
 <link rel="stylesheet" type="text/css" href="{% static 'budget/list.css' %}">
+
+<!-- Date picker -->
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
+<!-- Amount range slider -->
 <link rel="stylesheet" type="text/css" href="{% static 'budget/rangeSlider/nouislider.css' %}">
 
 {% endblock extra_styles %}
@@ -30,8 +33,8 @@
       </div>
     {% endfor %}
   {% endif %}
+  <h2 class="imp page-title mb-3">Spending Activity</h2>
   <div id="filters-and-list">
-     
     <form id="filter-form" action="{% url 'budget:expense_list' %}" method="GET" class="mt-3" enctype="application/x-www-form-urlencoded"> 
       
       <div id="search-section" class="mb-3">
@@ -41,22 +44,14 @@
 
       <div id="date-section" class="mb-3">
         <label id="singledate-label" for="singledate" class="imp">Date</label>
-        <label id="daterange-label" for="daterange" class="imp d-none">Date Range</label>
         <div id="date-check" class="custom-control custom-checkbox mb-2">
           {{ form.all_dates}}
           <label class="custom-control-label" for="all-dates">All dates</label>
         </div>
         <div class="flex align-center">
-          {% comment %}
-          <input id="singledate" type="text" name="singledate" class="form-control w-50" aria-describedby="date"/>
-          <input id="daterange" type="text" name="daterange" class="form-control w-50 d-none" aria-describedby="dateRange"/>
-          {% endcomment %}
           {{ form.single_date }}
           {{ form.date_range }}
           <div id="date-check" class="custom-control custom-checkbox ml-2">
-            {% comment %}
-            <input type="checkbox" class="custom-control-input" id="use-range" name="use-range">
-            {% endcomment %}
             {{ form.use_range}}
             <label class="custom-control-label" for="use-range">Date range</label>
           </div>
@@ -114,10 +109,6 @@
             <th scope="col" class="title-sm">Date</th>
             <th scope="col" class="title-sm">Amount</th>
             <th scope="col" class="title-sm">Category</th>
-            {% comment %}
-            <th scope="col" class="title-sm">Vendor</th>
-            <th scope="col" class="title-sm">Description</th>
-            <th scope="col" class="title-sm">Receipt</th>{% endcomment %}
           </tr>
         </thead>
         <tbody class="list-grou">
@@ -129,23 +120,11 @@
             <td >{{ record.expense_date }}</td>
             <td >${{ record.amount }}</td>
             <td >{{ record.category }}</td>
-            {% comment %}
-            <td>{{ record.vendor }}</td>
-            <td>{{ record.description }}</td>
-            <td>{% if record.receipt %} Yes
-              {% else %} {% endif %}</td>
-              {% endcomment %}
           </tr>
 
           {% endfor %}
 
         </tbody>
-        <tfoot>
-          <tr class="thead-light">
-            <td colspan="2" class="imp title-sm">Total:</td>
-            <td colspan="2" class="imp title-sm">${{ page_total }}</td>
-          </tr>
-        </tfoot>
       </table>
 
       <div class="flex just-center">
@@ -160,7 +139,6 @@
   </div>
 {% endblock content%}
 
-
 {% block my_scripts %}
 
 <!-- Declare global template variables -->
@@ -173,11 +151,8 @@
   let highestAmount = "{{ highest_amount }}";
 </script>
 
-<!-- Adding the proper URL's to each pagination link and determining which page is active to add the correct class -->
-<!-- <script src="../../../static/budget/scripts/addPaginationURLs.js"></script> -->
-
 <!-- Makes each table row a URL -->
-<script src="../../../static/budget/scripts/clickExpenseToRedirect.js"></script>
+<script src="{% static '/budget/scripts/clickExpenseToRedirect.js' %}"></script>
 
 <!-- Outside scripts for date and date range picker -->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
@@ -185,22 +160,22 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
 <!-- Activate date picker calendars -->
-<script src="../../../static/budget/scripts/activateDateCalendars.js"></script>
+<script src="{% static 'budget/scripts/activateDateCalendarsSearch.js' %}"></script>
 
 <!-- On checking of the date range checkbox, toggle between single date and date range -->
-<script src="../../../static/budget/scripts/switchDateFilter.js"></script>
+<script src="{% static '/budget/scripts/switchDateFilter.js' %}"></script>
 
 <!-- Amount range slider script from  -->
-<script src="../../../static/budget/scripts/nouislider.js"></script>
+<script src="{% static '/budget/scripts/nouislider.js' %}"></script>
 
 <!-- Add default amounts in the input fields and automatically update them as the slider moves  -->
-<script src="../../../static/budget/scripts/sliderFunctions.js"></script>
+<script src="{% static '/budget/scripts/sliderFunctions.js' %}"></script>
 
 <!-- Disable/activate the date and date range pickers on click of the "all dates" checkbox -->
-<script src="../../../static/budget/scripts/toggleActivationDatePicker.js"></script>
+<script src="{% static '/budget/scripts/toggleActivationDatePicker.js' %}"></script>
 
 <!-- Defaulting the appropriate search fields -->
-<script src="../../../static/budget/scripts/defaultValues.js"></script>
+<script src="{% static '/budget/scripts/defaultValues.js' %}"></script>
 
 
 {% endblock %}

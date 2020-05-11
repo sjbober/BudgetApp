@@ -1,11 +1,62 @@
 {% extends "budget/expenses/form.html" %}
+{% block staticload %}{% load static %}{% endblock %}
 
+<!-- Set the title tag -->
 {% block page_title %}New Expense{% endblock page_title %}
 
-{% block h1 %}New Expense{% endblock h1 %}
+{% block extra_styles %}
+<!-- Date picker -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+{% endblock %}
 
+<!-- Set the "Activity" tab class -->
 {% block new-activ %}active imp{% endblock %}
 
-{% block form-action %}{% url 'budget:expense_form_page' %}{% endblock form-action %}
+<!-- Set the h1 tag  -->
+{% block h1 %}New Expense{% endblock h1 %}
 
-{% block button-name %} Add Expense{% endblock %}
+<!-- Add the button to toggle between one-time and recurring expense -->
+{% block toggle_type %}
+<div class="custom-control custom-checkbox mb-3">
+    <input type="checkbox" class="custom-control-input" id="toggleType">
+    <label class="custom-control-label" for="toggleType">Is this a bill that occurs monthly?</label>
+</div>
+{% endblock toggle_type %}
+
+<!-- Set the form action and class for one-time form -->
+{% block one-form-action %}{% url 'budget:expense_form_page' %}{% endblock %}
+{% block one-form-class %}inline-form{% endblock %}
+
+<!-- Set the form action and class for recurring expense -->
+{% block recur-form-action %}{% url 'budget:expense_form_page' %}{% endblock %}
+{% block recur-form-class %}d-none{% endblock %}
+
+<!-- Set the one-time form button name -->
+{% block button-name %} Create Bill{% endblock %}
+
+<!-- Set the recurring form button name -->
+{% block recur-button-name %} Create Monthly Bill{% endblock %}
+
+<!-- Add scripts for this page -->
+{% block my_scripts %}
+<script>
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+</script>
+
+<!-- Outside scripts for date and date range picker -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<script src="{% static '/budget/scripts/activateDateCalendarsNewEdit.js' %}"></script>
+
+<script src="{% static '/budget/scripts/toggleExpenseType.js' %}"></script>
+<script src="{% static '/budget/scripts/setDateToday.js' %}"></script>
+<script src="{% static '/budget/scripts/displayImagePreviewBeforeUpload.js' %}"></script>
+<script src="{% static '/budget/scripts/deleteFile.js' %}"></script>
+
+<!-- Add 'None' as the default option in the category dropdown -->
+<script src="{% static '/budget/scripts/addPlaceholderTextToSelect.js' %}"></script>
+{% endblock %}

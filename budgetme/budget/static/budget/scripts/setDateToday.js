@@ -1,5 +1,5 @@
 // Upon clicking "Today", the date field will get auto populated with today's date. This is currently used for the New Expense form
-let date = document.getElementById("id_expense_date");
+let date = document.getElementById("datepicker");
 let todayButton = document.getElementById("today");
 
 todayButton.addEventListener("click",addTodaysDate)
@@ -23,7 +23,8 @@ function addTodaysDate() {
         day = "0" + day;
     }
 
-    let today = year + "-" + month + "-" + day;
+    // let today = year + "-" + month + "-" + day;
+    let today = month + "/" + day + "/" + year;
 
     date.value = today;
 

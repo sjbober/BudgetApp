@@ -21,6 +21,8 @@ urlpatterns = [
     # path('expenses/', views.ExpenseListView.as_view(), name='expense_list'),
 
     path('expenses/', views.expense_list, name='expense_list'),
+
+    path('expenses/recurring', views.expense_list_recurring, name='expense_list_recurring'),
     # path('expenses/<str:key>', views.expense_list, name='expense_list'),
 
     # path('expenses/filter/', views.expense_list_filter, name='expense_list_filter'),
@@ -30,6 +32,9 @@ urlpatterns = [
     # path('expenses/<int:pk>/', views.ExpenseDetailView.as_view(), name='expense_detail'),
 
     path('expenses/<int:pk>/', views.expense_detail, name='expense_detail'),
+
+    path('expenses/recurring/<int:pk>/', views.recurring_edit, name='recurring_edit'),
+    # path('expenses/recurring/<int:pk>/', views.expense_detail_recurring, name='expense_detail_recurring'),
 
     path('expenses/read-receipt/', views.read_receipt, name='read_receipt'),
 

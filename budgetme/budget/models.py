@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 class Expense(models.Model):
     expense_date = models.DateField('Date of expense')
-    vendor = models.CharField(max_length=100,blank=True)
+    # vendor = models.CharField(max_length=100,blank=True)
     description = models.CharField(max_length=200, blank=True)
     category = models.ForeignKey('Category', on_delete=models.SET_NULL,null=True,blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -16,13 +16,10 @@ class Expense(models.Model):
         return reverse('expense_detail', kwargs={'pk': self.pk})
 
 class RecurringExpense(models.Model):
-    active = models.BooleanField()
     day = models.IntegerField('Day of expense')
-    vendor = models.CharField(max_length=100,blank=True)
     description = models.CharField(max_length=200, blank=True)
     category = models.ForeignKey('Category', on_delete=models.SET_NULL,null=True,blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    receipt = models.ImageField(upload_to="images/",null=True,blank=True)
 
 
 class Income(models.Model):

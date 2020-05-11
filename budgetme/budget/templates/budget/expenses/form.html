@@ -1,11 +1,15 @@
 {% extends "budget/expenses/expense.html" %}
 
+<!-- Set the title tag -->
 {% block page_title %}{% endblock page_title %}
 
+<!-- Set the class of the main tag -->
 {% block main_class %} class="narrow-content"{% endblock %}
 
+<!-- Add page content -->
 {% block content %}
 
+<!-- Messages -->
 {% if messages %}
   {% for message in messages %}
     {% if message.tags == "error" %}
@@ -26,17 +30,19 @@
     {% block extra_button%}{% endblock extra_button%}
 </div>
 
-{% if error_message %}<p><strong>{% block error_message %}{% endblock error_message %}</strong></p>{% endif %}
+<!-- Add placeholder to place type checkbox for new expense page -->
+{% block toggle_type %}{% endblock toggle_type%}
 
-<form action="{% block form-action %}{% endblock form-action %}" method="POST" class="inline-form" enctype="multipart/form-data"> 
+<!-- One-time expense form -->
+<form id="one-time" action="{% block one-form-action %}{% endblock %}" method="POST" class="{% block one-form-class %}{% endblock %}" enctype="multipart/form-data"> 
     {% csrf_token %}
 
     <div class="form-group mb-2 row">
-        <label for="{{ form.expense_date.id_for_label }}" class="col-sm-4 col-form-label imp">Date</label>
-        <div class="col-md-8 flex">
-          {{ form.expense_date }}
-          <button id="today" type="button" class="btn btn-link">Today</button>
-        </div> 
+      <label for="{{ form.expense_date.id_for_label }}" class="col-sm-4 col-form-label imp">Date</label>
+      <div class="col-md-8 flex">
+        {{ form.expense_date }}
+        <button id="today" type="button" class="btn btn-link">Today</button>
+      </div> 
     </div>
 
     <div class="form-group mb-2 row">
@@ -51,13 +57,6 @@
         <div class="col-md-8 flex">
           {{ form.category }}
           <button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="top" title="Categories help you determine which areas you spend the most and allow you to set budgets for yourself."><i class="far fa-question-circle fa-lg"></i></button>
-        </div>
-    </div>
-
-    <div class="form-group mb-2 row">
-        <label for="{{ form.vendor.id_for_label }}" class="col-sm-4 col-form-label"><span class="imp">Vendor</span> <small>(optional)</small></label>
-        <div class="col-md-8">
-          {{ form.vendor }}
         </div>
     </div>
 
@@ -76,7 +75,6 @@
           <input id="receipt" type="file" accept="image/*" capture=environment class="image-upload" name="receipt"/>
           </label>
 
-          <!-- <button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="left" title="Upload a clean copy of your receipt and we'll auto-fill as many details as we can so you don't have to."><i class="far fa-question-circle fa-lg"></i></button> -->
       </div>
     </div>
 
@@ -88,35 +86,46 @@
     <button type="submit" class="btn btn-primary block imp title-med"><i class="fas fa-receipt"></i>{% block button-name %}{% endblock %}</button>
 
 </form>
-{% endblock content%}
-    
-{% block bootstrap_scripts %}
-    <!-- Bootstrap -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-{% endblock bootstrap_scripts %}
+<!-- Recurring expense form -->
+<form id="recurring" action="{% block recur-form-action %}{% endblock %}" method="POST" class="{% block recur-form-class %}{% endblock %}" enctype="application/x-www-form-urlencoded"> 
+  {% csrf_token %}
 
-{% block my_scripts %}
-  <script>
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
-    })
-  </script>
+  <div class="form-group mb-2 row">
+    <label for="{{ recurring_form.day.id_for_label }}" class="col-sm-4 col-form-label imp">Day</label>
+    <div class="col-md-8 flex">
+      {{ recurring_form.day }}
+    </div> 
+  </div>
 
-  <!-- <script src="../../../static/budget/scripts/receiptFileDisplay.js"></script> -->
-  <script src="../../../static/budget/scripts/setDateToday.js"></script>
-  <script src="../../../static/budget/scripts/addPlaceholderTextToSelect.js"></script>
-  <!-- <script src="../../../static/budget/scripts/removeReceipt.js"></script> -->
-  <script src="../../../static/budget/scripts/displayImagePreviewBeforeUpload.js"></script>
-  <!-- <script src="../../../static/budget/scripts/callOCR.js"></script> -->
-  <script src="../../../static/budget/scripts/deleteFile.js"></script>
+  <div class="form-group mb-2 row">
+      <label for="{{recurring_form.amount.id_for_label}}" class="col-sm-4 col-form-label imp">Amount</label>
+      <div class="col-md-8">
+        {{ recurring_form.amount }}
+      </div>
+  </div>
+
+  <div class="form-group mb-2 row">
+      <label for="{{ recurring_form.category.id_for_label }}" class="col-sm-4 col-form-label"><span class="imp">Category</span> <small>(optional)</small></label>
+      <div class="col-md-8 flex">
+        {{ recurring_form.category }}
+        <button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="top" title="Categories help you determine which areas you spend the most and allow you to set budgets for yourself."><i class="far fa-question-circle fa-lg"></i></button>
+      </div>
+  </div>
+
+  <div class="form-group mb-3 row">
+      <label for="{{ recurring_form.description.id_for_label}}" class="col-sm-4 col-form-label"><span class="imp">Description</span> <small>(optional)</small></label>
+      <div class="col-md-8">
+        {{ recurring_form.description }}
+      </div>           
+  </div>
+
+  <button type="submit" class="btn btn-primary block imp title-med"><i class="fas fa-receipt"></i>{% block recur-button-name %}{% endblock %}</button>
+
+</form>
+
+
+{% endblock content %}
 
 
 
-
-
-
-
-{% endblock my_scripts %}

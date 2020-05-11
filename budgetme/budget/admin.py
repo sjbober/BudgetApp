@@ -9,3 +9,6 @@ admin.site.register(Category)
 
 from .models import Income
 admin.site.register(Income)
+
+from .models import RecurringExpense
+admin.site.register(RecurringExpense)
