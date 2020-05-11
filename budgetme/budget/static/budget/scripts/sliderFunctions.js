@@ -9,7 +9,7 @@ function defaultAmount() {
     // let highestAmount = "{{ highest_amount }}";
     // let minAmount = "{{ min_amount }}";
     // let maxAmount = "{{ max_amount }}";
-    console.log(highestAmount);
+    intHighestAmount = parseFloat(highestAmount);
     let min,max;
 
     // Determine if the get request includes min or max values
@@ -25,8 +25,7 @@ function defaultAmount() {
     if (maxAmount) {
         max = maxAmount;
     } else {
-        // console.log(highestAmount)
-        max = highestAmount;
+        max = intHighestAmount;
     }
     // Initialize the slider
     noUiSlider.create(slider, {
@@ -36,7 +35,7 @@ function defaultAmount() {
         step: 1,
         range: {
             'min': 0,
-            'max': highestAmount
+            'max': intHighestAmount,
         }
     });
 
