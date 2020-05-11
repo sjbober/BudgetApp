@@ -6,8 +6,10 @@ function defaultValues() {
     let singleInput = document.getElementById("singledate");
     let rangeInput = document.getElementById("daterange");
     let rangeCheckbox = document.getElementById("use-range");
+    // Reminders of template variables:
     // let allDatesCheck = "{{ all_dates }}";
     // let hasReceipt = "{{ has_receipt }}";
+    // let dateRange = "{{ date_range }}";
 
     if (allDatesCheck == "" || allDatesCheck == "True") {
         console.log(allDatesCheck);
@@ -16,7 +18,8 @@ function defaultValues() {
         singleInput.disabled = true;
         rangeInput.disabled = true;
         rangeCheckbox.disabled = true;
-    }
+
+    } 
 
     if (!hasReceipt) {
         document.getElementById("id_has_receipt_0").checked = true;

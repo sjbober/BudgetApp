@@ -81,7 +81,8 @@ def expense_list(request):
             context.update({'all_dates': all_dates,
                             'min_amount': min_amount,
                             'max_amount': max_amount,
-                            'has_receipt': has_receipt})
+                            'has_receipt': has_receipt,
+                            'date_range': date_range,})
             
             # Filter queryset for keywords
             if keywords:

@@ -2,6 +2,7 @@
 
 let rangeCheckbox = document.getElementById("use-range");
 rangeCheckbox.addEventListener("change",changeDateInput);
+window.addEventListener("load",changeDateInput);
 
 function changeDateInput() {
     let singleInput = document.getElementById("singledate");
