@@ -29,7 +29,7 @@ class searchExpensesForm(forms.Form):
                                                                 'class': 'custom-control-input',
                                                                 'aria-describedby': 'useDateRange',  
                                                                     }))
-# CharField
+
     single_date = forms.DateField(required = False,widget=forms.TextInput(attrs={
 
                                                                 'id': 'singledate',

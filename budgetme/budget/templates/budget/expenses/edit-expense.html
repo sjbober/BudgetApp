@@ -1,6 +1,13 @@
 {% extends "budget/expenses/form.html" %}
 {% block staticload %}{% load static %}{% endblock %}
 
+{% block extra_styles %}
+<!-- Date picker -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+{% endblock %}
+
+
+
 <!-- Set the title tag -->
 {% block page_title %}Edit Expense{% endblock page_title %}
 
@@ -45,6 +52,18 @@
     $('[data-toggle="tooltip"]').tooltip()
   })
 </script>
+
+<!-- Outside scripts for date and date range picker -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<!-- Fuction to acivate picker -->
+<script src="{% static '/budget/scripts/activateDateCalendarsEdit.js' %}"></script>
+
+<!-- Convert date for time picker so it doesn't blow up -->
+<script src="{% static '/budget/scripts/convertDateForPicker.js' %}"></script>
+
 
 <script src="{% static '/budget/scripts/setDateToday.js' %}"></script>
 <script src="{% static '/budget/scripts/displayImagePreviewBeforeUpload.js' %}"></script>

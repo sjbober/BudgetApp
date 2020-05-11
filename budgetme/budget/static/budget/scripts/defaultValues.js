@@ -10,6 +10,7 @@ function defaultValues() {
     // let hasReceipt = "{{ has_receipt }}";
 
     if (allDatesCheck == "" || allDatesCheck == "True") {
+        console.log(allDatesCheck);
         document.getElementById("all-dates").checked = true;
 
         singleInput.disabled = true;
