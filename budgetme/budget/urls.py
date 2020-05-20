@@ -16,9 +16,11 @@ app_name = 'budget'
 urlpatterns = [
     # generic views!
     # new index url
-    path('', views.IndexView.as_view(), name='index'),
+    # path('', views.IndexView.as_view(), name='index'),
 
-    # path('expenses/', views.ExpenseListView.as_view(), name='expense_list'),
+    path('', views.login_view, name='index'),
+
+    path('logout/', views.logout_view, name='logout'),
 
     path('expenses/', views.expense_list, name='expense_list'),
 
@@ -35,8 +37,6 @@ urlpatterns = [
 
     path('expenses/recurring/<int:pk>/', views.recurring_edit, name='recurring_edit'),
     # path('expenses/recurring/<int:pk>/', views.expense_detail_recurring, name='expense_detail_recurring'),
-
-    path('expenses/read-receipt/', views.read_receipt, name='read_receipt'),
 
     path('expenses/<int:pk>/edit/', views.expense_edit, name='expense_edit'),
 

@@ -1,12 +1,31 @@
+
 from django import forms
-
-# from django.db import models
 from django.forms import ModelForm
+from django.contrib.auth.forms import AuthenticationForm # Login form
 
+# Import model classes
+from django.contrib.auth.models import User
 from .models import Expense
-from .models import TempReceipt
 from .models import Category
 from .models import RecurringExpense
+
+class LoginForm(AuthenticationForm):
+    username = forms.CharField(widget=forms.TextInput(
+        attrs={
+        'class': 'form-control', 
+        'id': 'username',
+        'aria-describedby': 'username',
+        'placeholder': 'Username', 
+        'required': 'true'
+        }))
+    password = forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'class': 'form-control',
+            'id': 'password',
+            'aria-describedby': 'password',
+            'placeholder': 'Password',
+            'required': 'true'
+        }))
 
 class searchExpensesForm(forms.Form):
     keywords = forms.CharField(required = False,widget=forms.TextInput(attrs={   
@@ -87,7 +106,7 @@ class searchExpensesForm(forms.Form):
                                                                 'aria-describedby': 'hasReceipt',
                                                                     }))
 
-class DeleteExpenseForm(forms.ModelForm):
+class DeleteExpenseForm(ModelForm):
     class Meta:
         model = Expense
         fields = []
@@ -124,7 +143,7 @@ class ExpenseForm(ModelForm):
                                                         'aria-describedby': 'description'
 
                                                         }),
-                'category': forms.Select(attrs={'class': 'form-control w-50',
+                'category': forms.Select(attrs={'class': 'form-control w-50 mr-2',
                                                 'value': 'Select One'
                                                         })
         
@@ -137,7 +156,7 @@ class RecurringExpenseForm(ModelForm):
         widgets = {
                 'day': forms.NumberInput(attrs={
                                                 'type': 'number',
-                                                'class': 'form-control w-50',
+                                                'class': 'form-control w-50 mr-2',
                                                 'aria-describedby': 'dayOfMonth' 
                                                 }),
                 'amount': forms.TextInput(attrs={
@@ -159,18 +178,13 @@ class RecurringExpenseForm(ModelForm):
                                                         'aria-describedby': 'description'
 
                                                         }),
-                'category': forms.Select(attrs={'class': 'form-control w-50',
+                'category': forms.Select(attrs={'class': 'form-control w-50 mr-2',
                                                 'value': 'Select One'
                                                         })
         
         }
 
-class DeleteRecurringExpenseForm(forms.ModelForm):
+class DeleteRecurringExpenseForm(ModelForm):
     class Meta:
         model = RecurringExpense
         fields = []
-
-class TempReceiptForm(ModelForm):
-    class Meta:
-        model = TempReceipt
-        fields = '__all__'

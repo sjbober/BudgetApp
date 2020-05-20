@@ -7,18 +7,23 @@ from django.http import HttpResponse
 from django.template import loader
 
 # Models
+# from django.contrib.auth.models import User
 from .models import Expense
 from .models import Income
 from .models import Category
-from .models import TempReceipt
 from .models import RecurringExpense
 
 from django.contrib import messages
 
+# Login authentication
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+
 # Forms to import
+from .forms import LoginForm
+from .forms import AuthenticationForm
 from .forms import ExpenseForm
 from .forms import searchExpensesForm
-# from .forms import ExpenseFilter
 from .forms import DeleteExpenseForm
 from .forms import RecurringExpenseForm
 from .forms import DeleteRecurringExpenseForm
@@ -32,16 +37,8 @@ from django.db.models import Q
 from django.shortcuts import redirect
 
 from django.urls import reverse_lazy
-# from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-# //////////////////////////////////////////
 from django.views import generic
-
-# To read images
-# import cloudmersive_ocr_api_client
-# from cloudmersive_ocr_api_client.rest import ApiException
-# from django.http import JsonResponse
-# from .forms import TempReceiptForm
 
 # Pagination
 from django.core.paginator import Paginator
@@ -49,13 +46,51 @@ from django.core.paginator import Paginator
 # Errors 
 import logging
 
-class IndexView(generic.ListView):
-    template_name = 'budget/index.html'
-    context_object_name = 'latest_expenses_list'
+# class IndexView(generic.ListView):
+#     template_name = 'budget/index.html'
+#     context_object_name = 'latest_expenses_list'
 
-    def get_queryset(self):
-        return Expense.objects.order_by('-expense_date')[:5]
+#     def get_queryset(self):
+#         return Expense.objects.order_by('-expense_date')[:5]
 
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        print(username)
+        password = request.POST['password']
+        print(password)
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('budget:expense_list')
+        else:
+            print("user does not exist")
+            messages.error(request, "Your username and/or password is incorrect.")
+    # else:
+    #     pass
+        # Return an 'invalid login' error message.
+
+    form = LoginForm()
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'budget/login.html', context)
+
+
+@login_required
+def logout_view(request):
+    logout(request)
+    form = LoginForm()
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'budget/login.html', context)
+
+
+# View spending history
+@login_required
 def expense_list(request):
     context = {}
     category_list = Category.objects.all()
@@ -181,6 +216,8 @@ def expense_list(request):
 
     return render(request, 'budget/expenses/list.html', context)
 
+# View list of monthly bills
+@login_required
 def expense_list_recurring(request):
     recurring_expenses = RecurringExpense.objects.all()
 
@@ -191,6 +228,7 @@ def expense_list_recurring(request):
     return render(request, 'budget/expenses/recurring-list.html',context)
 
 # View an existing expense
+@login_required
 def expense_detail(request, pk):
     expense = Expense.objects.get(pk = pk)
 
@@ -210,6 +248,7 @@ def expense_detail(request, pk):
     return render(request, 'budget/expenses/detail.html', context)
 
 # Edit an existing expense
+@login_required
 def expense_edit(request, pk):
     expense = Expense.objects.get(pk = pk)
 
@@ -234,6 +273,8 @@ def expense_edit(request, pk):
 
     return render(request, 'budget/expenses/edit-expense.html',context)
 
+# Edit a monthly bill
+@login_required
 def recurring_edit(request, pk):
     expense = RecurringExpense.objects.get(pk = pk)
 
@@ -248,7 +289,7 @@ def recurring_edit(request, pk):
     elif request.method == "POST":
         form = DeleteRecurringExpenseForm(request.POST, instance=expense)
         if form.is_valid():
-            messages.success(request, "A recurring expense for $%s has been successfully deleted." % expense.amount)
+            messages.success(request, "A monthly bill for $%s has been successfully deleted." % expense.amount)
             expense.delete()
             return redirect('budget:expense_list_recurring')
         else:
@@ -266,6 +307,7 @@ def recurring_edit(request, pk):
     return render(request, 'budget/expenses/edit-recurring.html',context)
 
 # Create a new expense page
+@login_required
 def expense_form_page(request):
     if request.method == "POST" and 'expense_date' in request.POST:
         form = ExpenseForm(request.POST, request.FILES)
@@ -281,7 +323,7 @@ def expense_form_page(request):
         if recurring_form.is_valid():
             recurring_expense = recurring_form.save()
             recurring_expense.save()
-            messages.success(request, "A recurring expense for ${} has been successfully created.".format(str(recurring_expense.amount)))
+            messages.success(request, "A monthly bill for ${} has been successfully created.".format(str(recurring_expense.amount)))
             return redirect('budget:expense_list_recurring')
         else:
             messages.error(request, "Your expense could not be submitted.")
@@ -297,70 +339,6 @@ def expense_form_page(request):
     }
 
     return render(request, 'budget/expenses/new-expense.html',context)
-
-# Code not working - attemt to read receipt
-def read_receipt(request):
-    # if request.method == "POST":
-    #     response = {"test": "test"}
-    #     return JsonResponse(response)
-    test = {"test": "success"}
-    # form = TempReceiptForm(request.POST, request.FILES)
-    # if form.is_valid():
-    #     img = form.save()
-    #     image_file = img.image
-        # return image_file
-    if request.method == "POST":
-        img = request.FILES.get('file')
-        newTemp = TempReceipt(image = img)
-        newTemp.save()
-    # tempRe = TempReceipt()
-    # tempRe.image = request.POST.get('file', None)
-    # tempRe.image = request.FILES["file"]
-    image_file = "C:/Users/sjbober/Documents/Projects/budget/budgetme" + newTemp.image.url
-    path = {"path": image_file}
-    return JsonResponse(path)
-    # image_file = '..\/' + newTemp.image.url
-    # pk = img.pk
-    # api_instance = cloudmersive_ocr_api_client.ImageOcrApi()
-    # image_file = request.GET.get('file', None)
-    # image_file = request.POST.get('file', None)
-    # image_file = request.POST.get("file", None)
-    # image_file = request.POST
-    # image_name = request.FILES["file"].name
-    # image_file = '../media/temp/' + image_name
-        # return JsonResponse(test)
-        # return JsonResponse(image_file)
-    response = {"error": "File not found"}
-                    # "image": image_file}
-    # return image_file
-    # image_file = tempRe.image
-    if image_file == None:
-    #     pass
-        return JsonResponse(response)
-    # image_file = request
-    # print(image_file)
-    # image_file = request
-    # return JsonResponse(test)
-
-    api_instance = cloudmersive_ocr_api_client.ImageOcrApi()
-    # return JsonResponse(test)
-   ## image_file = 'C:\\temp\\input.jpg' # file | Image file to perform OCR on.  Common file formats such as PNG, JPEG are supported.
-    # configuration = cloudmersive_ocr_api_client.Configuration()
-    api_instance.api_client.configuration.api_key = {}
-    api_instance.api_client.configuration.api_key['Apikey'] = '04d1a7be-c9d1-4d93-8ec4-e7545c2a570a'
-    # return JsonResponse(test)
-    try:
-        # Converts an uploaded image in common formats such as JPEG, PNG into text via Optical Character Recognition.
-        api_response = api_instance.image_ocr_post(image_file)
-        # return JsonResponse(test)
-        # return JsonResponse(api_response)
-        return api_response
-        # pprint(api_response)
-    except ApiException as e:
-        response = {"error": "Error calling the OCR API"}
-        return JsonResponse(response)
-        # print("Exception when calling ImageOcrApi->image_ocr_post: %s\n" % e)
-
 
 
 

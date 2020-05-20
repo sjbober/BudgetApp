@@ -1,7 +1,7 @@
 {% extends "budget/expenses/expense.html" %}
 {% load static %}
 
-{% block page_title %}Monthly Bills{% endblock page_title %}
+{% block page_title %}Repeating Bills{% endblock page_title %}
 
 {% block extra_styles %}
 <link rel="stylesheet" type="text/css" href="{% static 'budget/rec-list.css' %}">
@@ -30,8 +30,9 @@
 
     {% if recurring_expenses %}
     
-    <h2 class="imp page-title mb-3">Monthly Bills</h2>
-    <span class="mb-3">Select an expense to edit or delete it.</span>
+    <!-- <h2 class="imp page-title mb-3">Monthly Bills</h2> -->
+    <span class="title-sm mb-3">Repeating bills will automatically be added to your spending history each month.</span>
+    <!-- <span class="mb-3">Select a bill to edit or delete it.</span> -->
 
     <table class="table mb-5">
       <thead class="thead-light">
@@ -58,7 +59,9 @@
       </tbody>
     </table>
     {% else %}
-    <p class="mb-5">You don't have any recurring expenses.</p>
+    <p class="mb-3">You don't have any monthly bills right now. Select "New" to create some!</p>
+    <h3 class="imp title-sm"><i class="fas fa-question-circle"></i> What is a monthly bill?</h3>
+    <p class="">Monthly bills are any bills that you are charged the same amount for every month - rent, car payments, and insurance are great examples of monthly bills. When you create a monthly bill, we will go ahead and automatically log this bill in your spending activity every month on the day you choose.</p>
     {% endif %}
     
     

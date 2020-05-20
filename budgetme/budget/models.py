@@ -1,6 +1,5 @@
 from django.db import models
 
-# Create your models here.
 class Expense(models.Model):
     expense_date = models.DateField('Date of expense')
     # vendor = models.CharField(max_length=100,blank=True)
@@ -25,8 +24,6 @@ class RecurringExpense(models.Model):
 class Income(models.Model):
     start_date = models.DateField()
     does_repeat = models.BooleanField('Repeats monthly?',blank=True)
-    # is_ongoing = models.BooleanField('Current?',blank=True)
-    # end_date = models.DateField(blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
@@ -37,6 +34,3 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-
-class TempReceipt(models.Model):
-    image = models.ImageField(upload_to="temp/", blank=True)

@@ -33,70 +33,155 @@
       </div>
     {% endfor %}
   {% endif %}
-  <h2 class="imp page-title mb-3">Spending Activity</h2>
+  <!-- <h2 class="imp page-title mb-3">Spending Activity</h2> -->
   <div id="filters-and-list">
     <form id="filter-form" action="{% url 'budget:expense_list' %}" method="GET" class="mt-3" enctype="application/x-www-form-urlencoded"> 
       
-      <div id="search-section" class="mb-3">
-        <label for="keywords" class="imp">Keywords</label>
-        {{ form.keywords }}
-      </div>  
 
-      <div id="date-section" class="mb-3">
-        <label id="singledate-label" for="singledate" class="imp">Date</label>
-        <div id="date-check" class="custom-control custom-checkbox mb-2">
-          {{ form.all_dates}}
-          <label class="custom-control-label" for="all-dates">All dates</label>
-        </div>
-        <div class="flex align-center">
-          {{ form.single_date }}
-          {{ form.date_range }}
-          <div id="date-check" class="custom-control custom-checkbox ml-2">
-            {{ form.use_range}}
-            <label class="custom-control-label" for="use-range">Date range</label>
+      <div id="search-modal" class="flex just-center">
+        <button id="trigger-search-modal" class="btn btn-outline-primary title-med mb-2" type="button"  aria-controls="searchFilters">
+        <i class="fas fa-search"></i> Search Filters</button>
+      </div>
+      
+      <div class="custom-modal">
+        <div class="custom-modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title imp">Search Filters</h5>
+            <button id="close-modal" type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div id="search-section" class="mb-3">
+              <label for="keywords" class="imp">Description</label>
+              {{ form.keywords }}
+            </div>  
+        
+            <div id="date-section" class="mb-3">
+              <label id="singledate-label" for="singledate" class="imp">Date</label>
+              <div id="date-check" class="custom-control custom-checkbox mb-2">
+                {{ form.all_dates}}
+                <label class="custom-control-label" for="all-dates">All dates</label>
+              </div>
+              <div class="flex align-center">
+                {{ form.single_date }}
+                {{ form.date_range }}
+                <div id="date-check" class="custom-control custom-checkbox ml-2">
+                  {{ form.use_range}}
+                  <label class="custom-control-label" for="use-range">Date range</label>
+                </div>
+              </div>
+            </div>
+      
+            <div id="amount-section" class="mb-3">  
+              <p class="imp mb-3">Amount</p>  
+              <div id="slider" class="mb-2"></div> 
+              <div id="amount-labels" class="flex just-betw align-center date-modal-bod">
+                <label for="min-amount" class="">Min</label>
+                <span></span>
+                <label for="max-amount" class="">Max</label>
+              </div>
+      
+              <div id="amount-inputs" class="flex align-center just-betw date-modal-bod">
+                {{ form.min_amount }}
+                <span class="flex just-center" ><i class="fas fa-angle-right fa-lg"></i></span>
+                {{ form.max_amount }}
+              </div>
+            </div>
+      
+            <div id="category-section" class="mb-3">
+              <p class="imp mb-1">Categories</p>
+              {% for category in form.categories %}
+              <div class="custom-control custom-checkbox">
+                {{ category.tag }}
+                <label class="custom-control-label" for="{{ category.id_for_label }}">{{ category.choice_label }}</label>
+              </div>
+              {% endfor %}
+            </div>
+      
+            <div id="receipt-section" class="mb-3">
+              <p class="imp mb-1">Receipt</p>
+              {% for radio in form.has_receipt %}
+              <div class="form-check form-check-inline">
+                {{ radio.tag }}
+                <label class="form-check-label" for="{{ radio.id_for_label }}">
+                  {{ radio.choice_label}}
+                </label>
+              </div>
+              {% endfor %}
+            </div>
+              
+            <button type="submit" class="btn btn-outline-primary imp block"><i class="fas fa-search" aria-hidden="true"></i> Save Filters</button>
           </div>
         </div>
       </div>
-
-      <div id="amount-section" class="mb-3">  
-        <p class="imp mb-3">Amount</p>  
-        <div id="slider" class="mb-2"></div> 
-        <div id="amount-labels" class="flex align-center date-modal-body">
-          <label for="min-amount" class="">Min</label>
-          <span></span>
-          <label for="max-amount" class="">Max</label>
-        </div>
-
-        <div id="amount-inputs" class="flex align-center just-betw date-modal-body">
-          {{ form.min_amount }}
-          <span class="flex just-center" ><i class="fas fa-angle-right fa-lg"></i></span>
-          {{ form.max_amount }}
-        </div>
-      </div>
-
-      <div id="category-section" class="mb-3">
-        <p class="imp mb-1">Categories</p>
-        {% for category in form.categories %}
-        <div class="custom-control custom-checkbox">
-          {{ category.tag }}
-          <label class="custom-control-label" for="{{ category.id_for_label }}">{{ category.choice_label }}</label>
-        </div>
-        {% endfor %}
-      </div>
-
-      <div id="receipt-section" class="mb-3">
-        <p class="imp mb-1">Receipt</p>
-        {% for radio in form.has_receipt %}
-        <div class="form-check form-check-inline">
-          {{ radio.tag }}
-          <label class="form-check-label" for="{{ radio.id_for_label }}">
-            {{ radio.choice_label}}
-          </label>
-        </div>
-        {% endfor %}
-      </div>
       
-      <button type="submit" class="btn btn-outline-primary imp block"><i class="fas fa-search" aria-hidden="true"></i> Save Filters</button>
+
+      {% comment %}
+      <!-- <div id="searchFilters-desktop" class="mb-3">
+        <div id="search-section" class="mb-3">
+          <label for="keywords" class="imp">Description</label>
+          {{ form.keywords }}
+        </div>  
+  
+        <div id="date-section" class="mb-3">
+          <label id="singledate-label" for="singledate" class="imp">Date</label>
+          <div id="date-check" class="custom-control custom-checkbox mb-2">
+            {{ form.all_dates}}
+            <label class="custom-control-label" for="all-dates">All dates</label>
+          </div>
+          <div class="flex align-center">
+            {{ form.single_date }}
+            {{ form.date_range }}
+            <div id="date-check" class="custom-control custom-checkbox ml-2">
+              {{ form.use_range}}
+              <label class="custom-control-label" for="use-range">Date range</label>
+            </div>
+          </div>
+        </div>
+  
+        <div id="amount-section" class="mb-3">  
+          <p class="imp mb-3">Amount</p>  
+          <div id="slider" class="mb-2"></div> 
+          <div id="amount-labels" class="flex align-center date-modal-body">
+            <label for="min-amount" class="">Min</label>
+            <span></span>
+            <label for="max-amount" class="">Max</label>
+          </div>
+  
+          <div id="amount-inputs" class="flex align-center just-betw date-modal-body">
+            {{ form.min_amount }}
+            <span class="flex just-center" ><i class="fas fa-angle-right fa-lg"></i></span>
+            {{ form.max_amount }}
+          </div>
+        </div>
+  
+        <div id="category-section" class="mb-3">
+          <p class="imp mb-1">Categories</p>
+          {% for category in form.categories %}
+          <div class="custom-control custom-checkbox">
+            {{ category.tag }}
+            <label class="custom-control-label" for="{{ category.id_for_label }}">{{ category.choice_label }}</label>
+          </div>
+          {% endfor %}
+        </div>
+  
+        <div id="receipt-section" class="mb-3">
+          <p class="imp mb-1">Receipt</p>
+          {% for radio in form.has_receipt %}
+          <div class="form-check form-check-inline">
+            {{ radio.tag }}
+            <label class="form-check-label" for="{{ radio.id_for_label }}">
+              {{ radio.choice_label}}
+            </label>
+          </div>
+          {% endfor %}
+        </div>
+        
+        <button type="submit" class="btn btn-outline-primary imp block"><i class="fas fa-search" aria-hidden="true"></i> Save Filters</button>
+      </div> -->
+      {% endcomment %}
+
     </form>
   
     {% if page_obj %}
@@ -111,7 +196,7 @@
             <th scope="col" class="title-sm">Category</th>
           </tr>
         </thead>
-        <tbody class="list-grou">
+        <tbody class="">
         
           {% for record in page_obj %}
 
@@ -134,7 +219,7 @@
     </div>
   
     {% else %}
-        <p class="mt-3 ml-3 imp">No expenses found.</p>
+        <p class="mt-3 ml-3">No expenses found.</p>
     {% endif %}
   </div>
 {% endblock content%}
@@ -178,5 +263,7 @@
 <!-- Defaulting the appropriate search fields -->
 <script src="{% static '/budget/scripts/defaultValues.js' %}"></script>
 
+<!-- Activate custom modal -->
+<script src="{% static '/budget/scripts/activateCustomModal.js' %}"></script>
 
 {% endblock %}

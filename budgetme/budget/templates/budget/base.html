@@ -7,6 +7,11 @@
     <!-- Placeholder for title -->
     <title>{% block page_title %}Page Title{% endblock %}</title>
 
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'budget/favicon2/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'budget/favicon2/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'budget/favicon2/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'budget/favicon2/site.webmanifest' %}">
+
     <!-- Bootstrap CDN -->
     <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/pulse/bootstrap.min.css" rel="stylesheet" integrity="sha384-FnujoHKLiA0lyWE/5kNhcd8lfMILbUAZFAT89u11OhZI7Gt135tk3bGYVBC2xmJ5" crossorigin="anonymous">
 
@@ -25,7 +30,16 @@
   <body>
     <header>
       <nav class="navbar navbar-dark bg-primary flex just-betw align-center">
-        <a class="logo" href="#"><i class="fas fa-piggy-bank"></i> MoneyHog</a>
+        <!-- <a class="logo" href="#"><i class="fas fa-piggy-bank"></i> MoneyHog</a> -->
+        <!-- <a class="logo" href="#">
+          <img class="logo-pic mr-2" style="height:2rem;" src="{% static 'budget/logo/mh_logo.png' %}">
+        </a> -->
+
+        <div class="logo flex align-center">
+          <img class="nav-logo-pic mr-1" src="{% static 'budget/logo/logo-light.png' %}"> <span class="money">Money</span>Hog
+        </div>
+        <!-- <h1 class="flex"><img class="logo-pic mr-2" src="{% static 'budget/logo/logo.png' %}"> <span class="money">Money</span>Hog</h1> -->
+
         <ul class="navbar-list flex just-betw align-end">
             <li>
                 <button type="button" class="btn btn-outline-secondary hamb">
@@ -33,35 +47,27 @@
                 </button>
             </li>
             <li class="hide">
-                <a class="navbar-link {% block summary-active %}{% endblock summary-active %}" href="#"><i class="fas fa-chart-pie"></i> Summary {% block summary_active_sr %}{% endblock summary_active_sr %}</a>
+                <a class="navbar-link {% block summary-active %}{% endblock summary-active %}" href="#"><span class="nav-icon"><i class="fas fa-chart-pie"></i></span> Summary {% block summary_active_sr %}{% endblock summary_active_sr %}</a>
             </li>
             <li class="hide">
               <!-- navbar-active -->
               <!-- <div class="btn-group"> -->
-                <a class="navbar-link {% block expenses_active %}{% endblock expenses_active %}" href="{% url 'budget:expense_list' %}"><i class="fas fa-receipt"></i> Spending {% block expenses_active_sr %}{% endblock expenses_active_sr %}</a>
+                <a class="navbar-link {% block expenses_active %}{% endblock expenses_active %}" href="{% url 'budget:expense_list' %}"><span class="nav-icon"><i class="fas fa-receipt"></i></span> Spending {% block expenses_active_sr %}{% endblock expenses_active_sr %}</a>
               <!-- </div> -->
                 
             </li>
             <li class="hide">
-                <a class="navbar-link {% block income-active %}{% endblock income-active %}" href="#"><i class="fas fa-dollar-sign"></i> Income {% block income_active_sr %}{% endblock income_active_sr %}</a>
+                <a class="navbar-link {% block income-active %}{% endblock income-active %}" href="#"><span class="nav-icon"><i class="fas fa-dollar-sign"></i></span> Income {% block income_active_sr %}{% endblock income_active_sr %}</a>
             </li>
             <li class="hide">
-                <a class="navbar-link {% block categ-active %}{% endblock categ-active %}" href="#"><i class="fas fa-tags"></i> Categories {% block categ_active_sr %}{% endblock categ_active_sr %}</a>
+                <a class="navbar-link {% block categ-active %}{% endblock categ-active %}" href="#"><span class="nav-icon"><i class="fas fa-tags"></i></span> Categories {% block categ_active_sr %}{% endblock categ_active_sr %}</a>
             </li>
             <li class="hide">
-                <a class="navbar-link {% block account-active %}{% endblock account-active %}" href="#"><i class="fas fa-user-circle"></i> Account {% block account_active_sr %}{% endblock account_active_sr %}</a>
+                <a class="navbar-link {% block account-active %}{% endblock account-active %}" href="#"><span class="nav-icon"><i class="fas fa-user-circle"></i></span> My Account {% block account_active_sr %}{% endblock account_active_sr %}</a>
             </li>
-            <!-- <li class="hide">
-              <div class="dropdown dropleft">
-                <button class="navbar-link btn btn-link tn-secondary dropdown-toggl" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-plus"></i> New
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a class="dropdown-item" href="#">Expense</a>
-                  <a class="dropdown-item" href="#">Income</a>
-                </div>
-              </div>
-            </li> -->
-            
+            <li class="hide">
+              <a class="navbar-link" href="{% url 'budget:logout' %}"><span class="nav-icon"><i class="fas fa-door-open"></i></span> Logout</a>
+          </li>
         </ul>
       </nav>
    

@@ -13,7 +13,7 @@
 
 nav {
     /* height: 15vh; */
-    padding: 15px 20px;
+    /* padding: 10px 20px; */
 }
 
 .logo {
@@ -21,59 +21,53 @@ nav {
     /* color: lavendar; */
     color: #E6E6FA;
     /* color: #593196; */
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     font-weight: bold;
     font-family: 'Maven Pro', sans-serif;
     align-self: flex-end;
 }
 
+.money {
+    color: #EFA31D;
+}
+
+.nav-logo-pic {
+    height: 1.8rem;
+}
+
 .navbar-list {
     list-style: none;
-    /* color: white; */
     margin-bottom: 0;
     padding-left: 0;
     flex-direction: column;
-    /* padding: 10px; */
 }
 
 .navbar-link {
-    /* color: white; */
     color: #E6E6FA;
-    /* color: #593196; */
     padding: 5px 10px;
     font-size: 1.1rem;
 }
 
 .navbar-link:hover,
 .navbar-link:focus, 
-.navbar-link:hover:focus:active,
-.logo:hover,
-.logo:focus, 
-.logo:hover:focus:active {
+.navbar-link:hover:focus:active{
     color: #A991D4;
-    /* border: #A991D4; */
-    /* color: white; */
     text-decoration: none;
 } 
 
 
 .navbar-active {
-    /* background-color: white; */
     color: white;
-    /* color: #593196; */
-    /* border-radius: 5px; */
+    /* color: #EFA31D;
+    color: #f7cf89; */
     font-weight: bold;
     border-bottom: solid 2px white;
-    /* font-size: 1.2rem; */
-    /* font-weight: bolder; */
-    /* border-top: solid 2px white; */
-    /* border: solid 2px white; */
+    /* border-bottom: solid 2px #f7cf89; */
 }
 
 .navbar-active:hover,
 .navbar-active:focus, 
 .navbar-active:hover:focus:active {
-    /* color: #593196; */
     border-bottom: solid 2px #A991D4;
 } 
 
@@ -94,6 +88,11 @@ nav {
     
 }
 
+/* Nav tabs */
+.sub-nav {
+    display: none;
+}
+
 
 @media screen and (min-width: 900px) {
     .hamb {
@@ -112,6 +111,14 @@ nav {
         /* display: flex-row; */
         flex-direction: row;
         
+    }
+
+    .sub-nav {
+        display: inline-block;
+    }
+
+    .nav-icon {
+        display: none;
     }
   }
 
@@ -160,7 +167,6 @@ nav {
     }
 
 
-
 }
 
 
@@ -177,12 +183,10 @@ nav {
 
 .title-lg {
     font-size: 1.3em;
-    margin-bottom: 0;
 }
 
 .title-med {
     font-size: 1.2em;
-    margin-bottom: 0;
 }
 
 .title-sm {
@@ -247,6 +251,8 @@ tfoot,thead {
 .btn-outline-primary,
 .btn-success,
 .btn-danger,
+.btn-secondary,
+.btn-warning,
 /* .btn.btn-outline-primary, */
 .btn-info,
 .btn-outline-secondary
@@ -273,6 +279,16 @@ tfoot,thead {
     background-color: white;
 
 
+}
+
+.question {
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.05rem 0.2rem; 
+    padding: 0.06rem 0.2rem; 
+    border: 2px solid;
 }
 
 
@@ -373,12 +389,11 @@ main {
 
 
 /* hiding the document or picture uplod original button */
-/* .image-upload > input { */
-    .image-upload{
-        visibility:hidden;
-        width:0;
-        height:0
-    }
+.image-upload{
+    visibility:hidden;
+    width:0;
+    height:0
+}
 
     /*  */
 #id_expense_date {
