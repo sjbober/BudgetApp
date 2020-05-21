@@ -35,18 +35,14 @@ class searchExpensesForm(forms.Form):
                                                                 'aria-describedby': 'searchKeywords',  
                                                                     }))
 
-    all_dates = forms.BooleanField(required = False,widget=forms.CheckboxInput(attrs={  
-                                                                'id': 'all-dates',
-                                                                'type': 'checkbox',
-                                                                'class': 'custom-control-input',
-                                                                'aria-describedby': 'searchAllDates',  
-                                                                    }))
-
-    use_range = forms.BooleanField(required = False,widget=forms.CheckboxInput(attrs={  
-                                                                'id': 'use-range',
-                                                                'type': 'checkbox',
-                                                                'class': 'custom-control-input',
-                                                                'aria-describedby': 'useDateRange',  
+    DATE_CHOICES = [('All', 'All'),
+               ('single-date', 'Single'),
+               ('date-range', 'Range')]
+    date_choice = forms.ChoiceField(
+        required = False,choices=DATE_CHOICES,widget=forms.RadioSelect(attrs={  
+                                                                'type': 'radio',
+                                                                'class': 'form-check-input',
+                                                                'aria-describedby': 'date',
                                                                     }))
 
     single_date = forms.DateField(required = False,widget=forms.TextInput(attrs={

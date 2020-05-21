@@ -5,20 +5,32 @@ window.addEventListener("load", defaultValues);
 function defaultValues() {
     let singleInput = document.getElementById("singledate");
     let rangeInput = document.getElementById("daterange");
-    let rangeCheckbox = document.getElementById("use-range");
+
     // Reminders of template variables:
-    // let allDatesCheck = "{{ all_dates }}";
     // let hasReceipt = "{{ has_receipt }}";
-    // let dateRange = "{{ date_range }}";
+    // let dateChoice = "{{ date_choice }}";
 
-    if (allDatesCheck == "" || allDatesCheck == "True") {
-        document.getElementById("all-dates").checked = true;
-
+    // Activating/disabling the date picker based on the selected value of the 
+    // radio buttons, taking into account search results
+    if (dateChoice == "" || dateChoice == "All") {
+        document.getElementById("id_date_choice_0").checked = true;
         singleInput.disabled = true;
         rangeInput.disabled = true;
-        rangeCheckbox.disabled = true;
 
-    } 
+    } else if (dateChoice == "single-date") {
+        singleInput.disabled = false;
+        rangeInput.disabled = false;
+
+        rangeInput.className = "d-none";
+        singleInput.className = "form-control w-50";
+    } else if (dateChoice == "date-range") {
+        singleInput.disabled = false;
+        rangeInput.disabled = false;
+
+        singleInput.className = "d-none";
+        rangeInput.className = "form-control w-50";
+    }
+
 
     if (!hasReceipt) {
         document.getElementById("id_has_receipt_0").checked = true;

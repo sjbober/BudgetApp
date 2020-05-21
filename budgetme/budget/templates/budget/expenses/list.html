@@ -58,18 +58,21 @@
             </div>  
         
             <div id="date-section" class="mb-3">
-              <label id="singledate-label" for="singledate" class="imp">Date</label>
-              <div id="date-check" class="custom-control custom-checkbox mb-2">
-                {{ form.all_dates}}
-                <label class="custom-control-label" for="all-dates">All dates</label>
+              <p class="imp mb-1">Date</p>
+              <div class="mb-2">
+                {% for radio in form.date_choice %}
+                  <div class="form-check form-check-inline">
+                    {{ radio.tag }}
+                    <label class="form-check-label" for="{{ radio.id_for_label }}">
+                      {{ radio.choice_label}}
+                    </label>
+                  </div>
+                {% endfor %}
               </div>
-              <div class="flex align-center">
+
+              <div class="date-box flex align-center">
                 {{ form.single_date }}
                 {{ form.date_range }}
-                <div id="date-check" class="custom-control custom-checkbox ml-2">
-                  {{ form.use_range}}
-                  <label class="custom-control-label" for="use-range">Date range</label>
-                </div>
               </div>
             </div>
       
@@ -102,12 +105,12 @@
             <div id="receipt-section" class="mb-3">
               <p class="imp mb-1">Receipt</p>
               {% for radio in form.has_receipt %}
-              <div class="form-check form-check-inline">
-                {{ radio.tag }}
-                <label class="form-check-label" for="{{ radio.id_for_label }}">
-                  {{ radio.choice_label}}
-                </label>
-              </div>
+                <div class="form-check form-check-inline">
+                  {{ radio.tag }}
+                  <label class="form-check-label" for="{{ radio.id_for_label }}">
+                    {{ radio.choice_label}}
+                  </label>
+                </div>
               {% endfor %}
             </div>
               
@@ -115,73 +118,6 @@
           </div>
         </div>
       </div>
-      
-
-      {% comment %}
-      <!-- <div id="searchFilters-desktop" class="mb-3">
-        <div id="search-section" class="mb-3">
-          <label for="keywords" class="imp">Description</label>
-          {{ form.keywords }}
-        </div>  
-  
-        <div id="date-section" class="mb-3">
-          <label id="singledate-label" for="singledate" class="imp">Date</label>
-          <div id="date-check" class="custom-control custom-checkbox mb-2">
-            {{ form.all_dates}}
-            <label class="custom-control-label" for="all-dates">All dates</label>
-          </div>
-          <div class="flex align-center">
-            {{ form.single_date }}
-            {{ form.date_range }}
-            <div id="date-check" class="custom-control custom-checkbox ml-2">
-              {{ form.use_range}}
-              <label class="custom-control-label" for="use-range">Date range</label>
-            </div>
-          </div>
-        </div>
-  
-        <div id="amount-section" class="mb-3">  
-          <p class="imp mb-3">Amount</p>  
-          <div id="slider" class="mb-2"></div> 
-          <div id="amount-labels" class="flex align-center date-modal-body">
-            <label for="min-amount" class="">Min</label>
-            <span></span>
-            <label for="max-amount" class="">Max</label>
-          </div>
-  
-          <div id="amount-inputs" class="flex align-center just-betw date-modal-body">
-            {{ form.min_amount }}
-            <span class="flex just-center" ><i class="fas fa-angle-right fa-lg"></i></span>
-            {{ form.max_amount }}
-          </div>
-        </div>
-  
-        <div id="category-section" class="mb-3">
-          <p class="imp mb-1">Categories</p>
-          {% for category in form.categories %}
-          <div class="custom-control custom-checkbox">
-            {{ category.tag }}
-            <label class="custom-control-label" for="{{ category.id_for_label }}">{{ category.choice_label }}</label>
-          </div>
-          {% endfor %}
-        </div>
-  
-        <div id="receipt-section" class="mb-3">
-          <p class="imp mb-1">Receipt</p>
-          {% for radio in form.has_receipt %}
-          <div class="form-check form-check-inline">
-            {{ radio.tag }}
-            <label class="form-check-label" for="{{ radio.id_for_label }}">
-              {{ radio.choice_label}}
-            </label>
-          </div>
-          {% endfor %}
-        </div>
-        
-        <button type="submit" class="btn btn-outline-primary imp block"><i class="fas fa-search" aria-hidden="true"></i> Save Filters</button>
-      </div> -->
-      {% endcomment %}
-
     </form>
   
     {% if page_obj %}
@@ -229,12 +165,11 @@
 <!-- Declare global template variables -->
 <script type="text/javascript">
   let page_number = "{{ page_number }}";
-  let allDatesCheck = "{{ all_dates }}";
+  let dateChoice = "{{ date_choice }}";
   let minAmount = "{{ min_amount }}";
   let maxAmount = "{{ max_amount }}";
   let hasReceipt = "{{ has_receipt }}";
   let highestAmount = "{{ highest_amount }}";
-  let dateRange = "{{ date_range }}";
 </script>
 
 <!-- Makes each table row a URL -->
@@ -247,9 +182,6 @@
 
 <!-- Activate date picker calendars -->
 <script src="{% static 'budget/scripts/activateDateCalendarsSearch.js' %}"></script>
-
-<!-- On checking of the date range checkbox, toggle between single date and date range -->
-<script src="{% static '/budget/scripts/switchDateFilter.js' %}"></script>
 
 <!-- Amount range slider script from  -->
 <script src="{% static '/budget/scripts/nouislider.js' %}"></script>

@@ -1,25 +1,37 @@
-// When the user unchecks the "all dates" checkbox, the inputs and date range checkbox will be activated, and when the user re-checks the checkbox, those elements will be disbled
+// Toggling between "all", "single", and "range" radio boxes will disable/activate
+// the appropriate date picker 
 
-let allDatesCheckbox = document.getElementById("all-dates");
-allDatesCheckbox.addEventListener("change", toggleDatePicker)
+let all = document.getElementById("id_date_choice_0");
+let single = document.getElementById("id_date_choice_1");
+let range = document.getElementById("id_date_choice_2");
+
+all.addEventListener("click",toggleDatePicker);
+single.addEventListener("click",toggleDatePicker);
+range.addEventListener("click",toggleDatePicker);
 
 function toggleDatePicker() {
 
     let singleInput = document.getElementById("singledate");
     let rangeInput = document.getElementById("daterange");
-    let rangeCheckbox = document.getElementById("use-range");
 
-    if (allDatesCheckbox.checked) {
+    if (all.checked) {
         singleInput.disabled = true;
         rangeInput.disabled = true;
-        rangeCheckbox.disabled = true;
 
-    } else if ( !allDatesCheckbox.checked) {
+    } else if (single.checked) {
         singleInput.disabled = false;
         rangeInput.disabled = false;
-        rangeCheckbox.disabled = false;
 
-    } 
+        rangeInput.className = "d-none";
+        singleInput.className = "form-control w-50";
+
+    } else if (range.checked) {
+        singleInput.disabled = false;
+        rangeInput.disabled = false;
+
+        singleInput.className = "d-none";
+        rangeInput.className = "form-control w-50";
+    }
 
 }
 

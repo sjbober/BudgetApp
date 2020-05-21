@@ -96,16 +96,13 @@ def expense_list(request):
     category_list = Category.objects.all()
     expenses_list = Expense.objects.order_by('-expense_date')
     highest_amount = Expense.objects.order_by('-amount')[0].amount
-    # print(highest_amount)
 
     # If a search filter call has been made, we need to filter our expenses list and create a bounded form
     if 'keywords' in request.GET:
         form = searchExpensesForm(request.GET)
         if form.is_valid():
-            # print("form is valid")
             keywords = form.cleaned_data["keywords"]
-            all_dates = form.cleaned_data["all_dates"]
-            use_range = form.cleaned_data["use_range"]  
+            date_choice = form.cleaned_data["date_choice"] 
             single_date = form.cleaned_data["single_date"]    # 04/22/2020
             date_range = form.cleaned_data["date_range"]     # 04/22/2020 - 04/22/2020
             min_amount = form.cleaned_data["min_amount"]
@@ -113,11 +110,11 @@ def expense_list(request):
             categories = form.cleaned_data["categories"]
             has_receipt = form.cleaned_data["has_receipt"]
 
-            context.update({'all_dates': all_dates,
+            context.update({'date_choice': date_choice,
                             'min_amount': min_amount,
                             'max_amount': max_amount,
                             'has_receipt': has_receipt,
-                            'date_range': date_range,})
+                            })
             
             # Filter queryset for keywords
             if keywords:
@@ -128,12 +125,9 @@ def expense_list(request):
                 )
 
             # Filter queryset for date range or single date
-            if not all_dates and use_range: # if the user selected a date range
-                print(type(date_range))
-                # string
-                # "05/03/2020 - 05/08/2020"
-                print(date_range)
-                # change "04/22/2020 - 04/22/2020"
+            # if not all_dates and use_range: # if the user selected a date range
+            if date_choice == "date-range":
+                # change "mm/dd/yyyy - mm/dd/yyyy"
                 # into ["yyyy-mm-dd" - "yyyy-mm-dd"]
                 fdl = date_range.split(" - ")[0].split('/')
                 first_date = fdl[2] + "-" + fdl[0] + "-" + fdl[1]
@@ -143,8 +137,7 @@ def expense_list(request):
 
                 expenses_list = expenses_list.filter(expense_date__range=[first_date, second_date])
 
-                # expenses_list = Expense.objects.filter(date__range=["2011-01-01", "2011-01-31"])
-            elif not all_dates and not use_range:
+            elif date_choice == "single-date":
                 expenses_list = expenses_list.filter(expense_date=single_date).order_by('-expense_date')
 
             # Filter query set for min amount
@@ -180,7 +173,6 @@ def expense_list(request):
         
     else:
         form = searchExpensesForm(request.GET)
-        # expenses_list = Expense.objects.order_by('-expense_date')
 
     limit = 10 # record limit per page
     paginator = Paginator(expenses_list, limit)
