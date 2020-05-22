@@ -46,19 +46,10 @@ from django.core.paginator import Paginator
 # Errors 
 import logging
 
-# class IndexView(generic.ListView):
-#     template_name = 'budget/index.html'
-#     context_object_name = 'latest_expenses_list'
-
-#     def get_queryset(self):
-#         return Expense.objects.order_by('-expense_date')[:5]
-
 def login_view(request):
     if request.method == "POST":
         username = request.POST['username']
-        print(username)
         password = request.POST['password']
-        print(password)
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)

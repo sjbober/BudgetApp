@@ -49,7 +49,7 @@ class searchExpensesForm(forms.Form):
 
                                                                 'id': 'singledate',
                                                                 'type': 'text',
-                                                                'class': 'form-control w-50',
+                                                                'class': 'form-control w-75',
                                                                 'aria-describedby': 'singleDate',  
                                                                     }))
 
@@ -57,7 +57,7 @@ class searchExpensesForm(forms.Form):
 
                                                                 'id': 'daterange',
                                                                 'type': 'text',
-                                                                'class': 'form-control w-50 d-none',
+                                                                'class': 'form-control w-75 d-none',
                                                                 'aria-describedby': 'dateRange',  
                                                                     }))
 

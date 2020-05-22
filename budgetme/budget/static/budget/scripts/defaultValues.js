@@ -12,6 +12,7 @@ function defaultValues() {
 
     // Activating/disabling the date picker based on the selected value of the 
     // radio buttons, taking into account search results
+    // console.log(dateChoice);
     if (dateChoice == "" || dateChoice == "All") {
         document.getElementById("id_date_choice_0").checked = true;
         singleInput.disabled = true;
@@ -23,6 +24,7 @@ function defaultValues() {
 
         rangeInput.className = "d-none";
         singleInput.className = "form-control w-50";
+
     } else if (dateChoice == "date-range") {
         singleInput.disabled = false;
         rangeInput.disabled = false;
