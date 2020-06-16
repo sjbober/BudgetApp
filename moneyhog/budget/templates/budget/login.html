@@ -1,0 +1,79 @@
+{% block staticload %}{% load static %}{% endblock %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Placeholder for title -->
+    <title>Login to MoneyHog</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'budget/favicon_io/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'budget/favicon_io/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'budget/favicon_io/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'budget/favicon_io/site.webmanifest' %}">
+
+    <!-- Bootstrap CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/pulse/bootstrap.min.css" rel="stylesheet" integrity="sha384-FnujoHKLiA0lyWE/5kNhcd8lfMILbUAZFAT89u11OhZI7Gt135tk3bGYVBC2xmJ5" crossorigin="anonymous">
+
+    <!-- Font Awesome CDN -->
+    <script src="https://kit.fontawesome.com/bff70a1c12.js" crossorigin="anonymous"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@900&display=swap" rel="stylesheet"> 
+
+    <!-- Stylesheets  -->
+    <link rel="stylesheet" type="text/css" href="{% static 'budget/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'budget/index.css' %}">
+    
+  </head>
+  <body class="flex just-center">
+    <div class="login">
+        <div class="flex align-center just-center logos">
+            <h1 class="flex"><img class="logo-pic mr-2" src="{% static 'budget/logo/logo.png' %}"> <span class="money">Money</span>Hog</h1>
+        </div>
+        <!-- <p class="">Be in control of your spending. Keep track of your spending, set budgets for yourself.</p> -->
+        
+        <!-- Messages -->
+        {% if messages %}
+          {% for message in messages %}
+            {% if message.tags == "error" %}
+            <div class="alert alert-danger" role="alert">
+            {% else %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+            {% endif %}
+            {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <form id="" action="{% url 'budget:index' %}" method="POST" class="inline-form" enctype="application/x-www-form-urlencoded"> 
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="{{form.username.id_for_label}}" class="title-sm">Username</label>
+              {% comment %}
+              <input type="" class="form-control" id="email" aria-describedby="email" placeholder="Email">
+              {% endcomment %}
+              {{ form.username }}
+            </div>
+            <div class="form-group flex flex-col">
+              <label for="{{form.password.id_for_label}}" class="title-sm">Password</label>
+              {{ form.password }}
+              {% comment %}
+              <!-- <input type="password" class="form-control" id="password" placeholder="Password"> -->
+              {% endcomment %}
+              <a id="forgot-pw" href="#" class="title-sm">Forgot password?</a>
+            </div>
+            <div class="flex flex-col">
+                <button type="submit" class="btn btn-primary mb-5 imp title-med">LOGIN</button>
+                <div class="flex align-center just-center">
+                    <p class="mb-0 mr-3 title-sm">No Account? </p>
+                    <a href="#" class="btn btn-warning imp title-sm" > Sign up</a>
+              </div>
+            </div>
+              
+        </form>
+        
+    </div>
+
+  </body>
+</html>

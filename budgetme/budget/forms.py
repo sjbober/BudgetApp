@@ -110,7 +110,8 @@ class DeleteExpenseForm(ModelForm):
 class ExpenseForm(ModelForm):
     class Meta:
         model = Expense
-        fields = '__all__'
+        # fields = '__all__'
+        fields = ['expense_date','amount','description','category']
         widgets = {
                 'expense_date': forms.TextInput(attrs={
                                                         'id': 'datepicker',
@@ -118,8 +119,7 @@ class ExpenseForm(ModelForm):
                                                         'class': 'form-control w-50',
                                                         'aria-describedby': 'dateofExpense',
                                                         'required': 'true'  
-                                                        }),
-                                                        
+                                                        }),                                          
                 'amount': forms.TextInput(attrs={
                                                 'type': 'number',
                                                 'class': 'form-control w-50',
@@ -127,11 +127,6 @@ class ExpenseForm(ModelForm):
                                                 'min': '0',
                                                 'step': '0.01',
                                                 'required': 'true'
-                                                }),
-                'vendor': forms.TextInput(attrs={
-                                                'type': 'text',
-                                                'class': 'form-control w-50',
-                                                'aria-describedby': 'vendor'
                                                 }),
                 'description': forms.TextInput(attrs={
                                                         'type': 'text',
@@ -148,7 +143,8 @@ class ExpenseForm(ModelForm):
 class RecurringExpenseForm(ModelForm):
     class Meta:
         model = RecurringExpense
-        fields = '__all__'
+        # fields = '__all__'
+        fields = ['day','amount','description','category']
         widgets = {
                 'day': forms.NumberInput(attrs={
                                                 'type': 'number',
@@ -162,11 +158,6 @@ class RecurringExpenseForm(ModelForm):
                                                 'min': '0',
                                                 'step': '0.01',
                                                 'required': 'true'
-                                                }),
-                'vendor': forms.TextInput(attrs={
-                                                'type': 'text',
-                                                'class': 'form-control w-50',
-                                                'aria-describedby': 'vendor'
                                                 }),
                 'description': forms.TextInput(attrs={
                                                         'type': 'text',

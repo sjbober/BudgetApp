@@ -1,0 +1,156 @@
+{% extends "budget/expenses/expense.html" %}
+
+<!-- Set the title tag -->
+{% block page_title %}{% endblock page_title %}
+
+<!-- Set the class of the main tag -->
+{% block main_class %} class="narrow-content"{% endblock %}
+
+<!-- Add page content -->
+{% block content %}
+
+<!-- Messages -->
+{% if messages %}
+  {% for message in messages %}
+    {% if message.tags == "error" %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {% else %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    {% endif %}
+    {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<div class="flex just-betw mt-2 mb-4">
+    <h1 class="imp page-title mb-0">{% block h1 %}{% endblock h1 %}</h1>
+    {% block extra_button%}{% endblock extra_button%}
+</div>
+
+<!-- Add placeholder to place type checkbox for new expense page -->
+{% block toggle_type %}{% endblock toggle_type%}
+
+<!-- One-time expense form -->
+<form id="one-time" action="{% block one-form-action %}{% endblock %}" method="POST" class="{% block one-form-class %}{% endblock %}" enctype="multipart/form-data"> 
+    {% csrf_token %}
+
+    <div class="form-group mb-3 row">
+      <label for="{{ form.expense_date.id_for_label }}" class="col-sm-4 col-form-label imp">Date</label>
+      <div class="col-md-8 flex">
+        {{ form.expense_date }}
+        <button id="today" type="button" class="btn btn-link">Today</button>
+      </div> 
+    </div>
+
+    <div class="form-group mb-3 row">
+        <label for="{{forms.amount.id_for_label}}" class="col-sm-4 col-form-label imp">Amount</label>
+        <div class="col-md-8">
+          {{ form.amount }}
+        </div>
+    </div>
+
+    <div class="form-group mb-2 row">
+        <label for="{{ form.category.id_for_label }}" class="col-sm-4 col-form-label"><span class="imp">Category</span> <small>(optional)</small></label>
+        <div class="col-md-8 flex align-center mb-2">
+          {{ form.category }}
+          <button class="btn btn-outline-primary question" type="button" data-toggle="collapse" data-target="#categoryDescription1" aria-expanded="false" aria-controls="categoryDescription">
+            <i class="fas fa-question fa-sm"></i>
+          </button>
+        </div>
+        <div class="col-md-12 collapse mb-2" id="categoryDescription1">
+          <div class="card card-body">
+            <h3 class="imp title-sm"><i class="fas fa-question-circle"></i> What is a category?</h3>
+            <p class="">Categories are labels you can use to group spending habits or committments. For example, maybe you want to see how much you spend eating out versus how much you spend on groceries. We will create monthly dashboards that compare how much you spend in each category, and you can also set budgets for each category to track your spending goals.</p>
+          </div>
+        </div>
+    </div>
+
+    <div class="form-group mb-3 row">
+        <label for="{{ form.description.id_for_label}}" class="col-sm-4 col-form-label"><span class="imp">Description</span> <small>(optional)</small></label>
+        <div class="col-md-8">
+          {{ form.description }}
+        </div>           
+    </div>
+
+    <div class="form-group mb-2 row">
+      <label for="receipt" class="col-sm-4 col-form-label"><span class="imp">Receipt</span> <small>(optional)</small></label>
+      <div class="col-md-8 flex just-start">
+          <label id="" class="flex w-100" for="receipt">
+          <div class="btn btn-outline-primary w-100 imp"><i class="fas fa-camera fa-lg"></i> Choose file or photo</div>
+          <input id="receipt" type="file" accept="image/*" capture=environment class="image-upload" name="receipt"/>
+          </label>
+
+      </div>
+    </div>
+
+    <div id="receipt-file" class="flex just-center mb-4">
+        {% block existing_receipt %}
+        {% endblock existing_receipt %}
+    </div>
+
+    <button type="submit" class="btn btn-primary block imp title-med">{% block button-name %}{% endblock %}</button>
+
+</form>
+
+<!-- Recurring expense form -->
+<form id="recurring" action="{% block recur-form-action %}{% endblock %}" method="POST" class="{% block recur-form-class %}{% endblock %}" enctype="application/x-www-form-urlencoded"> 
+  {% csrf_token %}
+
+  <div class="form-group mb-2 row">
+    <label for="{{ recurring_form.day.id_for_label }}" class="col-sm-4 col-form-label imp">Day</label>
+    <div class="col-md-8 flex align-center mb-2">
+      {{ recurring_form.day }}
+      <button class="btn btn-outline-primary question" type="button" data-toggle="collapse" data-target="#dayDescription" aria-expanded="false" aria-controls="categoryDescription">
+        <i class="fas fa-question fa-sm"></i>
+      </button>
+    </div>
+    <div class="col-md-12 collapse mb-2" id="dayDescription">
+      <div class="card card-body">
+        <h3 class="imp title-sm"><i class="fas fa-question-circle"></i> What does the day field mean?</h3>
+        <p class="">This number represents the day that you pay this bill every month. For example, if you pay your rent bill on the 3rd of every month, enter 3 in this field. Repeating bills will be automatically added to your spending history on this day each month.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group mb-3 row">
+      <label for="{{recurring_form.amount.id_for_label}}" class="col-sm-4 col-form-label imp">Amount</label>
+      <div class="col-md-8">
+        {{ recurring_form.amount }}
+      </div>
+  </div>
+
+  <div class="form-group mb-2 row">
+      <label for="{{ recurring_form.category.id_for_label }}" class="col-sm-4 col-form-label"><span class="imp">Category</span> <small>(optional)</small></label>
+      <div class="col-md-8 flex align-center mb-2">
+        {{ recurring_form.category }}
+        <button class="btn btn-outline-primary question" type="button" data-toggle="collapse" data-target="#categoryDescription2" aria-expanded="false" aria-controls="categoryDescription">
+          <i class="fas fa-question fa-sm"></i>
+        </button>
+      </div>
+      <div class="col-md-12 collapse mb-2" id="categoryDescription2">
+        <div class="card card-body">
+          <h3 class="imp title-sm"><i class="fas fa-question-circle"></i> What is a category?</h3>
+          <p class="">Categories are labels you can use to group spending habits or committments. For example, maybe you want to see how much you spend eating out versus how much you spend on groceries. We will create monthly dashboards that compare how much you spend in each category, and you can also set budgets for each category to track your spending goals.</p>
+        </div>
+      </div>
+  </div>
+
+  <div class="form-group mb-3 row">
+      <label for="{{ recurring_form.description.id_for_label}}" class="col-sm-4 col-form-label"><span class="imp">Description</span> <small>(optional)</small></label>
+      <div class="col-md-8">
+        {{ recurring_form.description }}
+      </div>           
+  </div>
+
+  <button type="submit" class="btn btn-primary block imp title-med">{% block recur-button-name %}{% endblock %}</button>
+
+</form>
+
+
+{% endblock content %}
+
+
+

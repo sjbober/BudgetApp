@@ -1,0 +1,99 @@
+{% block staticload %}{% load static %}{% endblock %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Placeholder for title -->
+    <title>{% block page_title %}Page Title{% endblock %}</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'budget/favicon2/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'budget/favicon2/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'budget/favicon2/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'budget/favicon2/site.webmanifest' %}">
+
+    <!-- Bootstrap CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/pulse/bootstrap.min.css" rel="stylesheet" integrity="sha384-FnujoHKLiA0lyWE/5kNhcd8lfMILbUAZFAT89u11OhZI7Gt135tk3bGYVBC2xmJ5" crossorigin="anonymous">
+
+    <!-- Font Awesome CDN -->
+    <script src="https://kit.fontawesome.com/bff70a1c12.js" crossorigin="anonymous"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@900&display=swap" rel="stylesheet"> 
+
+    <!-- Stylesheets  -->
+    <link rel="stylesheet" type="text/css" href="{% static 'budget/main.css' %}">
+
+    {% block extra_styles %}{% endblock %}
+    
+  </head>
+  <body>
+    <header>
+      <nav class="navbar navbar-dark bg-primary flex just-betw align-center">
+        <!-- <a class="logo" href="#"><i class="fas fa-piggy-bank"></i> MoneyHog</a> -->
+        <!-- <a class="logo" href="#">
+          <img class="logo-pic mr-2" style="height:2rem;" src="{% static 'budget/logo/mh_logo.png' %}">
+        </a> -->
+
+        <div class="logo flex align-center">
+          <img class="nav-logo-pic mr-1" src="{% static 'budget/logo/logo-light.png' %}"> <span class="money">Money</span>Hog
+        </div>
+        <!-- <h1 class="flex"><img class="logo-pic mr-2" src="{% static 'budget/logo/logo.png' %}"> <span class="money">Money</span>Hog</h1> -->
+
+        <ul class="navbar-list flex just-betw align-end">
+            <li>
+                <button type="button" class="btn btn-outline-secondary hamb">
+                <i class="fa fa-bars fa-lg"></i>
+                </button>
+            </li>
+            <li class="hide">
+                <a class="navbar-link {% block summary-active %}{% endblock summary-active %}" href="#"><span class="nav-icon"><i class="fas fa-chart-pie"></i></span> Summary {% block summary_active_sr %}{% endblock summary_active_sr %}</a>
+            </li>
+            <li class="hide">
+              <!-- navbar-active -->
+              <!-- <div class="btn-group"> -->
+                <a class="navbar-link {% block expenses_active %}{% endblock expenses_active %}" href="{% url 'budget:expense_list' %}"><span class="nav-icon"><i class="fas fa-receipt"></i></span> Spending {% block expenses_active_sr %}{% endblock expenses_active_sr %}</a>
+              <!-- </div> -->
+                
+            </li>
+            <li class="hide">
+                <a class="navbar-link {% block income-active %}{% endblock income-active %}" href="#"><span class="nav-icon"><i class="fas fa-dollar-sign"></i></span> Income {% block income_active_sr %}{% endblock income_active_sr %}</a>
+            </li>
+            <li class="hide">
+                <a class="navbar-link {% block categ-active %}{% endblock categ-active %}" href="#"><span class="nav-icon"><i class="fas fa-tags"></i></span> Categories {% block categ_active_sr %}{% endblock categ_active_sr %}</a>
+            </li>
+            <li class="hide">
+                <a class="navbar-link {% block account-active %}{% endblock account-active %}" href="#"><span class="nav-icon"><i class="fas fa-user-circle"></i></span> My Account {% block account_active_sr %}{% endblock account_active_sr %}</a>
+            </li>
+            <li class="hide">
+              <a class="navbar-link" href="{% url 'budget:logout' %}"><span class="nav-icon"><i class="fas fa-door-open"></i></span> Logout</a>
+          </li>
+        </ul>
+      </nav>
+   
+    </header>
+    <main class="wide-content">
+        <!-- Placeholder for subheader -->
+        {% block page-header %}
+        {% endblock %}
+        <div {% block main_class %}{% endblock %}>
+          <!-- Placeholder for actual content -->
+          {% block content %}
+          {% endblock %}
+        </div>
+        
+    </main>
+
+    <!-- Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <!-- Nav Bar -->
+    <script src="{% static '/budget/scripts/responsiveNav.js' %}"></script>
+    
+    <!-- Placeholder for extra scripts -->
+    {% block my_scripts %}{% endblock %}
+
+  </body>
+</html>

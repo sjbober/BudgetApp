@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render
-
+from django.shortcuts import redirect
 
 # will remove HttpResponse once we convert all of the stubs
 from django.http import Http404
@@ -37,8 +37,6 @@ from django.db.models import Q
 from django.shortcuts import redirect
 
 from django.urls import reverse_lazy
-
-from django.views import generic
 
 # Pagination
 from django.core.paginator import Paginator
@@ -84,9 +82,15 @@ def logout_view(request):
 @login_required
 def expense_list(request):
     context = {}
-    category_list = Category.objects.all()
-    expenses_list = Expense.objects.order_by('-expense_date')
-    highest_amount = Expense.objects.order_by('-amount')[0].amount
+    # category_list = Category.objects.all()
+    # category_list = Category.objects.filter(user__exact=request.user.id)
+    category_list = []
+    expenses_list = Expense.objects.filter(user__exact=request.user.id).order_by('-expense_date')
+    # expenses_list = Expense.objects.order_by('-expense_date')
+    if expenses_list:
+        highest_amount = Expense.objects.order_by('-amount')[0].amount
+    else:
+        highest_amount = 1000
 
     # If a search filter call has been made, we need to filter our expenses list and create a bounded form
     if 'keywords' in request.GET:
@@ -160,7 +164,9 @@ def expense_list(request):
                 expenses_list = expenses_list.exclude(receipt__exact='')
             elif has_receipt == "no-receipt":
                 expenses_list = expenses_list.filter(receipt__exact='')
-
+        else:
+            pass
+            '''Need to put something here...'''
         
     else:
         form = searchExpensesForm(request.GET)
@@ -202,7 +208,8 @@ def expense_list(request):
 # View list of monthly bills
 @login_required
 def expense_list_recurring(request):
-    recurring_expenses = RecurringExpense.objects.all()
+    # recurring_expenses = RecurringExpense.objects.all()
+    recurring_expenses = RecurringExpense.objects.filter(user__exact=request.user.id)
 
     context = {
         'recurring_expenses': recurring_expenses,
@@ -213,7 +220,7 @@ def expense_list_recurring(request):
 # View an existing expense
 @login_required
 def expense_detail(request, pk):
-    expense = Expense.objects.get(pk = pk)
+    expense = get_object_or_404(Expense, pk=pk)
 
     if request.method == "POST":
         form = DeleteExpenseForm(request.POST, instance=expense)
@@ -233,7 +240,7 @@ def expense_detail(request, pk):
 # Edit an existing expense
 @login_required
 def expense_edit(request, pk):
-    expense = Expense.objects.get(pk = pk)
+    expense = get_object_or_404(Expense, pk=pk)
 
     if request.method == "POST":
         form = ExpenseForm(request.POST, request.FILES, instance=expense)
@@ -247,7 +254,9 @@ def expense_edit(request, pk):
     else:
         form = ExpenseForm(instance=expense)
 
-    category_list = Category.objects.all()
+    # category_list = Category.objects.all()
+    # category_list = Category.objects.filter(user__exact=request.user.id)
+    category_list = []
     context = {
         'category_list' : category_list,
         'form' : form,
@@ -259,7 +268,7 @@ def expense_edit(request, pk):
 # Edit a monthly bill
 @login_required
 def recurring_edit(request, pk):
-    expense = RecurringExpense.objects.get(pk = pk)
+    expense = get_object_or_404(RecurringExpense, pk=pk)
 
     if request.method == "POST" and 'day' in request.POST:
         recurring_form = RecurringExpenseForm(request.POST, instance=expense)
@@ -280,7 +289,9 @@ def recurring_edit(request, pk):
     else:
         recurring_form = RecurringExpenseForm(instance=expense)
 
-    category_list = Category.objects.all()
+    # category_list = Category.objects.all()
+    # category_list = Category.objects.filter(user__exact=request.user.id)
+    category_list = []
     context = {
         'category_list' : category_list,
         'recurring_form' : recurring_form,
@@ -295,7 +306,9 @@ def expense_form_page(request):
     if request.method == "POST" and 'expense_date' in request.POST:
         form = ExpenseForm(request.POST, request.FILES)
         if form.is_valid():
-            expense = form.save()
+            expense = form.save(commit=False)
+            expense.user = request.user
+            expense.save()
             messages.success(request, "Expense #{} has been successfully created.".format(str(expense.pk)))
             return redirect('budget:expense_detail', pk=expense.pk)
         else:
@@ -304,7 +317,8 @@ def expense_form_page(request):
     elif request.method == "POST" and 'day' in request.POST:
         recurring_form = RecurringExpenseForm(request.POST)
         if recurring_form.is_valid():
-            recurring_expense = recurring_form.save()
+            recurring_expense = recurring_form.save(commit=False)
+            recurring_expense.user = request.user
             recurring_expense.save()
             messages.success(request, "A monthly bill for ${} has been successfully created.".format(str(recurring_expense.amount)))
             return redirect('budget:expense_list_recurring')
@@ -312,9 +326,12 @@ def expense_form_page(request):
             messages.error(request, "Your expense could not be submitted.")
     else:
         form = ExpenseForm()
+        print(form)
         recurring_form = RecurringExpenseForm()
 
-    category_list = Category.objects.all()
+    # category_list = Category.objects.all()
+    # category_list = Category.objects.filter(user__exact=request.user.id)
+    category_list = []
     context = {
         'category_list' : category_list,
         'form' : form,
@@ -330,19 +347,14 @@ def expense_form_page(request):
 # ///////////////////////////////////////
 
 
-class IncomeDetailView(generic.DetailView):
-    model = Income
-    template_name = 'budget/income/detail.html'
-
-
-def income_list(request):
-    return HttpResponse("You are viewing your list of incomes")
+# def income_list(request):
+#     return HttpResponse("You are viewing your list of incomes")
 
 # def income_detail(request, income_id):
 #     return HttpResponse("You are viewing %s income detail page" % income_id)
 
-def categories(request):
-    return HttpResponse("You are viewing the categories page")
+# def categories(request):
+#     return HttpResponse("You are viewing the categories page")
 
-def category_detail(request, category_id):
-    return HttpResponse("You are viewing %s category detail page" % category_id)
+# def category_detail(request, category_id):
+#     return HttpResponse("You are viewing %s category detail page" % category_id)

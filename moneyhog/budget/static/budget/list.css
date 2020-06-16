@@ -1,0 +1,102 @@
+
+/*  */
+#slider {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Input sizes for min and max amount search fields */
+#min-amount,
+#max-amount {
+    width: 35%;
+}
+
+/* Modal styling */
+.custom-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1050;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.1);
+    transition: visibility 0s linear .25s, opacity .25s 0s, transform .25s;
+}
+
+.custom-show-modal {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1.0);
+    transition: visibility 0s linear 0s, opacity 0.25s 0s, transform .25s;
+}
+
+.custom-modal-content {
+    background-color: #fff;
+    margin: 2% auto; 
+    /* padding: 5px 10px;
+    padding-bottom: 10px; */
+    border: 1px solid rgba(0,0,0,0.2);
+    width: 95%; 
+}
+
+/*  ======================================
+    Styling for Desktop
+    ======================================  */
+    
+    @media screen and (min-width: 800px) {
+        #filters-and-list {
+            display: flex;
+            
+        }
+
+        #filter-form {
+            width: 40%;
+            padding-right: 20px;
+            border-right: 1px solid #DCDCDC;
+        }
+        .table-responsive {
+            padding-left: 20px;
+        }
+
+        /* Remove modal for desktop and hide modal button */
+        #search-modal {
+            display: none;
+        }
+
+        .custom-modal {
+            position: static;
+            margin-top: 5px;
+            /* top: 0; */
+            /* left: 0; */
+            /* z-index: -1;  */
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: transparent;  /*  */
+            opacity: 1;            /*  */
+            visibility: visible;  /*  */
+            /*  */
+            /* z-index: -1;
+            opacity: 1; */
+
+        }
+        .custom-modal-content {
+            background-color: #fff;
+            margin: 0;                  /*  */
+            /* margin-top: 5px; */
+            border: none;                /*  */
+            width: 100%; 
+            height: 100%;
+        }
+
+        .modal-header {
+            display: none;
+        }
+
+
+
+    }
