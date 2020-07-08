@@ -253,7 +253,6 @@ tfoot,thead {
 .btn-danger,
 .btn-secondary,
 .btn-warning,
-/* .btn.btn-outline-primary, */
 .btn-info,
 .btn-outline-secondary
 /* .btn */
@@ -261,6 +260,12 @@ tfoot,thead {
  {
     /* box-shadow:  */
     box-shadow: 0px 0px 2px #888888;
+    border-radius: 5px;
+}
+
+.btn-outline-danger {
+    border: none;
+    box-shadow: none;
     border-radius: 5px;
 }
 

@@ -1,0 +1,135 @@
+{% extends "budget/category/category.html" %}
+{% load static %}
+
+{% block page_title %}Categories{% endblock page_title %}
+
+{% block extra_styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'budget/styles/category/list.css' %}">
+{% endblock extra_styles %}
+
+<!-- Set the class of the main tag -->
+{% block main_class %} class="narrow-content"{% endblock %}
+
+{% block content %}
+
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == "error" %}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      {% else %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+      {% endif %}
+      {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Set the h1 tag  -->
+  <div class="flex just-betw mt-2 mb-4">
+    <h1 class="imp page-title mb-0">{% block h1 %}Categories{% endblock h1 %}</h1>
+    {% block extra_button%}
+    <button id="add-category-btn" type="button" class="btn btn-primary imp title-med ml-2" data-toggle="modal" data-target="#addCategory"><i class="fas fa-plus"></i> New</button>
+
+    <div id="addCategory" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="title-xl imp"><i class="fas fa-tags"></i> New Category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body flex just-center">
+                    <form id="cat-form" action="{% url 'budget:create_category' %}" method="POST" class="flex flex-col"  enctype="application/x-www-form-urlencoded">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="imp sr-only" for="{{ form.name.id_for_label }}">Category Name</label>
+                            <input type="text" class="form-control" id="categoryName" aria-describedby="" placeholder="Enter a category">
+                          </div>
+                        <div class="modal-footer flex just-around">
+                            <button type="submit" class="btn btn-primary title-med imp ">
+                            Save Category
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock extra_button%}
+
+
+    </div>
+
+    <ul id="category-list" class="list-group">
+        {% if category_list %}
+        {% for category in category_list reversed %}
+        <li class="list-group-item flex align-center just-betw">
+            <div class="flex align-center">
+                <button type="button" class="btn btn-outline-primary title-med mr-3 imp"><i class="fas fa-pen"></i> <span class="button-words">Edit</span></button>
+                <span class="title-xl">{{ category.name }}</span>
+            </div>
+            
+            <button type="button" class="btn btn-outline-danger title-sm imp" data-toggle="modal" data-target="#delete{{category.name }}"><i class="fas fa-trash-alt"></i> <span class="button-words">Delete</span></button>
+
+            <!-- Add delete button -->
+            {% block extra_b %}
+
+            <div id="delete{{category.name}}" class="modal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="title-xl imp">Delete Category</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body flex just-center">
+                            <p class="title-xl">Are you sure you want to delete your {{ category.name }} category?</p>
+                        </div>
+                        <div class="modal-footer flex just-around">
+                            <form action="#" method="POST" class="inline-form" enctype="application/x-www-form-urlencoded"> 
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger imp">Yes, delete it</button>
+                            </form>
+                            <button type="button" class="btn btn-primary imp" data-dismiss="modal">No, cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endblock extra_b%}
+            
+
+
+        </li>
+        {% endfor %}
+
+    {% else %}
+        <p class="text-center title-med mb-3">You don't have any categories right now. Click the "New" button to create some!</p>
+        <h3 class="imp title-sm"><i class="fas fa-question-circle"></i> What is a category?</h3>
+        <p class="">Categories are ways for you to organize your spending to see where most of your money is going. Rent/Mortgage, Groceries, Eating Out, Electric Bill and Phone are some examples of categories you might create to track your spending.</p>
+   
+    {% endif %}
+</ul>
+
+
+{% endblock content%}
+
+
+
+{% block my_scripts %}
+
+<!-- Declare global template variables -->
+<script type="text/javascript">
+//   let page_number = "{{ page_number }}";
+</script>
+
+<!-- Add a category form field -->
+<script src="{% static '/budget/scripts/category/addCategory.js' %}"></script>
+
+
+
+{% endblock %}

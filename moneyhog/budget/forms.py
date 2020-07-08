@@ -27,7 +27,9 @@ class LoginForm(AuthenticationForm):
             'required': 'true'
         }))
 
-class searchExpensesForm(forms.Form):
+class SearchExpensesForm(forms.Form):
+
+    # def __init__(self,request):
 
     # def get_form_kwargs(self):
     #     kwargs = super().get_form_kwargs()
@@ -97,8 +99,8 @@ class searchExpensesForm(forms.Form):
     
 
     CATEG_CHOICES = []
-    # category_list = Category.objects.all()
-    category_list = Category.objects.filter(user__exact=request.user)
+    category_list = Category.objects.all()
+    # category_list = Category.objects.filter(user__exact=request.user)
     for category in category_list:
         CATEG_CHOICES.append((category.name, category.name))
 
@@ -125,6 +127,16 @@ class DeleteExpenseForm(ModelForm):
         fields = []
 
 class ExpenseForm(ModelForm):
+
+    # def __init__(self,user, *args, **kwargs):
+    #     super(NewTicket, self).__init__(*args, **kwargs)
+    #     try:
+    #         client_id = UserExtend.objects.values_list('client_id', flat=True).get(user=user)
+    #         self.fields['business'].queryset=Business.objects.filter(client__id=client_id)
+    #     except UserExtend.DoesNotExist:
+    #         ### there is not userextend corresponding to this user, do what you want 
+    #         pass
+
     class Meta:
         model = Expense
         # fields = '__all__'
@@ -192,3 +204,19 @@ class DeleteRecurringExpenseForm(ModelForm):
     class Meta:
         model = RecurringExpense
         fields = []
+
+class CreateCategoryForm(ModelForm):
+    class Meta:
+        model = Category
+        # fields = []
+        exclude = ['user']
+#         fields = ['name']
+#         widgets = {
+#                 'name': forms.TextInput(attrs={
+#                                             'id': 'categoryName',
+#                                             'type': 'text',
+#                                             'class': 'form-control mr-3',
+#                                             'aria-describedby': 'categoryName',
+#                                             'required': 'true'  
+#                                             })
+#         }

@@ -1,0 +1,75 @@
+
+.list-group-item {
+    background-color: #E6E6FA;
+    /* background-color: white; */
+    color: black;
+}
+
+.list-group-item:hover,
+.list-group-item:focus,
+.list-group-item:hover:focus:active {
+    color: black;
+}
+
+.btn-outline-primary {
+    border: none;
+    box-shadow: none;
+    border-radius: 5px;
+}
+
+
+/* Draft category */
+/* .draft {
+    padding: 0.75rem 1.25rem;
+
+} */
+
+#form-row {
+    padding: 0.75rem 1.25rem;
+}
+
+.form-control {
+    font-size: 1.1rem;
+    line-height: 1.1;
+
+}
+
+#label {
+    margin-bottom: none;
+}
+
+
+/* Cancel icon */
+#form-row {
+    position: relative;
+    /* border: 1px solid purple; */
+    /* width: 100%; */
+    box-shadow: 0px 0px 5px #888888;
+}
+
+.cancel-butn {
+    position: absolute;
+    right: -10px;
+    top: -8px;
+    border-radius: 100%;
+    padding: 0px;
+    border: none;
+    background-color: white;
+
+
+}
+
+
+/*  ======================================
+    Styling for Desktop
+    ======================================  */
+    
+    @media screen and (max-width: 800px) {
+        .button-words {
+            display:none;
+
+        }
+
+
+    }
+
