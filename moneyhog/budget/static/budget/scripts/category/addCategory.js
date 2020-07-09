@@ -78,7 +78,17 @@ function saveCategory() {
         return response.json();
     }).then(function(data) {
         console.log("Data is ok", data);
-        closeDialogBox();
+        if (data.hasOwnProperty("error")) {
+            displayError(data.error);
+
+        } else {
+            removeError();
+            removeInputText();
+            closeDialogBox();
+            addCategoryRow(data.category_name);
+
+        }
+        
 
         
     }).catch(function(ex) {
@@ -92,6 +102,22 @@ function closeDialogBox() {
 
 }
 
+function displayError(message) {
+    let errorLocation = document.getElementById("error-message");
+    errorLocation.className = "alert alert-danger";
+    errorLocation.innerHTML = message;
+}
+
+function removeError() {
+    let errorLocation = document.getElementById("error-message");
+    errorLocation.className = "";
+    errorLocation.innerHTML = "";
+}
+
+function removeInputText() {
+    let inputBox = document.getElementById("categoryName");
+    inputBox.value = "";
+}
 
 // Get a fresh cookie for this form submit
 function getCookie(name) {

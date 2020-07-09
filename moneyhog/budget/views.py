@@ -351,28 +351,26 @@ def create_category(request):
     if request.method == "POST":
         post_data = json.loads(request.body)
         cat_name = post_data['name']
-        cat_name = cat_name[0].upper() + cat_name[1:].lower()
-        print(cat_name)
+
         response_data = {}
 
-        category_names = []
-        for cat in Category.objects.all():
-            category_names.append(cat.name)
-        # categories = Category.objects.all() # check if category already exists
-        # print(categories)
-        if cat_name in category_names:
-            response_data['error'] = "This category already exists."
-
-        # check if category is blank
-        elif cat_name.strip() == "":
+        if cat_name.strip() == "": # check if blank was sent
             response_data['error'] = "You can't create a blank category."
-
-        # category is valid
         else:
-            category = Category(name=cat_name,user=request.user)
-            category.save()
-            response_data['result'] = 'Create post successful!'
-            response_data['category_name'] = category.name
+            cat_name = cat_name[0].upper() + cat_name[1:].lower()
+
+            category_names = []
+            for cat in Category.objects.all():
+                category_names.append(cat.name)
+
+            if cat_name in category_names:
+                response_data['error'] = "This category already exists."
+
+            else:   # category is valid
+                category = Category(name=cat_name,user=request.user)
+                category.save()
+                response_data['result'] = 'Create post successful!'
+                response_data['category_name'] = category.name
 
         return JsonResponse(response_data)
 
