@@ -59,13 +59,7 @@ function addCategoryRow(name) {
 
 
 function saveCategory() {
-    
     let value = document.getElementById("categoryName").value;
-    console.log(value);
-    // let catList = document.getElementById("category-list");
-    // let catDiv = document.getElementById("cat-div");
-    // console.log("create post is working!") // sanity check
-    // console.log("Category name: ", value);
 
     let theData = {
         'name': value,
@@ -84,6 +78,7 @@ function saveCategory() {
         return response.json();
     }).then(function(data) {
         console.log("Data is ok", data);
+        closeDialogBox();
 
         
     }).catch(function(ex) {
@@ -92,7 +87,13 @@ function saveCategory() {
 
 } // end function
 
+function closeDialogBox() {
+    $('#addCategory').modal('toggle')
 
+}
+
+
+// Get a fresh cookie for this form submit
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {

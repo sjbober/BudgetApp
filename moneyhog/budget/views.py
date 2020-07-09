@@ -352,11 +352,15 @@ def create_category(request):
         post_data = json.loads(request.body)
         cat_name = post_data['name']
         cat_name = cat_name[0].upper() + cat_name[1:].lower()
-
+        print(cat_name)
         response_data = {}
 
-        categories = Category.objects.all() # check if category already exists
-        if cat_name in categories:
+        category_names = []
+        for cat in Category.objects.all():
+            category_names.append(cat.name)
+        # categories = Category.objects.all() # check if category already exists
+        # print(categories)
+        if cat_name in category_names:
             response_data['error'] = "This category already exists."
 
         # check if category is blank
