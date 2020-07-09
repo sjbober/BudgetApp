@@ -43,11 +43,11 @@
                     </button>
                 </div>
                 <div class="modal-body flex just-center">
-                    <form id="cat-form" action="{% url 'budget:create_category' %}" method="POST" class="flex flex-col"  enctype="application/x-www-form-urlencoded">
+                    <form id="cat-form" action="{% url 'budget:category_list' %}" method="POST" class="flex flex-col"  enctype="application/x-www-form-urlencoded">
                         {% csrf_token %}
                         <div id="error-message" class=""></div>
                         <div class="form-group">
-                            <label class="imp sr-only" for="{{ form.name.id_for_label }}">Category Name</label>
+                            <label class="imp sr-onl" for="{{ form.name.id_for_label }}">Category Name</label>
                             <input type="text" class="form-control" id="categoryName" aria-describedby="" placeholder="Enter a category">
                           </div>
                         <div class="modal-footer flex just-around">
@@ -66,20 +66,20 @@
     </div>
 
     <ul id="category-list" class="list-group">
-        {% if category_list %}
-        {% for category in category_list reversed %}
+        {% if category_names %}
+        {% for category in category_names reversed %}
         <li class="list-group-item flex align-center just-betw">
             <div class="flex align-center">
                 <button type="button" class="btn btn-outline-primary title-med mr-3 imp"><i class="fas fa-pen"></i> <span class="button-words">Edit</span></button>
-                <span class="title-xl">{{ category.name }}</span>
+                <span class="title-xl">{{ category }}</span>
             </div>
             
-            <button type="button" class="btn btn-outline-danger title-sm imp" data-toggle="modal" data-target="#delete{{category.name }}"><i class="fas fa-trash-alt"></i> <span class="button-words">Delete</span></button>
+            <button type="button" class="btn btn-outline-danger title-sm imp" data-toggle="modal" data-target="#delete{{ category }}"><i class="fas fa-trash-alt"></i> <span class="button-words">Delete</span></button>
 
             <!-- Add delete button -->
             {% block extra_b %}
 
-            <div id="delete{{category.name}}" class="modal" tabindex="-1" role="dialog">
+            <div id="delete{{category}}" class="modal" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -89,7 +89,7 @@
                             </button>
                         </div>
                         <div class="modal-body flex just-center">
-                            <p class="title-xl">Are you sure you want to delete your {{ category.name }} category?</p>
+                            <p class="title-xl">Are you sure you want to delete your {{ category }} category?</p>
                         </div>
                         <div class="modal-footer flex just-around">
                             <form action="#" method="POST" class="inline-form" enctype="application/x-www-form-urlencoded"> 
@@ -108,14 +108,14 @@
         </li>
         {% endfor %}
 
-    {% else %}
     <div id="no-categ">
+    {% else %}
         <p class="text-center title-med mb-3">You don't have any categories right now. Click the "New" button to create some!</p>
         <h3 class="imp title-sm"><i class="fas fa-question-circle"></i> What is a category?</h3>
         <p class="">Categories are ways for you to organize your spending to see where most of your money is going. Rent/Mortgage, Groceries, Eating Out, Electric Bill and Phone are some examples of categories you might create to track your spending.</p>
-    </div>
    
     {% endif %}
+    </div>
 </ul>
 
 

@@ -1,16 +1,19 @@
 
 
-let addButton = document.getElementById("add-category-btn");
+// let addButton = document.getElementById("add-category-btn");
 
 
+// When the user submits the category form,
+// prevent the default option and instead trigger
+// a fetch call 
 let catForm = document.getElementById("cat-form");
 catForm.addEventListener("submit",function(event) {
     event.preventDefault();
     saveCategory();
 });
 
-
-// Add the category row to the UI without refresh
+// Add the category row to the UI using the given
+// category name
 function addCategoryRow(name) {
     let catList = document.getElementById("category-list");
     let newHTML = `  
@@ -52,7 +55,8 @@ function addCategoryRow(name) {
 
 }
 
-// Remove the instruction text when there are no categories
+//  Remove the instruction text intended for when
+//  there are no categories.
 function removeNoCategText() {
     let noCatText = document.getElementById("no-categ");
     noCatText.innerHTML = "";
@@ -60,11 +64,7 @@ function removeNoCategText() {
 
 
 
-
-
-
-
-// Create the category
+// Initiate a fetch call to create a category
 function saveCategory() {
     let value = document.getElementById("categoryName").value;
 
@@ -72,7 +72,7 @@ function saveCategory() {
         'name': value,
     }
 
-    fetch("create-category/", {
+    fetch("", {
         method: "POST",
         credentials: "same-origin",
         headers: {
@@ -85,13 +85,14 @@ function saveCategory() {
         return response.json();
     }).then(function(data) {
         console.log("Data is ok", data);
-        if (data.hasOwnProperty("error")) {
-            displayError(data.error);
 
-        } else {
-            removeError();
-            removeInputText();
-            closeDialogBox();
+        if (data.hasOwnProperty("error")) { // the category was not created successfully
+            displayError(data.error); 
+
+        } else { // a category was created successfully
+            removeError();      
+            removeInputText();   
+            closeDialogBox();  
             addCategoryRow(data.category_name);
 
         }
@@ -102,31 +103,37 @@ function saveCategory() {
         console.log("parsing failed", ex);
     });
 
-} // end function
+} 
 
+
+// Close the category dialog box
 function closeDialogBox() {
     $('#addCategory').modal('toggle')
 
 }
 
+
+// Display any errors in the dialog box itself
 function displayError(message) {
     let errorLocation = document.getElementById("error-message");
     errorLocation.className = "alert alert-danger";
     errorLocation.innerHTML = message;
 }
 
+// Remove error messages from the dialog box
 function removeError() {
     let errorLocation = document.getElementById("error-message");
     errorLocation.className = "";
     errorLocation.innerHTML = "";
 }
 
+// Remove any input text from the input field
 function removeInputText() {
     let inputBox = document.getElementById("categoryName");
     inputBox.value = "";
 }
 
-// Get a fresh cookie for this form submit
+// Get a fresh cookie for a form submit
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {

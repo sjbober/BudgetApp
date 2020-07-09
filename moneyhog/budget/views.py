@@ -1,11 +1,10 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
+from django.shortcuts import render
 from django.shortcuts import redirect
 
-# will remove HttpResponse once we convert all of the stubs
-from django.http import Http404
-from django.http import HttpResponse
+# For working with fetch calls
 from django.http import JsonResponse
-from django.template import loader
+import json
 
 # Models
 from .models import Expense
@@ -13,6 +12,7 @@ from .models import Income
 from .models import Category
 from .models import RecurringExpense
 
+# Displaying success/error/etc messages
 from django.contrib import messages
 
 # Login authentication
@@ -27,23 +27,18 @@ from .forms import SearchExpensesForm
 from .forms import DeleteExpenseForm
 from .forms import RecurringExpenseForm
 from .forms import DeleteRecurringExpenseForm
-# from .forms import CreateCategoryForm
+from .forms import CreateCategoryForm
 
 # For complex querying:
 import operator
 from functools import reduce
 from django.db.models import Q
 
-
-from django.shortcuts import redirect
-
-from django.urls import reverse_lazy
-
 # Pagination
 from django.core.paginator import Paginator
 
 # Errors 
-import logging
+# import logging
 
 def login_view(request):
     if request.method == "POST":
@@ -336,20 +331,29 @@ def expense_form_page(request):
 # Category List View
 @login_required
 def category_list(request):
-    category_list = Category.objects.filter(user__exact=request.user.id)
-    # form = CreateCategoryForm()
-    context = {
-        'category_list': category_list,
-        # 'form': form,
-    }
+    category_names = [cat.name for cat in Category.objects.filter(user__exact=request.user.id)]
 
-    return render(request, 'budget/category/list.html',context)
+    if request.method == "GET":
+        form = CreateCategoryForm()
+        context = {
+            'category_names': category_names,
+            'form': form,
+        }
 
-import json
-@login_required
-def create_category(request):
-    if request.method == "POST":
+        return render(request, 'budget/category/list.html',context)
+
+    elif request.method == "POST": # create a new category!
         post_data = json.loads(request.body)
+        # print(request.POST)
+        form = CreateCategoryForm(post_data['name'])
+        print(form)
+        break
+        if form.is_valid():
+            print("this is checking the form")
+            # category = form.save(commit=False)
+            # category.user = request.user
+            # category.save()
+        # form = CreateCategoryForm(post_data['name']k)
         cat_name = post_data['name']
 
         response_data = {}
@@ -358,10 +362,6 @@ def create_category(request):
             response_data['error'] = "You can't create a blank category."
         else:
             cat_name = cat_name[0].upper() + cat_name[1:].lower()
-
-            category_names = []
-            for cat in Category.objects.all():
-                category_names.append(cat.name)
 
             if cat_name in category_names:
                 response_data['error'] = "This category already exists."
@@ -372,5 +372,4 @@ def create_category(request):
                 response_data['result'] = 'Create post successful!'
                 response_data['category_name'] = category.name
 
-        return JsonResponse(response_data)
-
+            return JsonResponse(response_data)
