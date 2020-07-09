@@ -10,6 +10,7 @@ catForm.addEventListener("submit",function(event) {
 });
 
 
+// Add the category row to the UI without refresh
 function addCategoryRow(name) {
     let catList = document.getElementById("category-list");
     let newHTML = `  
@@ -19,7 +20,7 @@ function addCategoryRow(name) {
                         <span class="title-xl">` + name + `</span>
                     </div>
                     
-                    <button type="button" class="btn btn-outline-danger title-sm imp" data-toggle="modal" data-target="#delete` + value + `"><i class="fas fa-trash-alt"></i> <span class="button-words">Delete</span></button>
+                    <button type="button" class="btn btn-outline-danger title-sm imp" data-toggle="modal" data-target="#delete` + name + `"><i class="fas fa-trash-alt"></i> <span class="button-words">Delete</span></button>
 
                     <div id="delete` + name + `" class="modal" tabindex="-1" role="dialog">
                         <div class="modal-dialog" role="document">
@@ -47,7 +48,14 @@ function addCategoryRow(name) {
                 `;
                 
         catList.innerHTML = newHTML + catList.innerHTML;
+        removeNoCategText();
 
+}
+
+// Remove the instruction text when there are no categories
+function removeNoCategText() {
+    let noCatText = document.getElementById("no-categ");
+    noCatText.innerHTML = "";
 }
 
 
@@ -56,8 +64,7 @@ function addCategoryRow(name) {
 
 
 
-
-
+// Create the category
 function saveCategory() {
     let value = document.getElementById("categoryName").value;
 
