@@ -208,15 +208,18 @@ class DeleteRecurringExpenseForm(ModelForm):
 class CreateCategoryForm(ModelForm):
     class Meta:
         model = Category
-        # fields = []
         exclude = ['user']
-#         fields = ['name']
-#         widgets = {
-#                 'name': forms.TextInput(attrs={
-#                                             'id': 'categoryName',
-#                                             'type': 'text',
-#                                             'class': 'form-control mr-3',
-#                                             'aria-describedby': 'categoryName',
-#                                             'required': 'true'  
-#                                             })
-#         }
+        widgets = {
+                'name': forms.TextInput(attrs={
+                                            'id': 'categoryName',
+                                            'type': 'text',
+                                            'class': 'form-control',
+                                            'aria-describedby': 'categoryName',
+                                            'placeholder': 'Enter a category' 
+                                            })
+        }
+
+# class DeleteCategory(ModelForm):
+#     class Meta:
+#         model = Category
+#         fields = []

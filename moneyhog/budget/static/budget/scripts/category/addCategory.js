@@ -84,7 +84,6 @@ function saveCategory() {
     }).then(function(response) {
         return response.json();
     }).then(function(data) {
-        console.log("Data is ok", data);
 
         if (data.hasOwnProperty("error")) { // the category was not created successfully
             displayError(data.error); 

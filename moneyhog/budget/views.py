@@ -344,16 +344,6 @@ def category_list(request):
 
     elif request.method == "POST": # create a new category!
         post_data = json.loads(request.body)
-        # print(request.POST)
-        form = CreateCategoryForm(post_data['name'])
-        print(form)
-        break
-        if form.is_valid():
-            print("this is checking the form")
-            # category = form.save(commit=False)
-            # category.user = request.user
-            # category.save()
-        # form = CreateCategoryForm(post_data['name']k)
         cat_name = post_data['name']
 
         response_data = {}
@@ -373,3 +363,12 @@ def category_list(request):
                 response_data['category_name'] = category.name
 
             return JsonResponse(response_data)
+
+# Delete a category
+@login_required
+def categ_delete_edit(request,pk):
+    if request.method == "POST": # delete
+        category = get_object_or_404(Category, pk=pk)
+
+    elif request.method == "PUT":
+        pass
