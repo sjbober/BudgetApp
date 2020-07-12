@@ -92,9 +92,9 @@
                             <p class="title-xl">Are you sure you want to delete your {{ category }} category?</p>
                         </div>
                         <div class="modal-footer flex just-around">
-                            <form action="#" method="POST" class="inline-form" enctype="application/x-www-form-urlencoded"> 
+                            <form action="{% url 'budget:categ_delete_edit' %}" method="POST" class="inline-form delete-form" enctype="application/x-www-form-urlencoded"> 
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-danger imp">Yes, delete it</button>
+                                <button id="delete{{category}}Btn" type="submit" class="btn btn-danger imp">Yes, delete it</button>
                             </form>
                             <button type="button" class="btn btn-primary imp" data-dismiss="modal">No, cancel</button>
                         </div>
@@ -132,6 +132,7 @@
 
 <!-- Add a category form field -->
 <script src="{% static '/budget/scripts/category/addCategory.js' %}"></script>
+<script src="{% static '/budget/scripts/category/deleteCategory.js' %}"></script>
 
 
 

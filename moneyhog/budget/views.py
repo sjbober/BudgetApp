@@ -366,9 +366,13 @@ def category_list(request):
 
 # Delete a category
 @login_required
-def categ_delete_edit(request,pk):
+def categ_delete_edit(request):
     if request.method == "POST": # delete
-        category = get_object_or_404(Category, pk=pk)
+        print("this far")
+        post_data = json.loads(request.body)
+        cat_name = post_data['name']
+        # queryset = Category.objects.filter(name__exact=cat_name)
+        category = get_object_or_404(Category, name__exact=cat_name)
 
     elif request.method == "PUT":
         pass
