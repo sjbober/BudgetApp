@@ -68,7 +68,7 @@
     <ul id="category-list" class="list-group">
         {% if category_names %}
         {% for category in category_names reversed %}
-        <li class="list-group-item flex align-center just-betw">
+        <li id="{{category}}" class="list-group-item flex align-center just-betw">
             <div class="flex align-center">
                 <button type="button" class="btn btn-outline-primary title-med mr-3 imp"><i class="fas fa-pen"></i> <span class="button-words">Edit</span></button>
                 <span class="title-xl">{{ category }}</span>
@@ -88,11 +88,12 @@
                             <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div class="modal-body flex just-center">
+                        <div class="modal-body flex flex-col just-betw align-center">
+                            <div id="delete-error-{{category}}"></div>
                             <p class="title-xl">Are you sure you want to delete your {{ category }} category?</p>
                         </div>
                         <div class="modal-footer flex just-around">
-                            <form action="{% url 'budget:categ_delete_edit' %}" method="POST" class="inline-form delete-form" enctype="application/x-www-form-urlencoded"> 
+                            <form action="{% url 'budget:category_list' %}" method="POST" class="inline-form delete-form" enctype="application/x-www-form-urlencoded"> 
                                 {% csrf_token %}
                                 <button id="delete{{category}}Btn" type="submit" class="btn btn-danger imp">Yes, delete it</button>
                             </form>

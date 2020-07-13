@@ -4,84 +4,25 @@
 
 //
 let deleteForms = document.getElementsByClassName("delete-form");
-// cons
+
 for (let i = 0; i < deleteForms.length; i++) {
     deleteForms[i].addEventListener("submit",function(event) {
-        console.log("this was triggered");
         event.preventDefault();
-        deleteCategory(event.target.id);
+        let cat_name = event.submitter.id.slice(6,-3);
+        // console.log(cat_id);
+        deleteCategory(cat_name);
     });
 }
-// deleteForms.map(elem => elem.addEventListener("submit",function(event) {
-//     console.log("this was triggered");
-//     event.preventDefault();
-//     deleteCategory(event.target.id);
-// }));
-
-
-// Add the category row to the UI using the given
-// category name
-function deleteCategoryRow(name) {
-    let catList = document.getElementById("category-list");
-    let newHTML = `  
-                <li class="list-group-item flex align-center just-betw">
-                    <div class="flex align-center">
-                        <button type="button" class="btn btn-outline-primary title-med mr-3 imp"><i class="fas fa-pen"></i> <span class="button-words">Edit</span></button>
-                        <span class="title-xl">` + name + `</span>
-                    </div>
-                    
-                    <button type="button" class="btn btn-outline-danger title-sm imp" data-toggle="modal" data-target="#delete` + name + `"><i class="fas fa-trash-alt"></i> <span class="button-words">Delete</span></button>
-
-                    <div id="delete` + name + `" class="modal" tabindex="-1" role="dialog">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="title-xl imp">Delete Category</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body flex just-center">
-                                    <p class="title-xl">Are you sure you want to delete your ` + name + ` category?</p>
-                                </div>
-                                <div class="modal-footer flex just-around">
-                                    <form action="#" method="POST" class="inline-form" enctype="application/x-www-form-urlencoded"> 
-                                        <button type="submit" class="btn btn-danger imp">Yes, delete it</button>
-                                    </form>
-                                    <button type="button" class="btn btn-primary imp" data-dismiss="modal">No, cancel</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </li>          
-                `;
-                
-        catList.innerHTML = newHTML + catList.innerHTML;
-        removeNoCategText();
-
-}
-
-//  Remove the instruction text intended for when
-//  there are no categories.
-function removeNoCategText() {
-    let noCatText = document.getElementById("no-categ");
-    noCatText.innerHTML = "";
-}
-
-
 
 // Initiate a fetch call to create a category
-function deleteCategory(id) {
-    let category_name = id.slice(6,-4);
-    console.log(category_name);
-    // let value = document.getElementById("categoryName").value;
+function deleteCategory(name) {
 
     let theData = {
-        'name': category_name,
+        'name': name,
+        'purpose': 'delete',
     }
 
-    fetch("/delete", {
+    fetch("", {
         method: "POST",
         credentials: "same-origin",
         headers: {
@@ -94,16 +35,12 @@ function deleteCategory(id) {
         return response.json();
     }).then(function(data) {
 
-        if (data.hasOwnProperty("error")) { // the category was not created successfully
-            // displayError(data.error); 
-            console.log("error");
+        if (data['result'] == "error") { // the category was not created successfully
+            displayDeleteError(name);
 
-        } else { // a category was created successfully
-            console.log("success");
-            // removeError();      
-            // removeInputText();   
-            // closeDialogBox();  
-            // addCategoryRow(data.category_name);
+        } else if (data['result'] == "success") { // a category was created successfully     
+            closeFormModal("delete" + name);  
+            deleteCategoryRow(name);
 
         }
         
@@ -116,32 +53,44 @@ function deleteCategory(id) {
 } 
 
 
-// Close the category dialog box
-function closeDialogBox() {
-    $('#addCategory').modal('toggle')
+// Close the category delete modal
+function closeFormModal(id) {
+    $('#' + id).modal('toggle')
 
 }
+
+// Add the category row to the UI using the given
+// category name
+function deleteCategoryRow(name) {
+    let catList = document.getElementById("category-list");
+    let categ = document.getElementById(name);
+    catList.removeChild(categ);
+    if (catList.children.length == 1) {
+        addNoCategText();
+    }
+}
+
+//  Remove the instruction text intended for when
+//  there are no categories.
+function addNoCategText() {
+    let noCatText = document.getElementById("no-categ");
+    noCatText.innerHTML = `
+    <p class="text-center title-med mb-3">You don't have any categories right now. Click the "New" button to create some!</p>
+    <h3 class="imp title-sm"><i class="fas fa-question-circle"></i> What is a category?</h3>
+    <p class="">Categories are ways for you to organize your spending to see where most of your money is going. Rent/Mortgage, Groceries, Eating Out, Electric Bill and Phone are some examples of categories you might create to track your spending.</p>
+    `;
+}
+
 
 
 // Display any errors in the dialog box itself
-function displayError(message) {
-    let errorLocation = document.getElementById("error-message");
+function displayDeleteError(name) {
+    let id = "delete-error-" + name
+    let errorLocation = document.getElementById(id);
     errorLocation.className = "alert alert-danger";
-    errorLocation.innerHTML = message;
+    errorLocation.innerHTML = "An error occurred while trying to delete this category. Please try again later.";
 }
 
-// Remove error messages from the dialog box
-function removeError() {
-    let errorLocation = document.getElementById("error-message");
-    errorLocation.className = "";
-    errorLocation.innerHTML = "";
-}
-
-// Remove any input text from the input field
-function removeInputText() {
-    let inputBox = document.getElementById("categoryName");
-    inputBox.value = "";
-}
 
 // Get a fresh cookie for a form submit
 function getCookie(name) {

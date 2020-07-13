@@ -23,9 +23,4 @@ urlpatterns = [
 
     path('categories/', views.category_list, name='category_list'),
 
-    # path('categories/<int:pk>', views.categ_delete_edit, name='categ_delete_edit'),
-
-
-    path('categories/delete', views.categ_delete_edit, name='categ_delete_edit'),
-
 ]

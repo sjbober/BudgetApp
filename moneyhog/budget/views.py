@@ -210,7 +210,7 @@ def expense_list_recurring(request):
 
     return render(request, 'budget/expenses/recurring-list.html',context)
 
-# View an existing expense
+# View or delete an existing expense
 @login_required
 def expense_detail(request, pk):
     expense = get_object_or_404(Expense, pk=pk)
@@ -342,37 +342,49 @@ def category_list(request):
 
         return render(request, 'budget/category/list.html',context)
 
-    elif request.method == "POST": # create a new category!
+    elif request.method == "POST": # create, edit or delete a category!
         post_data = json.loads(request.body)
+        response_data = {}
         cat_name = post_data['name']
 
-        response_data = {}
+        if post_data['purpose'] == 'create': #create category
+            if cat_name.strip() == "": # check if blank was sent
+                response_data['error'] = "You can't create a blank category."
+            else:
+                cat_name = cat_name.strip()
+                cat_name = cat_name[0].upper() + cat_name[1:].lower()
 
-        if cat_name.strip() == "": # check if blank was sent
-            response_data['error'] = "You can't create a blank category."
-        else:
-            cat_name = cat_name[0].upper() + cat_name[1:].lower()
+                if cat_name in category_names:
+                    response_data['error'] = "This category already exists."
 
-            if cat_name in category_names:
-                response_data['error'] = "This category already exists."
+                else:   # category is valid
+                    category = Category(name=cat_name,user=request.user)
+                    category.save()
+                    response_data['result'] = 'success'
+                    response_data['category_name'] = category.name
 
-            else:   # category is valid
-                category = Category(name=cat_name,user=request.user)
-                category.save()
-                response_data['result'] = 'Create post successful!'
-                response_data['category_name'] = category.name
+                return JsonResponse(response_data)
+
+        elif post_data['purpose'] == 'delete': # delete category
+            category = Category.objects.filter(name__exact=cat_name)
+            if category:
+                category.delete()
+                response_data['result'] = 'success'
+            else:
+                response_data['result'] = 'error'
 
             return JsonResponse(response_data)
 
-# Delete a category
-@login_required
-def categ_delete_edit(request):
-    if request.method == "POST": # delete
-        print("this far")
-        post_data = json.loads(request.body)
-        cat_name = post_data['name']
-        # queryset = Category.objects.filter(name__exact=cat_name)
-        category = get_object_or_404(Category, name__exact=cat_name)
 
-    elif request.method == "PUT":
-        pass
+# Delete a category
+# @login_required
+# def categ_delete_edit(request):
+#     if request.method == "POST": # delete
+#         print("this far")
+#         post_data = json.loads(request.body)
+#         cat_name = post_data['name']
+#         # queryset = Category.objects.filter(name__exact=cat_name)
+#         category = get_object_or_404(Category, name__exact=cat_name)
+
+#     elif request.method == "PUT":
+#         pass
