@@ -38,7 +38,8 @@ function deleteCategory(name) {
         if (data['result'] == "error") { // the category was not created successfully
             displayDeleteError(name);
 
-        } else if (data['result'] == "success") { // a category was created successfully     
+        } else if (data['result'] == "success") { // a category was created successfully
+            console.log('success');     
             closeFormModal("delete" + name);  
             deleteCategoryRow(name);
 

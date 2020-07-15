@@ -7,6 +7,8 @@ app_name = 'budget'
 urlpatterns = [
     path('', views.login_view, name='index'),
 
+    path('signup/', views.signup, name='signup'),
+
     path('logout/', views.logout_view, name='logout'),
 
     path('expenses/', views.expense_list, name='expense_list'),

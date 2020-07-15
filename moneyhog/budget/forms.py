@@ -2,12 +2,46 @@
 from django import forms
 from django.forms import ModelForm
 from django.contrib.auth.forms import AuthenticationForm # Login form
+from django.contrib.auth.forms import UserCreationForm
 
 # Import model classes
 from django.contrib.auth.models import User
 from .models import Expense
 from .models import Category
 from .models import RecurringExpense
+
+class SignupForm(UserCreationForm):
+    username = forms.CharField(widget=forms.TextInput(
+        attrs={
+        'class': 'form-control', 
+        'id': 'username',
+        'aria-describedby': 'username',
+        'placeholder': 'Username', 
+        'required': 'true'
+        }))
+    password1 = forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'class': 'form-control',
+            'id': 'password1',
+            'aria-describedby': 'password',
+            'placeholder': 'Password',
+            'required': 'true'
+        }))
+    password2 = forms.CharField(widget=forms.PasswordInput(
+    attrs={
+        'class': 'form-control',
+        'id': 'password2',
+        'aria-describedby': 'password',
+        'placeholder': 'Password Confirmation',
+        'required': 'true'
+    }))
+    email = forms.CharField(widget=forms.TextInput(
+    attrs={
+        'class': 'form-control',
+        'id': 'email',
+        'aria-describedby': 'email',
+        'placeholder': 'Email Address',
+    }),required=False)
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(
@@ -219,7 +253,3 @@ class CreateCategoryForm(ModelForm):
                                             })
         }
 
-# class DeleteCategory(ModelForm):
-#     class Meta:
-#         model = Category
-#         fields = []

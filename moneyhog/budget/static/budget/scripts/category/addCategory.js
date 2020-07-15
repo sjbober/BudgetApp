@@ -17,10 +17,19 @@ catForm.addEventListener("submit",function(event) {
 // Initiate a fetch call to create a category
 function saveCategory() {
     let value = document.getElementById("categoryName").value;
+    let fulltok = catForm.children[0].value;
+    // console.log(fulltok);
+    let part_1 = fulltok.slice(0,fulltok.length/2);
+    let part_2 = fulltok.slice(fulltok.length/2,-1);
+    console.log(part_1,part_2);
+    // console.log(token);
+    // console.log(getCookie("csrftoken"));
 
     let theData = {
         'name': value,
         'purpose': 'create',
+        'tok1': part_1,
+        'tok2': part_2,
     }
 
     fetch("", {
@@ -43,7 +52,9 @@ function saveCategory() {
             removeError();      
             removeInputText();   
             closeDialogBox();  
-            addCategoryRow(data.category_name);
+            let toke = data.tok1+data.tok2;
+            console.log(toke)
+            addCategoryRow(data.category_name,toke);
 
         }
         
@@ -55,7 +66,7 @@ function saveCategory() {
 
 } 
 
-// Get a fresh cookie for a form submit
+// Get cookie for a form submit
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -76,7 +87,7 @@ function getCookie(name) {
 
 // Add the category row to the UI using the given
 // category name
-function addCategoryRow(name) {
+function addCategoryRow(name,tokk) {
     let catList = document.getElementById("category-list");
     let newHTML = `  
         <li id="` + name + `" class="list-group-item flex align-center just-betw">
@@ -104,7 +115,7 @@ function addCategoryRow(name) {
                         </div>
                         <div class="modal-footer flex just-around">
                             <form action="" method="POST" class="inline-form delete-form" enctype="application/x-www-form-urlencoded"> 
-                                {% csrf_token %}
+                                <input type="hidden" name="csrfmiddlewaretoken" value="`+ tokk + `" />    
                                 <button id="delete` + name + `Btn" type="submit" class="btn btn-danger imp">Yes, delete it</button>
                             </form>
                             <button type="button" class="btn btn-primary imp" data-dismiss="modal">No, cancel</button>
@@ -120,6 +131,9 @@ function addCategoryRow(name) {
 
 }
 
+{/* <input type="hidden" name="csrfmiddlewaretoken" value="TsoWgcYcgWinJSU3rwZ1hGI083JsH4jxb1Rn29ggj35y1yK3nxs3zGVoKbgaw7fZ"></input> */}
+
+{/* <input type="hidden" name="csrfmiddlewaretoken" value={{csrftoken}} /> */}
 // Remove error messages from the dialog box
 function removeError() {
     let errorLocation = document.getElementById("error-message");

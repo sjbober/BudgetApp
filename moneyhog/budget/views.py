@@ -7,6 +7,7 @@ from django.http import JsonResponse
 import json
 
 # Models
+from django.contrib.auth.models import User
 from .models import Expense
 from .models import Income
 from .models import Category
@@ -28,6 +29,7 @@ from .forms import DeleteExpenseForm
 from .forms import RecurringExpenseForm
 from .forms import DeleteRecurringExpenseForm
 from .forms import CreateCategoryForm
+from .forms import SignupForm
 
 # For complex querying:
 import operator
@@ -39,6 +41,29 @@ from django.core.paginator import Paginator
 
 # Errors 
 # import logging
+
+def signup(request):
+    # expense = get_object_or_404(Expense, pk=pk)
+
+    if request.method == "POST":
+        userForm = SignupForm(request.POST)
+        if userForm.is_valid():
+            # user = userForm.save()
+            username = userForm.cleaned_data["username"]
+            password = userForm.cleaned_data["password1"]
+            email = userForm.cleaned_data["email"]   
+            user = User.objects.create_user(username, email, password)
+            messages.success(request, "Your account was successfully created, %s! Try logging in now." % user.username)
+            return redirect('budget:index')
+        else:
+            messages.error(request, "An error occurred and your account could not be created.")
+    # else:
+    form = SignupForm()
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'budget/signup.html', context)
 
 def login_view(request):
     if request.method == "POST":
@@ -329,6 +354,9 @@ def expense_form_page(request):
 
 
 # Category List View
+from django.views.decorators.csrf import ensure_csrf_cookie
+
+@ensure_csrf_cookie
 @login_required
 def category_list(request):
     category_names = [cat.name for cat in Category.objects.filter(user__exact=request.user.id)]
@@ -348,6 +376,8 @@ def category_list(request):
         cat_name = post_data['name']
 
         if post_data['purpose'] == 'create': #create category
+            print(post_data['tok1'], post_data['tok2'])
+
             if cat_name.strip() == "": # check if blank was sent
                 response_data['error'] = "You can't create a blank category."
             else:
@@ -362,6 +392,8 @@ def category_list(request):
                     category.save()
                     response_data['result'] = 'success'
                     response_data['category_name'] = category.name
+                    response_data['tok1'] = post_data['tok1']
+                    response_data['tok2'] = post_data['tok2']
 
                 return JsonResponse(response_data)
 
@@ -372,7 +404,7 @@ def category_list(request):
                 response_data['result'] = 'success'
             else:
                 response_data['result'] = 'error'
-
+            print('got this far')
             return JsonResponse(response_data)
 
 
