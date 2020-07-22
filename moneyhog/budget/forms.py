@@ -63,35 +63,22 @@ class LoginForm(AuthenticationForm):
 
 class SearchExpensesForm(forms.Form):
 
-    # def __init__(self,request):
-
-    # def get_form_kwargs(self):
-    #     kwargs = super().get_form_kwargs()
-    #     kwargs['user'] = self.request.user
-    #     return kwargs
-
-    # def __init__(self,user, *args, **kwargs):
-    #     super(NewTicket, self).__init__(*args, **kwargs)
-    #     try:
-    #         client_id = UserExtend.objects.values_list('client_id', flat=True).get(user=user)
-    #         self.fields['business'].queryset=Business.objects.filter(client__id=client_id)
-    #     except UserExtend.DoesNotExist:
-    #         ### there is not userextend corresponding to this user, do what you want 
-    #         pass
-
+    def __init__(self,*args,user,**kwargs):
+        self.user = user
+        super().__init__(*args,**kwargs)
+        self.fields['categories'].choices = [(category.name,category.name) for category in Category.objects.filter(user__exact=self.user)]
 
     keywords = forms.CharField(required = False,widget=forms.TextInput(attrs={   
-                                                                'id': 'keywords',
-                                                                'type': 'text',
-                                                                'class': 'form-control',
-                                                                'aria-describedby': 'searchKeywords',  
-                                                                    }))
+                                                                    'id': 'keywords',
+                                                                    'type': 'text',
+                                                                    'class': 'form-control',
+                                                                    'aria-describedby': 'searchKeywords',  
+                                                                        }))
 
     DATE_CHOICES = [('All', 'All'),
                ('single-date', 'Single'),
                ('date-range', 'Range')]
-    date_choice = forms.ChoiceField(
-        required = False,choices=DATE_CHOICES,widget=forms.RadioSelect(attrs={  
+    date_choice = forms.ChoiceField(required = False,choices=DATE_CHOICES,widget=forms.RadioSelect(attrs={  
                                                                 'type': 'radio',
                                                                 'class': 'form-check-input',
                                                                 'aria-describedby': 'date',
@@ -132,14 +119,8 @@ class SearchExpensesForm(forms.Form):
                                                                     }))
     
 
-    CATEG_CHOICES = []
-    category_list = Category.objects.all()
-    # category_list = Category.objects.filter(user__exact=request.user)
-    for category in category_list:
-        CATEG_CHOICES.append((category.name, category.name))
-
     categories = forms.MultipleChoiceField(
-        required = False,choices=CATEG_CHOICES,widget=forms.CheckboxSelectMultiple(attrs={  
+        required = False,widget=forms.CheckboxSelectMultiple(attrs={  
                                                                 'type': 'checkbox',
                                                                 'class': 'custom-control-input',
                                                                 'aria-describedby': 'category',
@@ -155,21 +136,14 @@ class SearchExpensesForm(forms.Form):
                                                                 'aria-describedby': 'hasReceipt',
                                                                     }))
 
+
+
 class DeleteExpenseForm(ModelForm):
     class Meta:
         model = Expense
         fields = []
 
 class ExpenseForm(ModelForm):
-
-    # def __init__(self,user, *args, **kwargs):
-    #     super(NewTicket, self).__init__(*args, **kwargs)
-    #     try:
-    #         client_id = UserExtend.objects.values_list('client_id', flat=True).get(user=user)
-    #         self.fields['business'].queryset=Business.objects.filter(client__id=client_id)
-    #     except UserExtend.DoesNotExist:
-    #         ### there is not userextend corresponding to this user, do what you want 
-    #         pass
 
     class Meta:
         model = Expense

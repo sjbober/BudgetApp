@@ -2,7 +2,10 @@
 .list-group-item {
     background-color: #E6E6FA;
     color: black;
-    border-bottom: 2px solid #593196;
+    /* border-left: 2px solid #593196; */
+    /* border-top-width: 2px; */
+    /* border-right: 2px solid #593196; */
+    margin-bottom: 7px;
 }
 
 .list-group-item:hover,
@@ -17,12 +20,6 @@
     border-radius: 5px;
 }
 
-
-/* Draft category */
-/* .draft {
-    padding: 0.75rem 1.25rem;
-
-} */
 
 #form-row {
     padding: 0.75rem 1.25rem;

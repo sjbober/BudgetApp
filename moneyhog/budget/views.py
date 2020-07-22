@@ -43,21 +43,17 @@ from django.core.paginator import Paginator
 # import logging
 
 def signup(request):
-    # expense = get_object_or_404(Expense, pk=pk)
-
     if request.method == "POST":
         userForm = SignupForm(request.POST)
         if userForm.is_valid():
-            # user = userForm.save()
-            username = userForm.cleaned_data["username"]
-            password = userForm.cleaned_data["password1"]
-            email = userForm.cleaned_data["email"]   
-            user = User.objects.create_user(username, email, password)
+            user = userForm.save(commit=False)
+            user.email = userForm.cleaned_data["email"]
+            user.save()
             messages.success(request, "Your account was successfully created, %s! Try logging in now." % user.username)
             return redirect('budget:index')
         else:
             messages.error(request, "An error occurred and your account could not be created.")
-    # else:
+
     form = SignupForm()
     context = {
         'form': form,
@@ -74,7 +70,7 @@ def login_view(request):
             login(request, user)
             return redirect('budget:expense_list')
         else:
-            print("user does not exist")
+            # print("user does not exist")
             messages.error(request, "Your username and/or password is incorrect.")
     # else:
     #     pass
@@ -112,7 +108,10 @@ def expense_list(request):
 
     # If a search filter call has been made, we need to filter our expenses list and create a bounded form
     if 'keywords' in request.GET:
-        form = SearchExpensesForm(request.GET)
+        # form = SearchExpensesForm(request.GET)
+        form = SearchExpensesForm(request.GET,user=request.user.id)
+        # SearchExpensesForm(request.GET,form_kwargs={'user': request.user.id})
+        # form = SearchExpensesForm(request.user.id,request.GET)
         if form.is_valid():
             keywords = form.cleaned_data["keywords"]
             date_choice = form.cleaned_data["date_choice"] 
@@ -188,7 +187,11 @@ def expense_list(request):
             '''Need to put something here...'''
         
     else:
-        form = SearchExpensesForm(request.GET,request.user)
+        form = SearchExpensesForm(request.GET,user=request.user.id)
+        # form = SearchExpensesForm(request.user.id,request.GET)
+        # form = SearchExpensesForm(form_kwargs={'user': request.user.id},request.GET)
+        print(request.user.id)
+        # form_kwargs={'user': request.user}
 
     limit = 10 # record limit per page
     paginator = Paginator(expenses_list, limit)
