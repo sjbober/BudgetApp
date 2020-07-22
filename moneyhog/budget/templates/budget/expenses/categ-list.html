@@ -1,4 +1,4 @@
-{% extends "budget/category/category.html" %}
+{% extends "budget/expenses/expense.html" %}
 {% load static %}
 
 {% block page_title %}Categories{% endblock page_title %}
@@ -9,6 +9,8 @@
 
 <!-- Set the class of the main tag -->
 {% block main_class %} class="narrow-content"{% endblock %}
+
+{% block categ-activ %}active imp{% endblock %}
 
 {% block content %}
 
@@ -30,14 +32,15 @@
   <!-- Set the h1 tag  -->
   <div class="flex just-betw mt-2 mb-4">
     <h1 class="imp page-title mb-0">{% block h1 %}Categories{% endblock h1 %}</h1>
+    
     {% block extra_button%}
-    <button id="add-category-btn" type="button" class="btn btn-primary imp title-med ml-2" data-toggle="modal" data-target="#addCategory"><i class="fas fa-plus"></i> New</button>
+    <button id="add-category-btn" type="button" class="btn btn-outline-primary imp title-xl ml-2" data-toggle="modal" data-target="#addCategory"><i class="fas fa-plus"></i> Add Category</button>
 
     <div id="addCategory" class="modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="title-xl imp"><i class="fas fa-tags"></i> New Category</h5>
+                    <h5 class="title-xl imp"><i class="fas fa-tags"></i> Add Category</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>

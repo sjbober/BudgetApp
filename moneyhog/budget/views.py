@@ -371,7 +371,8 @@ def category_list(request):
             'form': form,
         }
 
-        return render(request, 'budget/category/list.html',context)
+        # return render(request, 'budget/category/list.html',context)
+        return render(request, 'budget/expenses/categ-list.html',context)
 
     elif request.method == "POST": # create, edit or delete a category!
         post_data = json.loads(request.body)

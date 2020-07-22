@@ -4,15 +4,21 @@
 {% block expenses_active_sr %}<span class="sr-only">(current)</span>{% endblock expenses_active_sr %}
 
 {% block page-header %}
-<ul class="nav nav-tabs nav-fill mb-4">
+<!-- <div>
+    <a class="btn btn-primary title-med" href="{% url 'budget:expense_form_page' %}"><i class="fas fa-plus"></i> <span class="sub-nav">New</span></a>
+</div> -->
+<ul class="nav nav-pills nav-fill mb-4">
     <li class="nav-item ">
-        <a class="nav-link title-med {% block hist-activ %}{% endblock %}" href="{% url 'budget:expense_list' %}"><i class="fas fa-list-ul"></i> <span class="sub-nav">History</span></a>
+        <a class="nav-link title-med {% block hist-activ %}{% endblock %}" href="{% url 'budget:expense_list' %}"><i class="fas fa-list-ul"></i> <span class="sub-nav">Bill History</span></a>
     </li>
     <li class="nav-item">
         <a class="nav-link title-med {% block rec-activ %}{% endblock %}" href="{% url 'budget:expense_list_recurring' %}"><i class="fas fa-redo-alt"></i> <span class="sub-nav">Repeating Bills</span></a>
     </li>
     <li class="nav-item">
-        <a class="nav-link title-med {% block new-activ %}{% endblock %}" href="{% url 'budget:expense_form_page' %}"><i class="fas fa-plus"></i> <span class="sub-nav">New</span></a>
+        <a class="nav-link title-med {% block categ-activ %}{% endblock %}" href="{% url 'budget:category_list' %}"><i class="fas fa-tags"></i> <span class="sub-nav">Spending Categories</span></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link title-med {% block new-activ %}{% endblock %}" href="{% url 'budget:expense_form_page' %}"><i class="fas fa-plus"></i> <span class="sub-nav">Add Bill</span></a>
     </li>
 </ul>
 
