@@ -1,0 +1,120 @@
+{% extends "budget/expenses/expense.html" %}
+{% load static %}
+
+<!-- Set the title tag -->
+{% block page_title %}Record Spending Activity{% endblock page_title %}
+
+{% block extra_styles %}
+<!-- Date picker -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+{% endblock %}
+
+<!-- Set the "Activity" tab class -->
+{% block hist-activ %}active imp{% endblock %}
+
+<!-- Set the class of the main tag -->
+{% block main_class %} class="narrow-content"{% endblock %}
+
+<!-- Page Title -->
+{% block h1 %}New Spending Record{% endblock h1 %}
+{% block extra_button %}
+{% endblock extra_button%}
+
+<!-- Add page content -->
+{% block content %}
+
+<!-- One-time expense form -->
+<form id="one-time" action="{% block one-form-action %}{% url 'budget:record_spending' %}{% endblock %}" method="POST" class="" enctype="multipart/form-data"> 
+    {% csrf_token %}
+
+    <div class="form-group mb-3 row">
+      <label for="{{ form.expense_date.id_for_label }}" class="col-sm-4 col-form-label imp">Date</label>
+      <div class="col-md-8 flex">
+        {{ form.expense_date }}
+        <button id="today" type="button" class="btn btn-link">Today</button>
+      </div> 
+    </div>
+
+    <div class="form-group mb-3 row">
+        <label for="{{forms.amount.id_for_label}}" class="col-sm-4 col-form-label imp">Amount</label>
+        <div class="col-md-8">
+          {{ form.amount }}
+        </div>
+    </div>
+
+    <div class="form-group mb-2 row">
+        <label for="{{ form.category.id_for_label }}" class="col-sm-4 col-form-label"><span class="imp">Category</span> <small>(optional)</small></label>
+        <div class="col-md-8 flex align-center mb-2">
+          {{ form.category }}
+          <button class="btn btn-outline-primary question" type="button" data-toggle="collapse" data-target="#categoryDescription1" aria-expanded="false" aria-controls="categoryDescription">
+            <i class="fas fa-question fa-sm"></i>
+          </button>
+        </div>
+        <div class="col-md-12 collapse mb-2" id="categoryDescription1">
+          <div class="card card-body">
+            <h3 class="imp title-sm"><i class="fas fa-question-circle"></i> What is a category?</h3>
+            <p class="">Categories are labels you can use to group spending habits or committments. For example, maybe you want to see how much you spend eating out versus how much you spend on groceries. We will create monthly dashboards that compare how much you spend in each category, and you can also set budgets for each category to track your spending goals.</p>
+          </div>
+        </div>
+    </div>
+
+    <div class="form-group mb-3 row">
+        <label for="{{ form.description.id_for_label}}" class="col-sm-4 col-form-label"><span class="imp">Description</span> <small>(optional)</small></label>
+        <div class="col-md-8">
+          {{ form.description }}
+        </div>           
+    </div>
+
+    <div class="form-group mb-2 row">
+      <label for="receipt" class="col-sm-4 col-form-label"><span class="imp">Receipt</span> <small>(optional)</small></label>
+      <div class="col-md-8 flex just-start">
+          <label id="" class="flex w-100" for="receipt">
+          <div class="btn btn-outline-primary w-100 imp"><i class="fas fa-camera fa-lg"></i> Choose file or photo</div>
+          <input id="receipt" type="file" accept="image/*" capture=environment class="image-upload" name="receipt"/>
+          </label>
+
+      </div>
+    </div>
+
+    <div id="receipt-file" class="flex just-center mb-4">
+        {% block existing_receipt %}
+        {% endblock existing_receipt %}
+    </div>
+
+    <div class="flex just-center">
+      <button type="submit" class="btn btn-warning imp title-med">{% block button-name %} Create Spending Record{% endblock %}</button>
+    </div>
+
+</form>
+
+
+{% endblock content %}
+
+
+<!-- Add scripts for this page -->
+{% block my_scripts %}
+
+<!-- Outside scripts for date and date range picker -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+{% block extra-scripts %}
+<!-- Function to acivate picker -->
+<script src="{% static '/budget/scripts/activateDateCalendarsNew.js' %}"></script>
+
+{% endblock %}
+
+<!-- Set default date (today) -->
+<script src="{% static '/budget/scripts/setDateToday.js' %}"></script>
+
+<!-- Display the receipt image preview -->
+<script src="{% static '/budget/scripts/displayImagePreviewBeforeUpload.js' %}"></script>
+
+<!-- Delete receipt -->
+<script src="{% static '/budget/scripts/deleteFile.js' %}"></script>
+
+<!-- Add 'None' as the default option in the category dropdown -->
+<script src="{% static '/budget/scripts/addPlaceholderTextToSelect.js' %}"></script>
+
+{% endblock %}

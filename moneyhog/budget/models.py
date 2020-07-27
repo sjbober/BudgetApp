@@ -31,9 +31,9 @@ class RecurringExpense(models.Model):
 
 
 class Income(models.Model):
-    start_date = models.DateField()
-    does_repeat = models.BooleanField('Repeats monthly?',blank=True)
+    date = models.DateField()
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+    paycheck = models.ImageField(upload_to="images/",null=True,blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE, null=False,blank=False)
 
     def __str__(self):

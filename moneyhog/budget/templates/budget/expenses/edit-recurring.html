@@ -1,63 +1,19 @@
-{% extends "budget/expenses/form.html" %}
-{% block staticload %}{% load static %}{% endblock %}
+{% extends "budget/expenses/new-repeat-bill.html" %}
+{% load static %}
 
 <!-- Set the title tag -->
-{% block page_title %}Edit Monthly Bill{% endblock page_title %}
+{% block page_title %}Edit Bill{% endblock page_title %}
 
-<!-- Set the "Monthly" tab class -->
-{% block recur-activ %}active imp{% endblock %}
+<!-- Page title and optional button-->
+{% block h1 %}Edit Bill{% endblock h1 %}
 
-<!-- Set the h1 tag  -->
-{% block h1 %}Edit Monthly Bill{% endblock h1 %}
-
-<!-- Add delete button -->
+<!-- Cancel edits -->
 {% block extra_button%}
-<button type="button" class="btn btn-outline-danger imp title-sm" data-toggle="modal" data-target="#deleteMonthlyBill"><i class="fas fa-trash-alt"></i> Delete</button>
-
-<div id="deleteMonthlyBill" class="modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="title-xl imp">Delete Monthly Bill</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body flex just-center">
-                <p class="title-xl">Are you sure you want to delete this monthly bill?</p>
-            </div>
-            <div class="modal-footer flex just-around">
-                <form action="{% url 'budget:recurring_edit' expense.pk %}" method="POST" class="inline-form" enctype="application/x-www-form-urlencoded"> 
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger imp">Yes, delete it</button>
-                </form>
-                <button type="button" class="btn btn-primary imp" data-dismiss="modal">No, cancel</button>
-            </div>
-        </div>
-    </div>
-</div>
+<a href="{% url 'budget:expense_list_recurring' %}" class="btn btn-info imp title-sm">Cancel</a>
 {% endblock extra_button%}
 
 <!-- Set the form action -->
-{% block recur-form-action %}{% url 'budget:recurring_edit' expense.pk %}{% endblock %}
-
-<!-- Set the class for the recurring form -->
-{% block recur-form-class %}inline-form{% endblock %}
-
-<!-- Remove the one-time form -->
-{% block one-form-class %}d-none{% endblock %}
+{% block recur-form-action %}{% url 'budget:recurring_edit' expense.id %}{% endblock %}
 
 <!-- Add the name to the button -->
-{% block recur-button-name %} Save Changes{% endblock %}
-
-<!-- Add scripts for this page -->
-{% block my_scripts %}
-<script>
-  $(function () {
-    $('[data-toggle="tooltip"]').tooltip()
-  })
-</script>
-
-<script src="{% static '/budget/scripts/addPlaceholderTextToSelect.js' %}"></script>
-
-{% endblock %}
+{% block button-name %} Save Changes{% endblock %}

@@ -317,10 +317,11 @@ def recurring_edit(request, pk):
 
     return render(request, 'budget/expenses/edit-recurring.html',context)
 
-# Create a new expense page
+
+# Record spending
 @login_required
-def expense_form_page(request):
-    if request.method == "POST" and 'expense_date' in request.POST:
+def record_spending(request):
+    if request.method == "POST":
         form = ExpenseForm(request.POST, request.FILES)
         if form.is_valid():
             expense = form.save(commit=False)
@@ -330,8 +331,21 @@ def expense_form_page(request):
             return redirect('budget:expense_detail', pk=expense.pk)
         else:
             messages.error(request, "Your expense could not be submitted.")
+    else:
+        form = ExpenseForm()
 
-    elif request.method == "POST" and 'day' in request.POST:
+    category_list = Category.objects.filter(user__exact=request.user.id)
+    context = {
+        'category_list' : category_list,
+        'form' : form,
+    }
+
+    return render(request, 'budget/expenses/new-spending.html',context)
+
+# Create repeating bill
+@login_required
+def create_repeat_bill(request):
+    if request.method == "POST" and 'day' in request.POST:
         recurring_form = RecurringExpenseForm(request.POST)
         if recurring_form.is_valid():
             recurring_expense = recurring_form.save(commit=False)
@@ -342,18 +356,15 @@ def expense_form_page(request):
         else:
             messages.error(request, "Your expense could not be submitted.")
     else:
-        form = ExpenseForm()
         recurring_form = RecurringExpenseForm()
 
     category_list = Category.objects.filter(user__exact=request.user.id)
     context = {
         'category_list' : category_list,
-        'form' : form,
         'recurring_form': recurring_form,
     }
 
-    return render(request, 'budget/expenses/new-expense.html',context)
-
+    return render(request, 'budget/expenses/new-repeat-bill.html',context)
 
 
 # Category List View
@@ -424,3 +435,18 @@ def category_list(request):
 
 #     elif request.method == "PUT":
 #         pass
+
+
+@login_required
+def income(request):
+    category_names = [cat.name for cat in Category.objects.filter(user__exact=request.user.id)]
+
+    if request.method == "GET":
+        form = CreateCategoryForm()
+        context = {
+            'category_names': category_names,
+            'form': form,
+        }
+
+        # return render(request, 'budget/category/list.html',context)
+        return render(request, 'budget/income/income.html',context)

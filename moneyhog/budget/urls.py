@@ -15,7 +15,9 @@ urlpatterns = [
 
     path('expenses/recurring', views.expense_list_recurring, name='expense_list_recurring'),
 
-    path('expenses/expense-form-page/', views.expense_form_page, name='expense_form_page'),
+    path('expenses/record-spending/', views.record_spending, name='record_spending'),
+
+    path('expenses/create-repeat-bill/', views.create_repeat_bill, name='create_repeat_bill'),
 
     path('expenses/<int:pk>/', views.expense_detail, name='expense_detail'),
 
@@ -23,6 +25,8 @@ urlpatterns = [
 
     path('expenses/<int:pk>/edit/', views.expense_edit, name='expense_edit'),
 
-    path('categories/', views.category_list, name='category_list'),
+    path('expenses/categories/', views.category_list, name='category_list'),
+
+    path('income/', views.income, name='income'),
 
 ]

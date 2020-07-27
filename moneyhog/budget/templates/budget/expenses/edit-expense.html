@@ -1,35 +1,18 @@
-{% extends "budget/expenses/form.html" %}
-{% block staticload %}{% load static %}{% endblock %}
-
-{% block extra_styles %}
-<!-- Date picker -->
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-{% endblock %}
-
-
+{% extends "budget/expenses/new-spending.html" %}
+{% load static %}
 
 <!-- Set the title tag -->
 {% block page_title %}Edit Expense{% endblock page_title %}
 
-<!-- Set the "Monthly" tab class -->
-{% block hist-activ %}active imp{% endblock %}
-
-<!-- Set the h1 tag  -->
+<!-- Page title and optional button-->
 {% block h1 %}Edit Expense #{{ expense.id }}{% endblock h1 %}
 
-<!-- Add delete button -->
 {% block extra_button%}
-<a href="{% url 'budget:expense_detail' expense.id %}" type="button" class="btn btn-link imp text-info title-sm">Cancel <i class="fas fa-times" aria-hidden="true"></i></a>
+<a href="{% url 'budget:expense_detail' expense.id %}" class="btn btn-info imp title-sm">Cancel</a>
 {% endblock extra_button%}
 
 <!-- Set the form action -->
 {% block one-form-action %}{% url 'budget:expense_edit' expense.id %}{% endblock %}
-
-<!-- Set the form class -->
-{% block one-form-class %}inline-form{% endblock %}
-
-<!-- Remove the recurring form -->
-{% block recur-form-class %}d-none{% endblock %}
 
 <!-- Add a receipt if the expense has one -->
 {% block existing_receipt %}
@@ -45,24 +28,12 @@
 <!-- Add the name to the button -->
 {% block button-name %} Save Changes{% endblock %}
 
-<!-- Add scripts for this page -->
-{% block my_scripts %}
 
-<!-- Outside scripts for date and date range picker -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-
-<!-- Fuction to acivate picker -->
+{% block extra-scripts %}
+<!-- Function to acivate picker -->
 <script src="{% static '/budget/scripts/activateDateCalendarsEdit.js' %}"></script>
 
 <!-- Convert date for time picker so it doesn't blow up -->
 <script src="{% static '/budget/scripts/convertDateForPicker.js' %}"></script>
-
-
-<script src="{% static '/budget/scripts/setDateToday.js' %}"></script>
-<script src="{% static '/budget/scripts/displayImagePreviewBeforeUpload.js' %}"></script>
-<script src="{% static '/budget/scripts/deleteFile.js' %}"></script>
-<script src="{% static '/budget/scripts/addPlaceholderTextToSelect.js' %}"></script>
 
 {% endblock %}

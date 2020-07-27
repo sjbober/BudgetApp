@@ -56,7 +56,7 @@
         #filter-form {
             width: 40%;
             padding-right: 20px;
-            border-right: 1px solid #DCDCDC;
+            /* border-right: 1px solid #DCDCDC; */
         }
         .table-responsive {
             padding-left: 20px;
@@ -67,28 +67,26 @@
             display: none;
         }
 
+        
+
         .custom-modal {
             position: static;
             margin-top: 5px;
-            /* top: 0; */
-            /* left: 0; */
-            /* z-index: -1;  */
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: transparent;  /*  */
-            opacity: 1;            /*  */
-            visibility: visible;  /*  */
-            /*  */
-            /* z-index: -1;
-            opacity: 1; */
+            background-color: transparent; 
+            opacity: 1;            
+            visibility: visible;  
+            border-right: 1px solid #DCDCDC;
+            /* border-right: 1px solid black; */
+
 
         }
         .custom-modal-content {
             background-color: #fff;
-            margin: 0;                  /*  */
-            /* margin-top: 5px; */
-            border: none;                /*  */
+            margin: 0;                
+            border: none;               
             width: 100%; 
             height: 100%;
         }

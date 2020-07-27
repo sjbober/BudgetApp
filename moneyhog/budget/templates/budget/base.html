@@ -29,17 +29,11 @@
   </head>
   <body>
     <header>
+      <!-- Site Nav -->
       <nav class="navbar navbar-dark bg-primary flex just-betw align-center">
-        <!-- <a class="logo" href="#"><i class="fas fa-piggy-bank"></i> MoneyHog</a> -->
-        <!-- <a class="logo" href="#">
-          <img class="logo-pic mr-2" style="height:2rem;" src="{% static 'budget/logo/mh_logo.png' %}">
-        </a> -->
-
         <div class="logo flex align-center">
           <img class="nav-logo-pic mr-1" src="{% static 'budget/logo/logo-light.png' %}"> <span class="money">Money</span>Hog
         </div>
-        <!-- <h1 class="flex"><img class="logo-pic mr-2" src="{% static 'budget/logo/logo.png' %}"> <span class="money">Money</span>Hog</h1> -->
-
         <ul class="navbar-list flex just-betw align-end">
           <li>
               <button type="button" class="btn btn-outline-secondary hamb">
@@ -50,21 +44,11 @@
               <a class="navbar-link {% block summary-active %}{% endblock summary-active %}" href="#"><span class="nav-icon"><i class="fas fa-chart-pie"></i></span> Summary {% block summary_active_sr %}{% endblock summary_active_sr %}</a>
           </li>
           <li class="hide">
-            <!-- navbar-active -->
-            <!-- <div class="btn-group"> -->
               <a class="navbar-link {% block expenses_active %}{% endblock expenses_active %}" href="{% url 'budget:expense_list' %}"><span class="nav-icon"><i class="fas fa-receipt"></i></span> Spending {% block expenses_active_sr %}{% endblock expenses_active_sr %}</a>
-            <!-- </div> -->
-              
           </li>
           <li class="hide">
-              <a class="navbar-link {% block income-active %}{% endblock income-active %}" href="#"><span class="nav-icon"><i class="fas fa-dollar-sign"></i></span> Income {% block income_active_sr %}{% endblock income_active_sr %}</a>
+              <a class="navbar-link {% block income-active %}{% endblock income-active %}" href="{% url 'budget:income' %}"><span class="nav-icon"><i class="fas fa-dollar-sign"></i></span> Income {% block income_active_sr %}{% endblock income_active_sr %}</a>
           </li>
-          <!-- <li class="hide">
-              <a class="navbar-link {% block categ-active %}{% endblock categ-active %}" href="{% url 'budget:category_list' %}"><span class="nav-icon"><i class="fas fa-tags"></i></span> Categories {% block categ_active_sr %}{% endblock categ_active_sr %}</a>
-          </li> -->
-          <!-- <li class="hide">
-              <a class="navbar-link {% block account-active %}{% endblock account-active %}" href="#"><span class="nav-icon"><i class="fas fa-user-circle"></i></span> My Account {% block account_active_sr %}{% endblock account_active_sr %}</a>
-          </li> -->
           <li class="hide">
             <a class="navbar-link" href="{% url 'budget:logout' %}"><span class="nav-icon"><i class="fas fa-door-open"></i></span> Logout</a>
           </li>
@@ -73,10 +57,35 @@
    
     </header>
     <main class="wide-content">
+
         <!-- Placeholder for subheader -->
         {% block page-header %}
         {% endblock %}
         <div {% block main_class %}{% endblock %}>
+
+          <!-- Messages (error, success, etc) -->
+          {% if messages %}
+            {% for message in messages %}
+              {% if message.tags == "error" %}
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              {% else %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              {% endif %}
+              {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <!-- Page Heading Title -->
+          <div class="flex just-betw mt-2 mb-4">
+            <h1 class="imp page-title">{% block h1 %}{% endblock h1 %}</h1>
+            {% block extra_button%}{% endblock extra_button %}
+          </div>
+
+          
           <!-- Placeholder for actual content -->
           {% block content %}
           {% endblock %}

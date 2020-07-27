@@ -130,6 +130,18 @@ nav {
         border-bottom-width: 2px;
     }
 
+
+    /* Expense nav */
+    .nav-link {
+        border-bottom: solid 2px transparent;
+    } 
+    .nav-link:hover,
+    .nav-link:focus, 
+    .nav-link:hover:focus:active {
+        border-bottom: solid 2px #593196;
+    }
+
+
 /*  ======================================================
     Body Containers padding/position
     ======================================================  */
@@ -138,15 +150,8 @@ nav {
 }
 
 .narrow-content {
-    /* padding */
-    /* padding: 10px 20px; */
-    /* padding-top: 5px; */
-    /* width: 350px; */
     max-width: 500px;
-    /* margin-right: auto;
-    margin-left: auto; */
     margin: 0 auto;
-    /* border: 1px solid black; */
 }
 
 /*  ======================================
@@ -246,7 +251,11 @@ tfoot,thead {
 /*  ======================================
     buttons
     ======================================  */
-
+.btn-warning {
+    /* background-color: #ff8500; */
+    /* background-color: #d18000; */
+    /* background-color: #EFA31D; */
+}
 .btn-primary,
 .btn-outline-primary,
 .btn-success,
