@@ -7,9 +7,18 @@ for (let i =0; i < row.length; i++) {
 
 }
 
-// If a row is clicked, redirect the user
+// If a row is clicked, check if it was the
+// delete button that was clicked. If it is,
+// open the delete modal. If it isn't,
+// redirect the user to the edit page
 function redirect(evt) {
-  let pk = evt.target.parentElement.id;
-  window.location = "/budget/expenses/recurring/" + pk;
+  
+  if (evt.target.className == "fas fa-trash-alt") {
+
+  } else {
+    console.log(evt);
+    let pk = evt.target.parentElement.id;
+    window.location = "/budget/expenses/recurring/" + pk;
+  }
 
 }

@@ -230,7 +230,7 @@ def expense_list(request):
 # View list of monthly bills
 @login_required
 def expense_list_recurring(request):
-    recurring_expenses = RecurringExpense.objects.filter(user__exact=request.user.id)
+    recurring_expenses = RecurringExpense.objects.filter(user__exact=request.user.id).order_by('day')
 
     context = {
         'recurring_expenses': recurring_expenses,
