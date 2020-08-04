@@ -1,175 +1,28 @@
 {% extends "budget/base.html" %}
 
-{% block income_active %}navbar-active{% endblock income_active %}
+<!-- Page title -->
+{% block page_title %}Income{% endblock %}
+
+<!-- Income nav button is active in site nav bar -->
+{% block income-active %}navbar-active{% endblock income-active %}
 {% block income_active_sr %}<span class="sr-only">(current)</span>{% endblock income_active_sr %}
 
-{% load bootstrap_pagination %}
-
-{% block page_title %}Income{% endblock page_title %}
-
-{% block extra_styles %}
-<link rel="stylesheet" type="text/css" href="{% static 'budget/list.css' %}">
-
-{% endblock extra_styles %}
-
-{% block hist-activ %}active imp{% endblock %}
-
-{% block content %}
-
-  {% if messages %}
-    {% for message in messages %}
-      {% if message.tags == "error" %}
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-      {% else %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-      {% endif %}
-      {{ message }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-    {% endfor %}
-  {% endif %}
-  <!-- <h2 class="imp page-title mb-3">Spending Activity</h2> -->
-  <div id="filters-and-list">
-    <form id="filter-form" action="{% url 'budget:expense_list' %}" method="GET" class="mt-3" enctype="application/x-www-form-urlencoded"> 
-      
-
-      <div id="search-modal" class="flex just-center">
-        <button id="trigger-search-modal" class="btn btn-outline-primary title-med mb-2" type="button"  aria-controls="searchFilters">
-        <i class="fas fa-search"></i> Search Filters</button>
-      </div>
-      
-      <div class="custom-modal">
-        <div class="custom-modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title imp">Search Filters</h5>
-            <button id="close-modal" type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div id="search-section" class="mb-3">
-              <label for="keywords" class="imp">Description</label>
-              {{ form.keywords }}
-            </div>  
-        
-            <div id="date-section" class="mb-3">
-              <p class="imp mb-1">Date</p>
-              <div class="mb-2">
-                {% for radio in form.date_choice %}
-                  <div class="form-check form-check-inline">
-                    {{ radio.tag }}
-                    <label class="form-check-label" for="{{ radio.id_for_label }}">
-                      {{ radio.choice_label}}
-                    </label>
-                  </div>
-                {% endfor %}
-              </div>
-
-              <div class="date-box flex align-center">
-                {{ form.single_date }}
-                {{ form.date_range }}
-              </div>
-            </div>
-      
-            <div id="amount-section" class="mb-3">  
-              <p class="imp mb-3">Amount</p>  
-              <div id="slider" class="mb-2"></div> 
-              <div id="amount-labels" class="flex just-betw align-center date-modal-bod">
-                <label for="min-amount" class="">Min</label>
-                <span></span>
-                <label for="max-amount" class="">Max</label>
-              </div>
-      
-              <div id="amount-inputs" class="flex align-center just-betw date-modal-bod">
-                {{ form.min_amount }}
-                <span class="flex just-center" ><i class="fas fa-angle-right fa-lg"></i></span>
-                {{ form.max_amount }}
-              </div>
-            </div>
-      
-            <div id="category-section" class="mb-3">
-              <p class="imp mb-1">Categories</p>
-              {% for category in form.categories %}
-              <div class="custom-control custom-checkbox">
-                {{ category.tag }}
-                <label class="custom-control-label" for="{{ category.id_for_label }}">{{ category.choice_label }}</label>
-              </div>
-              {% endfor %}
-            </div>
-      
-            <div id="receipt-section" class="mb-3">
-              <p class="imp mb-1">Receipt</p>
-              {% for radio in form.has_receipt %}
-                <div class="form-check form-check-inline">
-                  {{ radio.tag }}
-                  <label class="form-check-label" for="{{ radio.id_for_label }}">
-                    {{ radio.choice_label}}
-                  </label>
-                </div>
-              {% endfor %}
-            </div>
-              
-            <button type="submit" class="btn btn-outline-primary imp block"><i class="fas fa-search" aria-hidden="true"></i> Save Filters</button>
-          </div>
-        </div>
-      </div>
-    </form>
-  
-    {% if page_obj %}
-    <div class="table-responsive flex flex-col">
-      <span class="mt-2 mb-2">Showing {{ start_num }} - {{ end_num }} of {{ num_records }} expenses.</span>
-      <table class="table mb-">
-        <thead class="thead-light">
-          <tr>
-            <th scope="col" class="title-sm">ID</th>
-            <th scope="col" class="title-sm">Date</th>
-            <th scope="col" class="title-sm">Amount</th>
-            <th scope="col" class="title-sm">Category</th>
-          </tr>
-        </thead>
-        <tbody class="">
-        
-          {% for record in page_obj %}
-
-          <tr class="click btn-link">
-            <td >{{ record.pk }}</td>
-            <td >{{ record.expense_date }}</td>
-            <td >${{ record.amount }}</td>
-            <td >{{ record.category }}</td>
-          </tr>
-
-          {% endfor %}
-
-        </tbody>
-      </table>
-
-      <div class="flex just-center">
-        {% bootstrap_paginate page_obj range=10 %}
-      </div>
-      
-    </div>
-  
-    {% else %}
-        <p class="mt-3 ml-3">No expenses found.</p>
-    {% endif %}
-  </div>
-{% endblock content%}
-
-{% block my_scripts %}
-
-<!-- Declare global template variables -->
-<script type="text/javascript">
-  let page_number = "{{ page_number }}";
-  let dateChoice = "{{ date_choice }}";
-  let minAmount = "{{ min_amount }}";
-  let maxAmount = "{{ max_amount }}";
-  let hasReceipt = "{{ has_receipt }}";
-  let highestAmount = "{{ highest_amount }}";
-</script>
-
-<!-- Makes each table row a URL -->
-<script src="{% static '/budget/scripts/clickExpenseToRedirect.js' %}"></script>
+<!-- Spending nav bar -->
+{% block page-header %}
+<ul class="nav nav-pills nav-fill mb-4">
+    <li class="nav-item ">
+        <a class="nav-link title-med {% block hist-activ %}{% endblock %}" href="{% url 'budget:expense_list' %}"><i class="fas fa-list-ul"></i> <span class="sub-nav">History</span></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link title-med {% block rec-activ %}{% endblock %}" href="{% url 'budget:expense_list_recurring' %}"><i class="fas fa-redo-alt"></i> <span class="sub-nav">Repeating Income</span></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link title-med {% block categ-activ %}{% endblock %}" href="{% url 'budget:category_list' %}"><i class="fas fa-tags"></i> <span class="sub-nav">Categories</span></a>
+    </li>
+</ul>
 
 {% endblock %}
+
+{% block extra_button%}
+<a class="btn btn-warning title-xl imp" href="{% block link-url %}{% endblock %}"><i class="fas fa-plus"></i>  {% block btn-label %}{% endblock %}</a>
+{% endblock extra_button %}

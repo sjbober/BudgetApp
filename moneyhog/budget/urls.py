@@ -5,7 +5,11 @@ from . import views
 app_name = 'budget'
 
 urlpatterns = [
-    path('', views.login_view, name='index'),
+    path('login/', views.login_view, name='login'),
+
+    path('', views.summary, name='summary'),
+
+    # path('month-expenses/', views.monthly_expenses, name='monthly_expenses'),
 
     path('signup/', views.signup, name='signup'),
 
@@ -13,7 +17,7 @@ urlpatterns = [
 
     path('expenses/', views.expense_list, name='expense_list'),
 
-    path('expenses/recurring', views.expense_list_recurring, name='expense_list_recurring'),
+    path('expenses/recurring/', views.expense_list_recurring, name='expense_list_recurring'),
 
     path('expenses/record-spending/', views.record_spending, name='record_spending'),
 

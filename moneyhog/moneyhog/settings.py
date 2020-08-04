@@ -27,7 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# LOGIN_URL = 'moneyhog:index'
+LOGIN_URL = 'budget:login'
+LOGIN_REDIRECT_URL = 'budget:login'
 
 
 # Application definition

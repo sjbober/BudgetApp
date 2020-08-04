@@ -1,4 +1,4 @@
-{% block staticload %}{% load static %}{% endblock %}
+{% load static %}
 <!DOCTYPE html>
 <html>
   <head>
@@ -41,7 +41,7 @@
               </button>
           </li>
           <li class="hide">
-              <a class="navbar-link {% block summary-active %}{% endblock summary-active %}" href="#"><span class="nav-icon"><i class="fas fa-chart-pie"></i></span> Summary {% block summary_active_sr %}{% endblock summary_active_sr %}</a>
+              <a class="navbar-link {% block summary-active %}{% endblock summary-active %}" href="{% url 'budget:summary' %}"><span class="nav-icon"><i class="fas fa-chart-pie"></i></span> Summary {% block summary_active_sr %}{% endblock summary_active_sr %}</a>
           </li>
           <li class="hide">
               <a class="navbar-link {% block expenses_active %}{% endblock expenses_active %}" href="{% url 'budget:expense_list' %}"><span class="nav-icon"><i class="fas fa-receipt"></i></span> Spending {% block expenses_active_sr %}{% endblock expenses_active_sr %}</a>

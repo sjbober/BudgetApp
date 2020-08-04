@@ -16,9 +16,4 @@ class Command(BaseCommand):
 
         for expense in monthly_expenses:
             one_time_expense = Expense(expense_date=date.today(),description=expense.description,category=expense.category,amount=expense.amount,user=expense.user)
-
             one_time_expense.save()
-    # user = models.ForeignKey(settings.AUTH_/USER_MODEL,
-                            # on_delete=models.CASCADE, 
-                            # null=False,
-                            # blank=False)

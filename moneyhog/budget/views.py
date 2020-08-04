@@ -35,13 +35,18 @@ from .forms import SignupForm
 import operator
 from functools import reduce
 from django.db.models import Q
+from django.db.models import Sum
 
 # Pagination
 from django.core.paginator import Paginator
 
+# Dates
+from datetime import date
+
 # Errors 
 # import logging
 
+# Create account
 def signup(request):
     if request.method == "POST":
         userForm = SignupForm(request.POST)
@@ -50,7 +55,7 @@ def signup(request):
             user.email = userForm.cleaned_data["email"]
             user.save()
             messages.success(request, "Your account was successfully created, %s! Try logging in now." % user.username)
-            return redirect('budget:index')
+            return redirect('budget:login')
         else:
             messages.error(request, "An error occurred and your account could not be created.")
 
@@ -61,6 +66,7 @@ def signup(request):
 
     return render(request, 'budget/signup.html', context)
 
+# Login
 def login_view(request):
     if request.method == "POST":
         username = request.POST['username']
@@ -68,7 +74,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('budget:expense_list')
+            return redirect('budget:summary')
         else:
             # print("user does not exist")
             messages.error(request, "Your username and/or password is incorrect.")
@@ -83,7 +89,98 @@ def login_view(request):
 
     return render(request, 'budget/login.html', context)
 
+# View breakdown of spending by category and spending vs. income
+@login_required
+def summary(request):
 
+    if request.method == "POST":
+        post_data = json.loads(request.body)
+        month = post_data['month']
+        year = post_data['year']
+
+        response_data = {}
+
+    # check if month and year are numerical!!!
+
+        if month == '' and year == '': # If no date is sent, use today's month/year
+
+            # Get today's month and year, and this month's start and end days
+            today = date.today()
+            first_date = str(today.year) + "-" + str(today.month) + "-01"
+            month_ends = {1:31,2:28,3:31,4:30,5:31,6:30,7:31,8:31,9:30,10:31,11:30,12:31}
+            second_date = str(today.year) + "-" + str(today.month) + "-" + str(month_ends[today.month])
+            expense_date__range=[first_date, second_date]
+
+            # Get a sum of expenses by category for the current month
+            exp_by_categ = Category.objects.filter(user__exact=request.user.id).filter(expense__expense_date__range=[first_date, second_date]).annotate(sum=Sum('expense__amount'))
+
+            # Send response
+            response_data['result'] = 'success'
+            response_data['type'] = 'current month and year'
+            
+            expenses = {}
+            for categ in exp_by_categ:
+                expenses[str(categ)] = categ.sum
+
+            response_data['expenses'] = expenses
+
+        return JsonResponse(response_data)
+
+
+    else:
+        context = {
+            # 'exp_by_categ': exp_by_categ,
+        }
+        return render(request, 'budget/summary.html', context)
+
+# Get sum of expenses on a monthly (or other timeframe) grouped by category
+@login_required
+def monthly_expenses(request):
+
+    if request.method == "POST":
+        post_data = json.loads(request.body)
+        month = post_data['month']
+        year = post_data['year']
+
+        response_data = {}
+
+    # check if month and year are numerical!!!
+
+    if month == '' and year == '': # If no date is sent, use today's month/year
+
+        # Get today's month and year, and this month's start and end days
+        today = date.today()
+        first_date = str(today.year) + "-" + str(today.month) + "-01"
+        month_ends = {1:31,2:28,3:31,4:30,5:31,6:30,7:31,8:31,9:30,10:31,11:30,12:31}
+        second_date = str(today.year) + "-" + str(today.month) + "-" + str(month_ends[today.month])
+        expense_date__range=[first_date, second_date]
+
+        # Get a sum of expenses by category for the current month
+        exp_by_categ = Category.objects.filter(user__exact=request.user.id).filter(expense__expense_date__range=[first_date, second_date]).annotate(sum=Sum('expense__amount'))
+        print(exp_by_categ)
+
+        # Send response
+        response_data['result'] = 'success'
+        response_data['type'] = 'current month and year'
+        response_data['expenses'] = exp_by_categ
+
+
+    elif month == '' and year != '':   # user wants current year comparison
+
+
+
+        response_data['result'] = 'success'
+
+    elif month != '' and year != '':
+        pass
+    else:
+        response_data['result'] = 'error'
+        response_data['message'] = ''
+
+    
+    return JsonResponse(response_data)
+
+# Logout
 @login_required
 def logout_view(request):
     logout(request)
@@ -108,10 +205,7 @@ def expense_list(request):
 
     # If a search filter call has been made, we need to filter our expenses list and create a bounded form
     if 'keywords' in request.GET:
-        # form = SearchExpensesForm(request.GET)
         form = SearchExpensesForm(request.GET,user=request.user.id)
-        # SearchExpensesForm(request.GET,form_kwargs={'user': request.user.id})
-        # form = SearchExpensesForm(request.user.id,request.GET)
         if form.is_valid():
             keywords = form.cleaned_data["keywords"]
             date_choice = form.cleaned_data["date_choice"] 
@@ -273,7 +367,7 @@ def expense_edit(request, pk):
             messages.error(request, "An error occurred and your changes have not been saved.")
 
     else:
-        form = ExpenseForm(instance=expense)
+        form = ExpenseForm(instance=expense,user=request.user.id)
 
     category_list = Category.objects.filter(user__exact=request.user.id)
     context = {
@@ -306,7 +400,7 @@ def recurring_edit(request, pk):
         else:
             messages.error(request, "An error occurred and expense #%s was not deleted." % expense.pk)
     else:
-        recurring_form = RecurringExpenseForm(instance=expense)
+        recurring_form = RecurringExpenseForm(instance=expense,user=request.user.id)
 
     category_list = Category.objects.filter(user__exact=request.user.id)
     context = {
@@ -332,7 +426,7 @@ def record_spending(request):
         else:
             messages.error(request, "Your expense could not be submitted.")
     else:
-        form = ExpenseForm()
+        form = ExpenseForm(user=request.user.id)
 
     category_list = Category.objects.filter(user__exact=request.user.id)
     context = {
@@ -341,6 +435,7 @@ def record_spending(request):
     }
 
     return render(request, 'budget/expenses/new-spending.html',context)
+
 
 # Create repeating bill
 @login_required
@@ -356,7 +451,7 @@ def create_repeat_bill(request):
         else:
             messages.error(request, "Your expense could not be submitted.")
     else:
-        recurring_form = RecurringExpenseForm()
+        recurring_form = RecurringExpenseForm(user=request.user.id)
 
     category_list = Category.objects.filter(user__exact=request.user.id)
     context = {

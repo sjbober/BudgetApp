@@ -145,6 +145,12 @@ class DeleteExpenseForm(ModelForm):
 
 class ExpenseForm(ModelForm):
 
+    def __init__(self,*args,user,**kwargs):
+        self.user = user
+        super().__init__(*args,**kwargs)
+        self.fields['category'].choices = [(category.name,category.name) for category in Category.objects.filter(user__exact=self.user)]
+
+
     class Meta:
         model = Expense
         # fields = '__all__'
@@ -178,6 +184,12 @@ class ExpenseForm(ModelForm):
         }
 
 class RecurringExpenseForm(ModelForm):
+
+    def __init__(self,*args,user,**kwargs):
+        self.user = user
+        super().__init__(*args,**kwargs)
+        self.fields['category'].choices = [(category.name,category.name) for category in Category.objects.filter(user__exact=self.user)]
+
     class Meta:
         model = RecurringExpense
         # fields = '__all__'

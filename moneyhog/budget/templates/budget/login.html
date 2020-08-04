@@ -48,7 +48,7 @@
 
         <!-- <h1 class="page-title mb-4 imp flex just-center">Login</h1> -->
 
-        <form id="" action="{% url 'budget:index' %}" method="POST" class="inline-form" enctype="application/x-www-form-urlencoded"> 
+        <form id="" action="{% url 'budget:login' %}" method="POST" class="inline-form" enctype="application/x-www-form-urlencoded"> 
             {% csrf_token %}
             <div class="form-group">
               <label for="{{form.username.id_for_label}}" class="title-sm">Username</label>
