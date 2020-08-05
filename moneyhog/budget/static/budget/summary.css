@@ -1,0 +1,25 @@
+
+
+#byCateg, #spendSave {
+    /* width: 100%;
+    height: 74%; */
+}
+
+.pie {
+    width: 100vh;
+    height: 100vw;
+}
+
+/*  ======================================
+    Styling for Desktop
+    ======================================  */
+    
+    @media screen and (min-width: 800px) {
+        #byCateg, #spendSave {
+            /* width: 25%;
+            height: 25%; */
+        }
+
+
+    }
+

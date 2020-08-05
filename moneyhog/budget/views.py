@@ -112,11 +112,35 @@ def summary(request):
             expense_date__range=[first_date, second_date]
 
             # Get a sum of expenses by category for the current month
-            exp_by_categ = Category.objects.filter(user__exact=request.user.id).filter(expense__expense_date__range=[first_date, second_date]).annotate(sum=Sum('expense__amount'))
+            exp_by_categ = Category.objects.filter(user__exact=request.user.id).filter(expense__expense_date__range=[first_date, second_date]).annotate(sum=Sum('expense__amount')).order_by('-name')
+
+            colors = [
+                # [89,49,150],
+                [169,145,212],
+                [19,185,85],
+                [0,156,220],
+                [239,163,29],
+                [252,57,57],
+                [249,248,252],
+                [23,20,31]
+            ]
+
+            # --primary: #593196; rgb(89,49,150)
+            # --secondary: #A991D4; rgb(169,145,212)
+            # --success: #13B955; rgb(19,185,85)
+            # --info: #009CDC; rgb(0,156,220)
+            # --warning: #EFA31D; rgb(239,163,29)
+            # --danger: #FC3939; rgb(252,57,57)
+            # --light: #F9F8FC; rgb(249,248,252)
+            # --dark: #17141F; rgb(23,20,31)
+
 
             # Send response
             response_data['result'] = 'success'
             response_data['type'] = 'current month and year'
+            response_data['colors'] = colors
+            response_data['month'] = month
+            response_data['year'] = year
             
             expenses = {}
             for categ in exp_by_categ:
@@ -384,7 +408,7 @@ def recurring_edit(request, pk):
     expense = get_object_or_404(RecurringExpense, pk=pk)
 
     if request.method == "POST" and 'day' in request.POST:
-        recurring_form = RecurringExpenseForm(request.POST, instance=expense)
+        recurring_form = RecurringExpenseForm(request.POST, request.user.id,instance=expense)
         if recurring_form.is_valid():
             recurring_form.save()
             messages.success(request, "Your changes have been saved.")
@@ -416,7 +440,12 @@ def recurring_edit(request, pk):
 @login_required
 def record_spending(request):
     if request.method == "POST":
-        form = ExpenseForm(request.POST, request.FILES)
+        # for key in request.POST:
+        #     # print(key, request.POST[key])
+        # print(request.POST['amount'])
+        # print(request.POST['category'])
+        form = ExpenseForm(data=request.POST, files=request.FILES,user=request.user.id)
+        print(form)
         if form.is_valid():
             expense = form.save(commit=False)
             expense.user = request.user
@@ -424,7 +453,7 @@ def record_spending(request):
             messages.success(request, "Expense #{} has been successfully created.".format(str(expense.pk)))
             return redirect('budget:expense_detail', pk=expense.pk)
         else:
-            messages.error(request, "Your expense could not be submitted.")
+            messages.error(request, "Your expense could not be submitted. form is not valid")
     else:
         form = ExpenseForm(user=request.user.id)
 

@@ -30,8 +30,8 @@ function getMonthlyExpenses(month,year) {
             displayError(data.error); 
 
         } else { // no errors
-            console.log(data);
-            prepareData(data.expenses);
+            console.log(data.expenses,data.colors);
+            prepareData(data.expenses,data.colors);
             // let categories, sums, colors = prepareData(data.expenses);
             // console.log(categories,sums,colors);
             // generatePieCharts(categories,sums,colors);
@@ -61,49 +61,47 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function prepareData(expenses) {
+function prepareData(expenses,colors) {
     let categories = [];
     let sums = [];
     let backgroundColors = [];
     let borderColors = [];
 
+    let i = 0;
     for (const category of Object.entries(expenses)) {
+
         categories.push(category[0]);
         sums.push(category[1]);
-        console.log(category[0]);
-        console.log(category[1]);
-        // console.log(category.RBG_colors);
-        // Generate random color, and corresponding darker color (for border)
-        let randomColors = generateRandomRGB();
 
-        let color = 'rgba(' + randomColors[0] + ', ' + randomColors[1] + ', ' + randomColors[2] + ', ' + .2 + ')';
+        // Generate colors
+        let pos = i % colors.length;
+        let r = colors[pos][0] + Math.floor(i/colors.length);
+        let g = colors[pos][1];
+        let b = colors[pos][2];
+        let a_fill = .2;
+        let a_border = 1;
+
+        // Fill color
+        let color = 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a_fill + ')';
         backgroundColors.push(color);
-        let darkerColor = 'rgba(' + randomColors[0] + ', ' + randomColors[1] + ', ' + randomColors[2] + ', ' + 1 + ')';
+
+        // Border color
+        let darkerColor = 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a_border + ')';
         borderColors.push(darkerColor);
+
+        console.log(color);
+        console.log(darkerColor);
+        i++;
     }
 
-    generatePieCharts(categories,sums,backgroundColors);
+    generatePieCharts(categories,sums,backgroundColors,borderColors);
 
 
 }
 
-function generateRandomNumber(max) {
-    return Math.floor(Math.random() * max);
-}
 
-
-function generateRandomRGB() {
-    let red = generateRandomNumber(256);
-    let green = generateRandomNumber(256);
-    let blue = generateRandomNumber(256);
-
-    return [red, green, blue]
-}
-
-
-// generatePieCharts()
 function generatePieCharts(categories,sums,backgroundColors,borderColors) {
-    let ctx = document.getElementById('myChart').getContext('2d');
+    let ctx = document.getElementById('byCateg').getContext('2d');
 
     let myChart = new Chart(ctx, {
         type: 'pie',

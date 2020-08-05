@@ -145,16 +145,24 @@ class DeleteExpenseForm(ModelForm):
 
 class ExpenseForm(ModelForm):
 
-    def __init__(self,*args,user,**kwargs):
-        self.user = user
+    def __init__(self,*args,**kwargs):
+    # def __init__(self,*args,user,**kwargs):
+        print(kwargs)
+        self.user = kwargs.pop('user')
+        # self.user = user
+        
         super().__init__(*args,**kwargs)
-        self.fields['category'].choices = [(category.name,category.name) for category in Category.objects.filter(user__exact=self.user)]
+        print(kwargs)
+        if not kwargs:
+            print("no kwargs")
+            self.fields['category'].choices = [(category.name,category.name) for category in Category.objects.filter(user__exact=self.user)]
 
 
     class Meta:
         model = Expense
         # fields = '__all__'
         fields = ['expense_date','amount','description','category']
+        # cat_CHOICES = [(category.name,category.name) for category in Category.objects.filter(user__exact=user)]
         widgets = {
                 'expense_date': forms.TextInput(attrs={
                                                         'id': 'datepicker',
@@ -177,8 +185,7 @@ class ExpenseForm(ModelForm):
                                                         'aria-describedby': 'description'
 
                                                         }),
-                'category': forms.Select(attrs={'class': 'form-control w-50 mr-2',
-                                                'value': 'Select One'
+                'category': forms.Select(attrs={'class': 'form-control w-50 mr-2'
                                                         })
         
         }
