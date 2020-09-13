@@ -9,8 +9,6 @@ urlpatterns = [
 
     path('', views.summary, name='summary'),
 
-    # path('month-expenses/', views.monthly_expenses, name='monthly_expenses'),
-
     path('signup/', views.signup, name='signup'),
 
     path('logout/', views.logout_view, name='logout'),
@@ -30,7 +28,5 @@ urlpatterns = [
     path('expenses/<int:pk>/edit/', views.expense_edit, name='expense_edit'),
 
     path('expenses/categories/', views.category_list, name='category_list'),
-
-    path('income/', views.income, name='income'),
 
 ]

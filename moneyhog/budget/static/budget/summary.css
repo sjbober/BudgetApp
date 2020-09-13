@@ -1,25 +1,53 @@
 
-
-#byCateg, #spendSave {
-    /* width: 100%;
-    height: 74%; */
+.chart-title {
+    font-size: 28px;
 }
 
-.pie {
-    width: 100vh;
-    height: 100vw;
+#footer {
+    position: fixed;
+    background-color: white;
+    width: 100%;
+    bottom: 0;
+    box-shadow: 0px 0px 5px #888888;
+    z-index: 101;
+
 }
+
+
+
+
 
 /*  ======================================
     Styling for Desktop
     ======================================  */
     
     @media screen and (min-width: 800px) {
-        #byCateg, #spendSave {
-            /* width: 25%;
-            height: 25%; */
+
+
+        #footer {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            width:auto;
+            top: 95px;
+            bottom: auto;
+
+            right: 20px;
+            box-shadow: None;
+        
         }
+
+        .btn-outline-info {
+            margin-bottom: 8px;
+        }
+
+        /* #headingDiv {
+            position: fixed;
+        }
+
+        #pies {
+            padding-top: 50px;
+        } */
 
 
     }
-

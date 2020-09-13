@@ -1,0 +1,94 @@
+{% extends "budget/base.html" %}
+{% load static %}
+
+<!-- Page title -->
+{% block page_title %}Budget Summary{% endblock %}
+
+{% block extra_styles %}
+<!-- Pie chart -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" integrity="sha512-s+xg36jbIujB2S2VKfpGmlC3T5V2TF3lY48DX7u2r9XzGzgPsa6wTpOQA7J9iffvdeBN0q9tKzRxVxw1JviZPg==" crossorigin="anonymous"></script> -->
+
+
+<!-- Apex charts! -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<link rel="stylesheet" type="text/css" href="{% static 'budget/summary.css' %}">
+
+{% endblock %}
+
+
+<!-- Income nav button is active in site nav bar -->
+{% block summary-active %}navbar-active{% endblock summary-active %}
+{% block summary_active_sr %}<span class="sr-only">(current)</span>{% endblock summary_active_sr %}
+
+<!-- Spending nav bar -->
+{% block pie-activ %}active{% endblock %}
+
+<!-- Page Heading Title -->
+<!-- Monthly Spending Summaries -->
+{% block page-title %}
+<div id="headingDiv" class="flex flex-col align-start mb-4">
+    <h1 class="imp page-title"><span id="month"></span> <span id="year"></span> Summary</h1>
+    <form id="" action="" method="GET" class="flex mt-2" enctype="application/x-www-form-urlencoded"> 
+        {% csrf_token %}
+        <!-- Viewing Month:  -->
+        <div class="dropdown">
+            <button id="monthDropdownButton" class="btn btn-outline-dark dropdown-toggle imp title-med mb-2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+            <div id="monthDropdown" class="dropdown-menu" aria-labelledby="chooseMonth">
+                <a class="dropdown-item" href="#">January</a>
+                <a class="dropdown-item" href="#">February</a>
+                <a class="dropdown-item" href="#">March</a>
+                <a class="dropdown-item" href="#">April</a>
+                <a class="dropdown-item" href="#">May</a>
+                <a class="dropdown-item" href="#">June</a>
+                <a class="dropdown-item" href="#">July</a>
+                <a class="dropdown-item" href="#">August</a>
+                <a class="dropdown-item" href="#">September</a>
+                <a class="dropdown-item" href="#">October</a>
+                <a class="dropdown-item" href="#">November</a>
+                <a class="dropdown-item" href="#">December</a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button id="yearDropdownButton" class="btn btn-outline-dark dropdown-toggle imp title-med mb-2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Year</button>
+            <div id="yearDropdown" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#">January</a>
+            </div>
+        </div>
+    </form>
+  </div>
+{% endblock page-title %}
+
+{% block content %}
+<div id="pies">
+    <div id="error-message" class=""></div>
+    <div class="flex flex-col align-center just-center mb-5">
+        <h3 class="chart-title imp">Spending by Category</h3>
+        <div id="pieSpending"></div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+{% block footer %}
+<div id="footer" class="flex just-betw">
+    <a href="{% url 'budget:record_spending' %}" class="btn btn-outline-info title-lg imp block footer-btn"><i class="fas fa-plus"></i> Expense</a>
+</div>
+
+{% endblock footer %}
+
+
+
+{% block my_scripts %}
+
+<!-- Set current month and year in dropdown -->
+<script src="{% static '/budget/scripts/summary/displayMonthYear.js' %}"></script>
+
+<!-- Generate PIE charts -->
+<script src="{% static '/budget/scripts/summary/generatePieCharts.js' %}"></script>
+
+
+
+{% endblock %}

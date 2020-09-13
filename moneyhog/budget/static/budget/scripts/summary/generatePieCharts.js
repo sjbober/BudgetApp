@@ -1,12 +1,12 @@
+/* 
+ 
+
+*/
 
 
-// let this_month_expenses = "{{ exp_by_categ }}";
 
-window.addEventListener("load",getMonthlyExpenses('',''));
-
-// come back to this later
-// Initiate a fetch call to create a category
 function getMonthlyExpenses(month,year) {
+    // Takes two ints
 
     let theData = {
         'month': month,
@@ -30,16 +30,15 @@ function getMonthlyExpenses(month,year) {
             displayError(data.error); 
 
         } else { // no errors
-            console.log(data.expenses,data.colors);
-            prepareData(data.expenses,data.colors);
-            // let categories, sums, colors = prepareData(data.expenses);
-            // console.log(categories,sums,colors);
-            // generatePieCharts(categories,sums,colors);
+            console.log(data);
+            prepareCategData(data.expenses,data.total_spending);
+            // prepareSpendSave(data.total_spending,data.total_income);
+
 
         }
         
     }).catch(function(ex) {
-        console.log("parsing failed", ex);
+            displayError(ex); 
     });
 
 } 
@@ -61,91 +60,131 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function prepareData(expenses,colors) {
-    let categories = [];
-    let sums = [];
-    let backgroundColors = [];
-    let borderColors = [];
 
-    let i = 0;
-    for (const category of Object.entries(expenses)) {
+function displayError(error) {
+    let errorDiv = document.getElementById("error-message");
+    errorDiv.className = "alert alert-danger";
+    errorDiv.innerHTML = error;
+}
 
-        categories.push(category[0]);
-        sums.push(category[1]);
-
-        // Generate colors
-        let pos = i % colors.length;
-        let r = colors[pos][0] + Math.floor(i/colors.length);
-        let g = colors[pos][1];
-        let b = colors[pos][2];
-        let a_fill = .2;
-        let a_border = 1;
-
-        // Fill color
-        let color = 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a_fill + ')';
-        backgroundColors.push(color);
-
-        // Border color
-        let darkerColor = 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a_border + ')';
-        borderColors.push(darkerColor);
-
-        console.log(color);
-        console.log(darkerColor);
-        i++;
-    }
-
-    generatePieCharts(categories,sums,backgroundColors,borderColors);
-
+function generateCategoryColors(categories){
+    // # --primary: #593196; rgb(89,49,150)
+    // # --secondary: #A991D4; rgb(169,145,212)
+    // # --success: #13B955; rgb(19,185,85)
+    // # --info: #009CDC; rgb(0,156,220)
+    // # --warning: #EFA31D; rgb(239,163,29)
+    // # --danger: #FC3939; rgb(252,57,57)
+    // # --light: #F9F8FC; rgb(249,248,252)
+    // # --dark: #17141F; rgb(23,20,31)
 
 }
 
+// Prepare the data for the Spending by Category chart.
+// Call the generatePieCharts function with this data
+function prepareCategData(expenses,spending) {
+    spending = Number(spending);
+    if (spending == 0) {
+        buildAlertHTML("pieSpending", "You don't have any spending to show.");
 
-function generatePieCharts(categories,sums,backgroundColors,borderColors) {
-    let ctx = document.getElementById('byCateg').getContext('2d');
+    } else {
+        const colors = ['#593186','#A991D4','#13B955','#009CDC','#EFA31D','#FC3939','#F9F8FC','#17141F'];
+        let categories = [];
+        let sums = [];
 
-    let myChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: categories,
-            datasets: [{
-                // label: '# of Votes',
-                data: sums,
-                backgroundColor: backgroundColors,
-                borderColor: borderColors,
-                borderWidth: 1
-            }]
+        for (const category of Object.entries(expenses)) {
+
+            categories.push(category[0]);
+            sums.push(Number(category[1]));
         }
-    });
+
+        // categories.push("None");
+        // sums.push(0);
+
+        console.log(categories);
+        console.log(sums);
+
+        generatePieCharts(categories,sums,colors,'pieSpending');
+    }
+    
 }
 
-// function generatePieCharts() {
-//     let ctx = document.getElementById('myChart').getContext('2d');
+// Prepare the data for the Spending vs Savingby Category chart.
+// Call the generatePieCharts function with this data
+// function prepareSpendSave(spending,income) {
+//     spending = Number(spending);
+//     income = Number(income);
 
-//     let myChart = new Chart(ctx, {
-//         type: 'pie',
-//         data: {
-//             labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-//             datasets: [{
-//                 // label: '# of Votes',
-//                 data: [12, 19, 3, 5, 2, 3],
-//                 backgroundColor: [
-//                     'rgba(255, 99, 132, 0.2)',
-//                     'rgba(54, 162, 235, 0.2)',
-//                     'rgba(255, 206, 86, 0.2)',
-//                     'rgba(75, 192, 192, 0.2)',
-//                     'rgba(153, 102, 255, 0.2)',
-//                     'rgba(255, 159, 64, 0.2)'
-//                 ],
-//                 borderColor: [
-//                     'rgba(255, 99, 132, 1)',
-//                     'rgba(54, 162, 235, 1)',
-//                     'rgba(255, 206, 86, 1)',
-//                     'rgba(75, 192, 192, 1)',
-//                     'rgba(153, 102, 255, 1)',
-//                     'rgba(255, 159, 64, 1)'
-//                 ],
-//                 borderWidth: 1
-//             }]
+//     if (spending == 0 && income == 0) {
+//         buildAlertHTML("pieSavings", "You don't have any spending or income to show.");
+
+//     } else {
+//         const colors = ['#009CDC','#13B955'];
+//         let categories = ['Spending','Savings'];
+//         let savings;
+
+//         if (income < spending) {
+//             savings = 0;
+//         } else {
+//             savings = income - spending;
 //         }
-//     });
+        
+//         sums = [spending,savings];
+
+//         generatePieCharts(categories,sums,colors,'pieSavings');
+//     }
+    
+
 // }
+
+function buildAlertHTML(parentPie, message) {
+    console.log("triggered");
+    let alertDiv = document.createElement("div");
+    alertDiv.className = "alert alert-primary mt-2";
+    alertDiv.role = "alert";
+    alertDiv.innerHTML = message;
+
+    let pieDiv = document.getElementById(parentPie);
+    pieDiv.appendChild(alertDiv);
+}
+
+
+function generatePieCharts(categories,sums,backgroundColors,elementID) {
+    console.log("pie chart function called");
+    var options = {
+        chart: {
+          type: 'pie',
+          width: '45%',
+        },
+        series: sums,
+        labels: categories,
+        colors: backgroundColors,
+        dataLabels: {
+            enabled: true,
+            style: {
+                fontSize: '20px',
+            },
+        },          
+        responsive: [{
+            // Size under 700px wide
+            breakpoint: 700,
+            options: {      
+                chart: {
+                    width: "100%",
+                },
+                dataLabels: {
+                    style: {
+                        fontSize: '8px',
+                    },
+                }, 
+                legend: {
+                    position: 'bottom'
+                  },
+            } 
+        }], 
+        
+    }
+    
+    var chart = new ApexCharts(document.querySelector("#" + elementID), options);
+    chart.render();
+}
+

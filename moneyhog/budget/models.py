@@ -38,7 +38,7 @@ class Income(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE, null=False,blank=False)
 
     def __str__(self):
-        return str(self.amount)
+        return str(self.amount) + " on " + str(self.date)
 
 class Category(models.Model):
     name = models.CharField(max_length=50)

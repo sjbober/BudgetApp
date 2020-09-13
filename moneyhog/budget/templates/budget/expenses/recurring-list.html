@@ -14,11 +14,15 @@
 <!-- Page title and optional button-->
 {% block h1 %}Repeating Bills{% endblock h1 %}
 {% block link-url %}{% url 'budget:create_repeat_bill' %}{% endblock %}
-{% block btn-label %}Create Bill{% endblock %}
+{% block btn-label %} Bill{% endblock %}
 
 {% block content %}
 
     {% if recurring_expenses %}
+
+      {% for expense in recurring_expenses %}
+
+      {% endfor %}
     
     <span class="title-sm">Repeating bills will automatically be added to your spending history each month.</span>
 
@@ -40,9 +44,12 @@
           <td >${{ expense.amount }}</td>
           <td >{{ expense.category }}</td>
           <td>{{ expense.description }}</td>
-          <td><button type="button" class="btn btn-outline-danger imp title-xl" data-toggle="modal" data-target="#deleteMonthlyBill{{expense.id}}"><i class="fas fa-trash-alt"></i></button></td>
+          <td>
+            <button type="button" class="btn btn-outline-danger imp title-xl" data-toggle="modal" data-target="#deleteMonthlyBill{{expense.id}}"><i class="fas fa-trash-alt"></i><span class="title-sm">Delete</span>
+            </button>
+          </td>
 
-          <div id="deleteMonthlyBill{{expense.id}}" class="modal" tabindex="-1" role="dialog">
+          <div id="deleteMonthlyBill{{expense.id}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="deleteMonthlyBill{{expense.id}}" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -63,7 +70,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+          </div>
 
         </tr>
 
@@ -71,10 +78,39 @@
 
       </tbody>
     </table>
+
+        <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+      <i class="fas fa-trash-alt"></i>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
     {% else %}
     <p class="mb-3">You don't have any monthly bills right now. Select "Add Bill" to create some!</p>
     <h3 class="imp title-sm"><i class="fas fa-question-circle"></i> What is a monthly bill?</h3>
     <p class="">Monthly bills are any bills that you are charged the same amount for every month - rent, car payments, and insurance are great examples of monthly bills. When you create a monthly bill, we will go ahead and automatically log this bill in your spending activity every month on the day you choose.</p>
+    
     {% endif %}
     
     
@@ -86,6 +122,10 @@
 
 <!-- Makes each table row a URL -->
 <script src="../../../static/budget/scripts/clickRecurringRowToRedirect.js"></script>
+
+<script>
+
+</script>
 
 
 

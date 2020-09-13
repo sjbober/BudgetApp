@@ -44,10 +44,7 @@
               <a class="navbar-link {% block summary-active %}{% endblock summary-active %}" href="{% url 'budget:summary' %}"><span class="nav-icon"><i class="fas fa-chart-pie"></i></span> Summary {% block summary_active_sr %}{% endblock summary_active_sr %}</a>
           </li>
           <li class="hide">
-              <a class="navbar-link {% block expenses_active %}{% endblock expenses_active %}" href="{% url 'budget:expense_list' %}"><span class="nav-icon"><i class="fas fa-receipt"></i></span> Spending {% block expenses_active_sr %}{% endblock expenses_active_sr %}</a>
-          </li>
-          <li class="hide">
-              <a class="navbar-link {% block income-active %}{% endblock income-active %}" href="{% url 'budget:income' %}"><span class="nav-icon"><i class="fas fa-dollar-sign"></i></span> Income {% block income_active_sr %}{% endblock income_active_sr %}</a>
+              <a class="navbar-link {% block expenses_active %}{% endblock expenses_active %}" href="{% url 'budget:expense_list' %}"><span class="nav-icon"><i class="fas fa-receipt"></i></span> Details {% block expenses_active_sr %}{% endblock expenses_active_sr %}</a>
           </li>
           <li class="hide">
             <a class="navbar-link" href="{% url 'budget:logout' %}"><span class="nav-icon"><i class="fas fa-door-open"></i></span> Logout</a>
@@ -80,10 +77,12 @@
           {% endif %}
 
           <!-- Page Heading Title -->
-          <div class="flex just-betw align-center mt-2 mb-4">
+          {% block page-title %}
+          <div id="headingDiv" class="flex flex-wrap just-betw align-center mt-2 mb-4">
             <h1 class="imp page-title">{% block h1 %}{% endblock h1 %}</h1>
             {% block extra_button%}{% endblock extra_button %}
           </div>
+          {% endblock page-title %}
 
           
           <!-- Placeholder for actual content -->
@@ -92,6 +91,8 @@
         </div>
         
     </main>
+    {% block footer %}{% endblock footer %}
+
 
     <!-- Bootstrap -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

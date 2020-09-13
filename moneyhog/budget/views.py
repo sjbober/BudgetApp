@@ -95,114 +95,55 @@ def summary(request):
 
     if request.method == "POST":
         post_data = json.loads(request.body)
-        month = post_data['month']
-        year = post_data['year']
+        month = post_data['month'] # int
+        year = post_data['year']   # int
 
         response_data = {}
 
-    # check if month and year are numerical!!!
+        if month and year:
+            first_date = str(year) + "-" + str(month) + "-01"
 
-        if month == '' and year == '': # If no date is sent, use today's month/year
-
-            # Get today's month and year, and this month's start and end days
-            today = date.today()
-            first_date = str(today.year) + "-" + str(today.month) + "-01"
+            # Leap years??
             month_ends = {1:31,2:28,3:31,4:30,5:31,6:30,7:31,8:31,9:30,10:31,11:30,12:31}
-            second_date = str(today.year) + "-" + str(today.month) + "-" + str(month_ends[today.month])
+            second_date = str(year) + "-" + str(month) + "-" + str(month_ends[month])
+
             expense_date__range=[first_date, second_date]
 
             # Get a sum of expenses by category for the current month
-            exp_by_categ = Category.objects.filter(user__exact=request.user.id).filter(expense__expense_date__range=[first_date, second_date]).annotate(sum=Sum('expense__amount')).order_by('-name')
+            exp_by_categ = Category.objects.filter(user__exact=request.user.id).filter(expense__expense_date__range=[first_date, second_date]).annotate(sum=Sum('expense__amount')).order_by('-sum')
 
-            colors = [
-                # [89,49,150],
-                [169,145,212],
-                [19,185,85],
-                [0,156,220],
-                [239,163,29],
-                [252,57,57],
-                [249,248,252],
-                [23,20,31]
-            ]
-
-            # --primary: #593196; rgb(89,49,150)
-            # --secondary: #A991D4; rgb(169,145,212)
-            # --success: #13B955; rgb(19,185,85)
-            # --info: #009CDC; rgb(0,156,220)
-            # --warning: #EFA31D; rgb(239,163,29)
-            # --danger: #FC3939; rgb(252,57,57)
-            # --light: #F9F8FC; rgb(249,248,252)
-            # --dark: #17141F; rgb(23,20,31)
-
-
-            # Send response
-            response_data['result'] = 'success'
-            response_data['type'] = 'current month and year'
-            response_data['colors'] = colors
-            response_data['month'] = month
-            response_data['year'] = year
-            
+            # Get a sum of expenses for the current month, while
+            # also building a list to send in the json response 
+            #  (JS can't read python model objects)
             expenses = {}
+            total_spending = 0
             for categ in exp_by_categ:
                 expenses[str(categ)] = categ.sum
+                total_spending += categ.sum
 
+
+            # Fill out response
+            response_data['result'] = 'success'
+            response_data['type'] = 'current month and year'
+            response_data['month'] = month
+            response_data['year'] = year
             response_data['expenses'] = expenses
+            response_data['total_spending'] = total_spending
+
+        else:
+            response_data['result'] = 'error'
+            response_data['error'] = 'There was no month and/or year sent in the request.'
 
         return JsonResponse(response_data)
 
-
     else:
+        # TODO: get a list of valid years for this user
+
+
         context = {
-            # 'exp_by_categ': exp_by_categ,
         }
-        return render(request, 'budget/summary.html', context)
+        return render(request, 'budget/pie.html', context)
 
-# Get sum of expenses on a monthly (or other timeframe) grouped by category
-@login_required
-def monthly_expenses(request):
-
-    if request.method == "POST":
-        post_data = json.loads(request.body)
-        month = post_data['month']
-        year = post_data['year']
-
-        response_data = {}
-
-    # check if month and year are numerical!!!
-
-    if month == '' and year == '': # If no date is sent, use today's month/year
-
-        # Get today's month and year, and this month's start and end days
-        today = date.today()
-        first_date = str(today.year) + "-" + str(today.month) + "-01"
-        month_ends = {1:31,2:28,3:31,4:30,5:31,6:30,7:31,8:31,9:30,10:31,11:30,12:31}
-        second_date = str(today.year) + "-" + str(today.month) + "-" + str(month_ends[today.month])
-        expense_date__range=[first_date, second_date]
-
-        # Get a sum of expenses by category for the current month
-        exp_by_categ = Category.objects.filter(user__exact=request.user.id).filter(expense__expense_date__range=[first_date, second_date]).annotate(sum=Sum('expense__amount'))
-        print(exp_by_categ)
-
-        # Send response
-        response_data['result'] = 'success'
-        response_data['type'] = 'current month and year'
-        response_data['expenses'] = exp_by_categ
-
-
-    elif month == '' and year != '':   # user wants current year comparison
-
-
-
-        response_data['result'] = 'success'
-
-    elif month != '' and year != '':
-        pass
-    else:
-        response_data['result'] = 'error'
-        response_data['message'] = ''
-
-    
-    return JsonResponse(response_data)
 
 # Logout
 @login_required
@@ -440,10 +381,6 @@ def recurring_edit(request, pk):
 @login_required
 def record_spending(request):
     if request.method == "POST":
-        # for key in request.POST:
-        #     # print(key, request.POST[key])
-        # print(request.POST['amount'])
-        # print(request.POST['category'])
         form = ExpenseForm(data=request.POST, files=request.FILES,user=request.user.id)
         print(form)
         if form.is_valid():
@@ -470,7 +407,7 @@ def record_spending(request):
 @login_required
 def create_repeat_bill(request):
     if request.method == "POST" and 'day' in request.POST:
-        recurring_form = RecurringExpenseForm(request.POST)
+        recurring_form = RecurringExpenseForm(request.POST,user=request.user.id)
         if recurring_form.is_valid():
             recurring_expense = recurring_form.save(commit=False)
             recurring_expense.user = request.user
