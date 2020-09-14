@@ -1,6 +1,10 @@
 # Personal Expense Tracking Web Application
 
-This app allows users to manually log their daily expenses, automate
+This app allows users to:
+- Manually log their daily expenses and receipts
+- Create and manage their own spending categories
+- Automate logging of monthly bills
+- Visualize their monthly spending breakdown by category in a pie chart
 
 Front-end: HTML, CSS, Javascript, and Bootstrap
 Back-end: Django (Python)
