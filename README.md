@@ -6,12 +6,9 @@ This app allows users to:
 - Automate logging of monthly bills
 - Visualize their monthly spending breakdown by category in a pie chart
 
-Front-end: HTML, CSS, Javascript, and Bootstrap
+**Front-end:** HTML, CSS, Javascript, and Bootstrap
+**Back-end:** Django (Python)
+**Database:** MySQL
+**Deployment:** Heroku
 
-Back-end: Django (Python)
-
-Database: MySQL
-
-Deployment: Heroku
-
-Live site: https://moneyhog.herokuapp.com/
+**Live site:** https://moneyhog.herokuapp.com/
