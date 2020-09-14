@@ -1,4 +1,4 @@
-# BudgetApp
+# Personal Expense Tracking Web Application
 
 This app allows users to manually log their daily expenses, automate
 
