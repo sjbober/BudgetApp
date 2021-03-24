@@ -10,6 +10,3 @@ Technologies used:
 - **Front-end:** HTML, CSS, Javascript, and Bootstrap
 - **Back-end:** Django (Python)
 - **Database:** MySQL
-- **Deployment:** Heroku
-
-**Live site:** https://moneyhog.herokuapp.com/
