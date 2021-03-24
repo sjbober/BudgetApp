@@ -30,7 +30,7 @@ function getMonthlyExpenses(month,year) {
             displayError(data.error); 
 
         } else { // no errors
-            console.log(data);
+            // console.log(data);
             prepareCategData(data.expenses,data.total_spending);
             // prepareSpendSave(data.total_spending,data.total_income);
 
@@ -100,8 +100,8 @@ function prepareCategData(expenses,spending) {
         // categories.push("None");
         // sums.push(0);
 
-        console.log(categories);
-        console.log(sums);
+        // console.log(categories);
+        // console.log(sums);
 
         generatePieCharts(categories,sums,colors,'pieSpending');
     }
@@ -137,7 +137,7 @@ function prepareCategData(expenses,spending) {
 // }
 
 function buildAlertHTML(parentPie, message) {
-    console.log("triggered");
+    // console.log("triggered");
     let alertDiv = document.createElement("div");
     alertDiv.className = "alert alert-primary mt-2";
     alertDiv.role = "alert";
@@ -149,7 +149,7 @@ function buildAlertHTML(parentPie, message) {
 
 
 function generatePieCharts(categories,sums,backgroundColors,elementID) {
-    console.log("pie chart function called");
+    // console.log("pie chart function called");
     var options = {
         chart: {
           type: 'pie',

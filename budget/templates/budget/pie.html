@@ -68,6 +68,22 @@
     </div>
 </div>
 
+<div class="form-group mb-2 row">
+    <label for="receipt" class="col-sm-4 col-form-label"><span class="imp">Receipt</span> <small>(optional)</small></label>
+    <div class="col-md-8 flex just-start">
+        <label id="" class="flex w-100" for="receipt">
+        <div class="btn btn-outline-primary w-100 imp"><i class="fas fa-camera fa-lg"></i> Choose file or photo</div>
+        <input id="receipt" type="file" accept="image/*" capture=environment class="image-upload" name="receipt"/>
+        </label>
+
+    </div>
+  </div>
+
+  <div id="receipt-file" class="flex just-center mb-4">
+      {% block existing_receipt %}
+      {% endblock existing_receipt %}
+  </div>
+
 {% endblock %}
 
 
@@ -89,6 +105,10 @@
 <!-- Generate PIE charts -->
 <script src="{% static '/budget/scripts/summary/generatePieCharts.js' %}"></script>
 
+<!-- Call to scan receipt? -->
+<script src="{% static '/budget/scripts/summary/scanReceipt.js' %}"></script>
+<!-- <script src="{% static '/budget/scripts/displayImagePreviewBeforeUpload.js' %}"></script>
+<script src="{% static '/budget/scripts/deleteFile.js' %}"></script> -->
 
 
 {% endblock %}

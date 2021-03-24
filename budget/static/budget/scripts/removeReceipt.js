@@ -5,17 +5,12 @@
 
 let removeFileButton = document.getElementById("remove-file");
 removeFileButton.addEventListener("click", removeFile);
-// let previewName = document.getElementById("receipt-file");
 
 function removeFile() {
-    // console.log('this is working so far');
     let uploadReceiptButton = document.getElementById("receipt");
-    // let previewDiv = document.getElementById("receipt-preview");
     let previewName = document.getElementById("receipt-file");
 
-    // previewDiv.classList.add("d-none");
     previewName.innerHTML = "";
     uploadReceiptButton.files[0].isValid = false;
-    // console.log(uploadReceiptButton.files[0]);
 
 }

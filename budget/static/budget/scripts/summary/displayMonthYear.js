@@ -152,7 +152,7 @@ function convertMonthToPythonInt(monthLabel) {
 }
 
 function removePies() {
-    console.log("remove pies");
+    // console.log("remove pies");
     let spendPie = document.getElementById("pieSpending");
     // let savePie = document.getElementById("pieSavings");
 
