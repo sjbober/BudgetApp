@@ -1,5 +1,10 @@
 // Displays the image to be uploaded 
 
+/* 
+ 
+
+*/
+
 let uploadReceiptButton = document.getElementById("receipt");
 uploadReceiptButton.addEventListener("change", showImage);
 
@@ -78,19 +83,17 @@ function deleteFile() {
     filePlaceholder.innerHTML = "";
 }
 
-// https://microsoft-computer-vision3.p.rapidapi.com/ocr?language=unk&detectOrientation=false
-// https://microsoft-computer-vision3.p.rapidapi.com/generateThumbnail
 function scanReceipt(url) {
     fetch("https://microsoft-computer-vision3.p.rapidapi.com/generateThumbnail", {
         "method": "POST",
         "headers": {
-            "x-rapidapi-host": "microsoft-computer-vision3.p.rapidapi.com",
-            "x-rapidapi-key": "c1651e0c37msh7c895eb7dd828a5p1631e8jsn7e29d9353577",
+            "x-rapidapi-host": "",
+            "x-rapidapi-key": "",
             "content-type": "application/json",
             "accept": "application/json"
         },
         "body": {
-            "url": "https://homeschoolingwithguinever.files.wordpress.com/2009/11/meijer-receipt.jpg"
+            "url": ""
             // "url": "http://example.com/images/test.jpg"
         }
     })
